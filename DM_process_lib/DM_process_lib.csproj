@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FastReport.OpenSource" Version="2025.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.7" />
+  </ItemGroup>
+
+
+	<ItemGroup>
+		<Reference Include="DM_wraper_lib">
+			<HintPath>..\DM_wraper_lib\bin\Debug\net8.0\DM_wraper_lib.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+</Project>
