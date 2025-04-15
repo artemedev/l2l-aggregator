@@ -30,5 +30,7 @@
 				<TextBlock Text="{Binding User.USER_NAME}" FontSize="16" FontWeight="Bold"/>
 			</Grid>
 		</Grid>
+		<controls:NotificationMessageContainer Manager="{Binding Manager}"  VerticalAlignment="Bottom"
+								HorizontalAlignment="Right"  ZIndex="1000"/>
 	</Grid>
 </Window>

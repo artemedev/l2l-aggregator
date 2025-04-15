@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace l2l_aggregator.ViewModels
 {
-    internal class AuthViewModel
+    public partial class AuthViewModel : ViewModelBase
     {
     }
 }
