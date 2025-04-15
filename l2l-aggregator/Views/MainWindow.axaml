@@ -11,6 +11,24 @@
         Title="l2l_aggregator">
 
 	<Grid>
-
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="70"/>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="20"/>
+			</Grid.RowDefinitions>
+			<Grid Background="{DynamicResource ResourceKey=PrimaryBackground}" Grid.Row="0" IsVisible="{Binding IsNotLoginPage}">
+				<Border Padding="10" >
+					<StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center" VerticalAlignment="Center">
+						<Image Source="{SvgImage /Assets/Images/logo.svg}"></Image>
+						<Button Command="{Binding ButtonExit}" Content="Выход"/>
+					</StackPanel>
+				</Border>
+			</Grid>
+			<ContentControl  Grid.Row="1" Content="{Binding Content}"></ContentControl>
+			<Grid Grid.Row="2" Background="LightBlue" IsVisible="{Binding IsNotLoginPage}">
+				<TextBlock Text="{Binding User.USER_NAME}" FontSize="16" FontWeight="Bold"/>
+			</Grid>
+		</Grid>
 	</Grid>
 </Window>
