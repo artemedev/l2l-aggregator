@@ -3,9 +3,12 @@ using Avalonia.SimpleRouter;
 using CommunityToolkit.Mvvm.ComponentModel;
 using l2l_aggregator.Models;
 using l2l_aggregator.Services.Database;
-using l2l_aggregator.Services.Notification;
+using l2l_aggregator.Services.Database.Interfaces;
 using l2l_aggregator.Services.Notification.Interface;
+using Refit;
+using System;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace l2l_aggregator.ViewModels
@@ -21,7 +24,7 @@ namespace l2l_aggregator.ViewModels
 
         // Новое свойство для хранения данных пользователя
         [ObservableProperty]
-        private UserAuthResponse _user;
+        private UserAuthResponse? _user;
 
         private readonly DatabaseService _databaseService;
         private readonly HistoryRouter<ViewModelBase> _router;
@@ -44,6 +47,25 @@ namespace l2l_aggregator.ViewModels
                     await LoadUserData(Content); // Загружаем данные пользователя при входе
                 }
             };
+            InitializeAsync();
+        }
+        private async void InitializeAsync()
+        {
+            var serverUri = await _databaseService.Config.GetConfigValueAsync("ServerUri");
+
+            if (!string.IsNullOrEmpty(serverUri))
+            {
+                var client = RestService.For<IAuthApi>(new HttpClient()
+                {
+                    BaseAddress = new Uri(serverUri)
+                });
+
+                _router.GoTo<AuthViewModel>();
+            }
+            else
+            {
+                _router.GoTo<InitializationViewModel>();
+            }
         }
         private async Task LoadUserData(ViewModelBase contentViewModel)
         {
@@ -53,7 +75,7 @@ namespace l2l_aggregator.ViewModels
             if (users == null || users.Count == 0)
                 return;
 
-            UserAuthResponse response;
+            UserAuthResponse? response;
 
             var isSettingsPage = contentViewModel is SettingsViewModel || contentViewModel is CameraSettingsViewModel;
             response = isSettingsPage ? users.FirstOrDefault() : users.Skip(1).FirstOrDefault();
@@ -63,7 +85,6 @@ namespace l2l_aggregator.ViewModels
                 User = new UserAuthResponse
                 {
                     USER_NAME = response.USER_NAME,
-                    // Добавь и другие поля, если нужно
                 };
             }
         }

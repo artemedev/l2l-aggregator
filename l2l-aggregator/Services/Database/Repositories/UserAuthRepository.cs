@@ -1,11 +1,10 @@
 ﻿using Dapper;
 using l2l_aggregator.Models;
-using l2l_aggregator.Services.Database.Interfaces;
+using l2l_aggregator.Services.Database.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace l2l_aggregator.Services.Database.Repositories
@@ -24,7 +23,9 @@ namespace l2l_aggregator.Services.Database.Repositories
             response.AUTH_OK,
             response.ERROR_TEXT,
             response.NEED_CHANGE_FLAG,
-            EXPIRATION_DATE = DateTime.ParseExact(response.EXPIRATION_DATE, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture),
+            EXPIRATION_DATE = string.IsNullOrWhiteSpace(response.EXPIRATION_DATE)
+                            ? (DateTime?)null
+                            : DateTime.ParseExact(response.EXPIRATION_DATE, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture),
             response.REC_TYPE
         };
 
@@ -77,7 +78,7 @@ namespace l2l_aggregator.Services.Database.Repositories
                 return result.ToList();
             });
 
-        public Task<string> GetLastUserIdAsync() =>
+        public Task<string?> GetLastUserIdAsync() =>
             WithConnectionAsync(conn =>
                 conn.QueryFirstOrDefaultAsync<string>(
                     @"SELECT USERID FROM USER_AUTH_INFO ORDER BY EXPIRATION_DATE DESC"));

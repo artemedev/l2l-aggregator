@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using l2l_aggregator.Models;
-using l2l_aggregator.Services.Database.Interfaces;
+using l2l_aggregator.Services.Database.Repositories.Interfaces;
 using System.Threading.Tasks;
 
 namespace l2l_aggregator.Services.Database.Repositories
@@ -10,13 +10,13 @@ namespace l2l_aggregator.Services.Database.Repositories
     {
         public ConfigRepository(DatabaseInitializer dbService) : base(dbService) { }
 
-        public Task<string> GetConfigValueAsync(string key) =>
+        public Task<string?> GetConfigValueAsync(string key) =>
             WithConnectionAsync(conn =>
                 conn.QueryFirstOrDefaultAsync<string>(
                     "SELECT CONFIG_VALUE FROM CONFIG_INFO WHERE CONFIG_KEY = @key",
                     new { key }));
 
-        public Task SetConfigValueAsync(string key, string value) =>
+        public Task SetConfigValueAsync(string key, string? value) =>
             WithConnectionAsync(conn =>
                 conn.ExecuteAsync(
                     @"UPDATE OR INSERT INTO CONFIG_INFO 
@@ -27,7 +27,7 @@ namespace l2l_aggregator.Services.Database.Repositories
         public Task SaveScannerDeviceAsync(ScannerDevice scanner) =>
             SetConfigValueAsync("ScannerId", scanner.Id);
 
-        public async Task<ScannerDevice> LoadScannerDeviceAsync()
+        public async Task<ScannerDevice?> LoadScannerDeviceAsync()
         {
             var id = await GetConfigValueAsync("ScannerId");
             return string.IsNullOrWhiteSpace(id) ? null : new ScannerDevice { Id = id };

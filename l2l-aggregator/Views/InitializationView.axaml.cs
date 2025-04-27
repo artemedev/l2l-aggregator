@@ -1,8 +1,6 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 
-namespace l2l_aggregator;
+namespace l2l_aggregator.Views;
 
 public partial class InitializationView : UserControl
 {

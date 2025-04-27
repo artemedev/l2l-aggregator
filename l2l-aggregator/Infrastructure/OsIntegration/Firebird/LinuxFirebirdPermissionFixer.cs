@@ -15,12 +15,12 @@ namespace l2l_aggregator.Infrastructure.OsIntegration.Firebird
             string scriptPath = "/tmp/fix-firebird-perms.sh";
 
             string scriptContent = @"#!/bin/bash
-                                    echo 'Создаём директорию /var/lib/medtechtdapp...'
-                                    mkdir -p /var/lib/medtechtdapp
+                                    echo 'Создаём директорию /var/lib/l2l_aggregator...'
+                                    mkdir -p /var/lib/l2l_aggregator
 
                                     echo 'Выдаём права пользователю firebird...'
-                                    chown -R firebird:firebird /var/lib/medtechtdapp
-                                    chmod 755 /var/lib/medtechtdapp
+                                    chown -R firebird:firebird /var/lib/l2l_aggregator
+                                    chmod 755 /var/lib/l2l_aggregator
 
                                     echo '✅ Права успешно установлены.'";
 
@@ -37,7 +37,8 @@ namespace l2l_aggregator.Infrastructure.OsIntegration.Firebird
                         Arguments = scriptPath,
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
-                        RedirectStandardError = true
+                        RedirectStandardError = true,
+                        CreateNoWindow = true
                     }
                 };
 
@@ -50,9 +51,9 @@ namespace l2l_aggregator.Infrastructure.OsIntegration.Firebird
                 Console.WriteLine(output);
                 if (!string.IsNullOrWhiteSpace(error))
                 {
-                    Console.Error.WriteLine("⚠️ Ошибка при выполнении скрипта:");
-                    Console.Error.WriteLine(error);
+                    Console.Error.WriteLine("⚠️ Ошибка при выполнении скрипта:\n" + error);
                 }
+                File.Delete(scriptPath); // Удалим временный скрипт
             }
             catch (Exception ex)
             {

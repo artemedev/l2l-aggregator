@@ -8,8 +8,11 @@ using l2l_aggregator.Services.Database;
 using System.IO;
 using System;
 using l2l_aggregator.Infrastructure.OsIntegration.Firebird;
-using l2l_aggregator.Services.Database.Interfaces;
 using l2l_aggregator.Services.Database.Repositories;
+using l2l_aggregator.Services.Database.Repositories.Interfaces;
+using l2l_aggregator.Services.Database.Interfaces;
+using Refit;
+using System.Net.Http;
 
 namespace l2l_aggregator
 {
@@ -22,11 +25,15 @@ namespace l2l_aggregator
             // Регистрируем главную VM (она требует HistoryRouter)
             services.AddSingleton<MainWindowViewModel>();
 
+            // Регистрация ViewModels (они зависят от HistoryRouter)
+            services.AddTransient<InitializationViewModel>();
+
 
             // Регистрируем HistoryRouter перед ViewModels
             services.AddSingleton<HistoryRouter<ViewModelBase>>(s =>
                 new HistoryRouter<ViewModelBase>(t => (ViewModelBase)s.GetRequiredService(t)));
-
+            
+            // Регистрируем работу с бд
             services.AddSingleton<IUserAuthRepository, UserAuthRepository>();
             services.AddSingleton<IConfigRepository, ConfigRepository>();
             services.AddSingleton<IRegistrationDeviceRepository, RegistrationDeviceRepository>();
@@ -44,20 +51,23 @@ namespace l2l_aggregator
                 {
                     LinuxFirebirdPermissionFixer.EnsureFirebirdDirectoryAccess();
                     // Используем системную директорию, куда firebird точно имеет доступ
-                    databasePath = "/var/lib/medtechtdapp/TEST.fdb";
+                    databasePath = "/var/lib/l2l_aggregator/TEST.fdb";
 
-                    // Убедись, что директория существует и имеет нужные права:
-                    Directory.CreateDirectory("/var/lib/medtechtdapp");
-                    try
-                    {
-                        // Firebird работает от имени firebird, так что нужно отдать владельца
-                        var dirInfo = new DirectoryInfo("/var/lib/medtechtdapp");
-                        dirInfo.SetAccessControl(new System.Security.AccessControl.DirectorySecurity());
-                    }
-                    catch { /* Если нет прав на chown — не страшно, ручной подход */ }
                 }
                 return new DatabaseInitializer(databasePath);
             });
+            // Регистрируем Refit API-клиенты
+            var refitSettings = new RefitSettings
+            {
+                HttpMessageHandlerFactory = () => new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                }
+            };
+            services.AddRefitClient<ITaskApi>(refitSettings)
+                    .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://172.16.3.196:5005"));
+            services.AddRefitClient<IAuthApi>(refitSettings)
+                    .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://172.16.3.196:5005"));
         }
     }
 }

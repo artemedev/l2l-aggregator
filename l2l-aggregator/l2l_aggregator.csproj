@@ -28,6 +28,8 @@
     <PackageReference Include="FirebirdSql.Data.FirebirdClient" Version="10.3.2" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.4" />
     <PackageReference Include="Notification.Avalonia" Version="2.1.0" />
+    <PackageReference Include="Refit" Version="8.0.0" />
+    <PackageReference Include="Refit.HttpClientFactory" Version="8.0.0" />
     <PackageReference Include="Sandreas.Avalonia.SimpleRouter" Version="0.0.5" />
   </ItemGroup>
 

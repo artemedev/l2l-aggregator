@@ -1,4 +1,4 @@
-﻿using l2l_aggregator.Services.Database.Interfaces;
+﻿using l2l_aggregator.Services.Database.Repositories.Interfaces;
 
 namespace l2l_aggregator.Services.Database
 {

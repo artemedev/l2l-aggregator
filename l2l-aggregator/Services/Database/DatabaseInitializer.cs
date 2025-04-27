@@ -37,6 +37,7 @@ namespace l2l_aggregator.Services.Database
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Error creating database: {ex.Message}");
                 throw;
             }
         }
