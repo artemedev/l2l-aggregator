@@ -1,0 +1,80 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:keyboard="clr-namespace:l2l_aggregator.Controls.Keyboard"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="l2l_aggregator.Controls.Keyboard.Layout.VirtualKeyboardLayoutRU" Background="Black">
+	<DockPanel >
+
+		<Panel DockPanel.Dock="Bottom">
+
+			<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+
+
+				<StackPanel Orientation="Horizontal">
+					<keyboard:VirtualKey NormalKey="й" ShiftKey="Й" AltCtrlKey="" Name="VirtualKey1"/>
+					<keyboard:VirtualKey NormalKey="ц" ShiftKey="Ц" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="у" ShiftKey="У" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="к" ShiftKey="К" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="е" ShiftKey="Е" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="н" ShiftKey="Н" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="г" ShiftKey="Г" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="ш" ShiftKey="Ш" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="щ" ShiftKey="Щ" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="з" ShiftKey="З" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="х" ShiftKey="Х" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="ъ" ShiftKey="Ъ" AltCtrlKey=""/>
+					<keyboard:VirtualKey SpecialKey="Back" SpecialIcon="KeyboardBackspace" Width="294"/>
+				</StackPanel>
+				<StackPanel Orientation="Horizontal" Margin="45 0 0 0">
+					<keyboard:VirtualKey NormalKey="ф" ShiftKey="Ф" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="ы" ShiftKey="Ы" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="в" ShiftKey="В" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="а" ShiftKey="А" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="п" ShiftKey="П" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="р" ShiftKey="Р" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="о" ShiftKey="О" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="л" ShiftKey="Л" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="д" ShiftKey="Д" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="ж" ShiftKey='Ж' AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="э" ShiftKey='Э' AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="\" ShiftKey='/' AltCtrlKey=""/>
+					<keyboard:VirtualKey SpecialKey="Enter" SpecialIcon="KeyboardReturn" Width="252">
+						<keyboard:VirtualKey.SpecialIcon>
+
+						</keyboard:VirtualKey.SpecialIcon>
+					</keyboard:VirtualKey>
+				</StackPanel>
+				<StackPanel Orientation="Horizontal">
+					<keyboard:VirtualKey SpecialKey="LeftShift" SpecialIcon="KeyboardCaps"/>
+					<keyboard:VirtualKey NormalKey="я" ShiftKey="Я" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="ч" ShiftKey="Ч" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="с" ShiftKey="С" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="м" ShiftKey="М" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="и" ShiftKey="И" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="т" ShiftKey="Т" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="ь" ShiftKey="Ь" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="б" ShiftKey="Б" AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="ю" ShiftKey='Ю' AltCtrlKey=""/>
+					<keyboard:VirtualKey NormalKey="." ShiftKey="." AltCtrlKey=""/>
+					<keyboard:VirtualKey SpecialKey="RightShift" />
+				</StackPanel>
+				<StackPanel Orientation="Horizontal">
+					<keyboard:VirtualKey SpecialKey="BrowserFavorites" NormalKey="123"/>
+					<keyboard:VirtualKey SpecialKey="RightCtrl" NormalKey="ctrl" />
+					<keyboard:VirtualKey SpecialKey="LaunchApplication1" NormalKey="EN" />
+					<keyboard:VirtualKey NormalKey="" />
+					<keyboard:VirtualKey NormalKey=" " Width="933"/>
+					<keyboard:VirtualKey SpecialKey="Left"  SpecialIcon="ChevronLeft"/>
+					<keyboard:VirtualKey SpecialKey="Right" SpecialIcon="ChevronRight"/>
+					<keyboard:VirtualKey SpecialKey="BrowserFavorites" NormalKey="123"/>
+				</StackPanel>
+			</StackPanel>
+
+		</Panel>
+
+
+	</DockPanel>
+</UserControl>
