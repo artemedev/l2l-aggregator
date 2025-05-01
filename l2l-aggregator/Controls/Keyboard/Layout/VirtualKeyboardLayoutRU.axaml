@@ -97,7 +97,7 @@
 						<ColumnDefinition Width="*" />
 					</Grid.ColumnDefinitions>
 
-					<keyboard:VirtualKey Grid.Column="0" NormalKey="Shift" SpecialKey="LeftShift"  />
+					<keyboard:VirtualKey Grid.Column="0" SpecialKey="LeftShift" SpecialIcon="KeyboardCaps"/>
 					<keyboard:VirtualKey Grid.Column="1" NormalKey="я" ShiftKey="Я" />
 					<keyboard:VirtualKey Grid.Column="2" NormalKey="ч" ShiftKey="Ч" />
 					<keyboard:VirtualKey Grid.Column="3" NormalKey="с" ShiftKey="С" />
@@ -108,7 +108,7 @@
 					<keyboard:VirtualKey Grid.Column="8" NormalKey="б" ShiftKey="Б" />
 					<keyboard:VirtualKey Grid.Column="9" NormalKey="ю" ShiftKey="Ю" />
 					<keyboard:VirtualKey Grid.Column="10" NormalKey="." ShiftKey="." />
-					<keyboard:VirtualKey Grid.Column="11" NormalKey="Shift" SpecialKey="LeftShift" />
+					<keyboard:VirtualKey Grid.Column="11" SpecialKey="LeftShift" SpecialIcon="KeyboardCaps"/>
 				</Grid>
 
 				<!-- Четвёртая строка -->
