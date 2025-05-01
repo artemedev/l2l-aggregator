@@ -2,6 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="l2l_aggregator.App"
              xmlns:local="using:l2l_aggregator"
+			 xmlns:local2="using:l2l_aggregator.Controls.Keyboard"
+			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia" 
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
@@ -11,5 +13,10 @@
   
     <Application.Styles>
         <FluentTheme />
-    </Application.Styles>
+		<materialIcons:MaterialIconStyles />
+	</Application.Styles>
+	<Application.Resources>
+		<local2:FontSizeConverter x:Key="FontSizeConverter"/>
+		<local2:StringToMaterialIconKindConverter x:Key="IconConverter" />
+	</Application.Resources>
 </Application>

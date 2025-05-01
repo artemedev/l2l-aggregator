@@ -2,76 +2,158 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:keyboard="clr-namespace:l2l_aggregator.Controls.Keyboard"
+             xmlns:keyboard="clr-namespace:l2l_aggregator.Controls.Keyboard"
              xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="l2l_aggregator.Controls.Keyboard.Layout.VirtualKeyboardLayoutRU" Background="Black">
+			 xmlns:material="clr-namespace:Material.Icons;assembly=Material.Icons"
+             xmlns:local="clr-namespace:l2l_aggregator.Controls.Keyboard.Layout"
+             xmlns:local2="clr-namespace:l2l_aggregator.Controls.Keyboard"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="l2l_aggregator.Controls.Keyboard.Layout.VirtualKeyboardLayoutRU"
+             Background="LightGray">
+
+	<UserControl.Resources>
+		<!-- Убедитесь, что конвертер объявлен только здесь или в App.xaml -->
+		<local2:StringToMaterialIconKindConverter x:Key="IconConverter" />
+	</UserControl.Resources>
 	<DockPanel >
 
 		<Panel DockPanel.Dock="Bottom">
+			<StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Spacing="10" Margin="10">
 
-			<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+				<!-- Первая строка -->
+				<Grid HorizontalAlignment="Stretch">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
 
+					<keyboard:VirtualKey Grid.Column="0" NormalKey="й" ShiftKey="Й" />
+					<keyboard:VirtualKey Grid.Column="1" NormalKey="ц" ShiftKey="Ц" />
+					<keyboard:VirtualKey Grid.Column="2" NormalKey="у" ShiftKey="У" />
+					<keyboard:VirtualKey Grid.Column="3" NormalKey="к" ShiftKey="К" />
+					<keyboard:VirtualKey Grid.Column="4" NormalKey="е" ShiftKey="Е" />
+					<keyboard:VirtualKey Grid.Column="5" NormalKey="н" ShiftKey="Н" />
+					<keyboard:VirtualKey Grid.Column="6" NormalKey="г" ShiftKey="Г" />
+					<keyboard:VirtualKey Grid.Column="7" NormalKey="ш" ShiftKey="Ш" />
+					<keyboard:VirtualKey Grid.Column="8" NormalKey="щ" ShiftKey="Щ" />
+					<keyboard:VirtualKey Grid.Column="9" NormalKey="з" ShiftKey="З" />
+					<keyboard:VirtualKey Grid.Column="10" NormalKey="х" ShiftKey="Х" />
+					<keyboard:VirtualKey Grid.Column="11" NormalKey="ъ" ShiftKey="Ъ" />
+					<keyboard:VirtualKey Grid.Column="12" NormalKey="backspace" SpecialKey="Back" SpecialIcon="KeyboardBackspace" />
+				</Grid>
 
-				<StackPanel Orientation="Horizontal">
-					<keyboard:VirtualKey NormalKey="й" ShiftKey="Й" AltCtrlKey="" Name="VirtualKey1"/>
-					<keyboard:VirtualKey NormalKey="ц" ShiftKey="Ц" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="у" ShiftKey="У" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="к" ShiftKey="К" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="е" ShiftKey="Е" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="н" ShiftKey="Н" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="г" ShiftKey="Г" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="ш" ShiftKey="Ш" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="щ" ShiftKey="Щ" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="з" ShiftKey="З" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="х" ShiftKey="Х" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="ъ" ShiftKey="Ъ" AltCtrlKey=""/>
-					<keyboard:VirtualKey SpecialKey="Back" SpecialIcon="KeyboardBackspace" Width="294"/>
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Margin="45 0 0 0">
-					<keyboard:VirtualKey NormalKey="ф" ShiftKey="Ф" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="ы" ShiftKey="Ы" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="в" ShiftKey="В" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="а" ShiftKey="А" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="п" ShiftKey="П" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="р" ShiftKey="Р" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="о" ShiftKey="О" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="л" ShiftKey="Л" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="д" ShiftKey="Д" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="ж" ShiftKey='Ж' AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="э" ShiftKey='Э' AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="\" ShiftKey='/' AltCtrlKey=""/>
-					<keyboard:VirtualKey SpecialKey="Enter" SpecialIcon="KeyboardReturn" Width="252">
-						<keyboard:VirtualKey.SpecialIcon>
+				<!-- Вторая строка -->
+				<Grid HorizontalAlignment="Stretch">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="0.5*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
 
-						</keyboard:VirtualKey.SpecialIcon>
-					</keyboard:VirtualKey>
-				</StackPanel>
-				<StackPanel Orientation="Horizontal">
-					<keyboard:VirtualKey SpecialKey="LeftShift" SpecialIcon="KeyboardCaps"/>
-					<keyboard:VirtualKey NormalKey="я" ShiftKey="Я" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="ч" ShiftKey="Ч" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="с" ShiftKey="С" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="м" ShiftKey="М" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="и" ShiftKey="И" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="т" ShiftKey="Т" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="ь" ShiftKey="Ь" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="б" ShiftKey="Б" AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="ю" ShiftKey='Ю' AltCtrlKey=""/>
-					<keyboard:VirtualKey NormalKey="." ShiftKey="." AltCtrlKey=""/>
-					<keyboard:VirtualKey SpecialKey="RightShift" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal">
-					<keyboard:VirtualKey SpecialKey="BrowserFavorites" NormalKey="123"/>
-					<keyboard:VirtualKey SpecialKey="RightCtrl" NormalKey="ctrl" />
-					<keyboard:VirtualKey SpecialKey="LaunchApplication1" NormalKey="EN" />
-					<keyboard:VirtualKey NormalKey="" />
-					<keyboard:VirtualKey NormalKey=" " Width="933"/>
-					<keyboard:VirtualKey SpecialKey="Left"  SpecialIcon="ChevronLeft"/>
-					<keyboard:VirtualKey SpecialKey="Right" SpecialIcon="ChevronRight"/>
-					<keyboard:VirtualKey SpecialKey="BrowserFavorites" NormalKey="123"/>
-				</StackPanel>
+					<!-- Отступ слева -->
+					<Rectangle Grid.Column="0" />
+
+					<keyboard:VirtualKey Grid.Column="1" NormalKey="ф" ShiftKey="Ф" />
+					<keyboard:VirtualKey Grid.Column="2" NormalKey="ы" ShiftKey="Ы" />
+					<keyboard:VirtualKey Grid.Column="3" NormalKey="в" ShiftKey="В" />
+					<keyboard:VirtualKey Grid.Column="4" NormalKey="а" ShiftKey="А" />
+					<keyboard:VirtualKey Grid.Column="5" NormalKey="п" ShiftKey="П" />
+					<keyboard:VirtualKey Grid.Column="6" NormalKey="р" ShiftKey="Р" />
+					<keyboard:VirtualKey Grid.Column="7" NormalKey="о" ShiftKey="О" />
+					<keyboard:VirtualKey Grid.Column="8" NormalKey="л" ShiftKey="Л" />
+					<keyboard:VirtualKey Grid.Column="9" NormalKey="д" ShiftKey="Д" />
+					<keyboard:VirtualKey Grid.Column="10" NormalKey="ж" ShiftKey="Ж" />
+					<keyboard:VirtualKey Grid.Column="11" NormalKey="э" ShiftKey="Э" />
+					<keyboard:VirtualKey Grid.Column="12" NormalKey="enter" SpecialKey="Enter" SpecialIcon="KeyboardReturn" />
+				</Grid>
+
+				<!-- Третья строка -->
+				<Grid HorizontalAlignment="Stretch">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+
+					<keyboard:VirtualKey Grid.Column="0" NormalKey="Shift" SpecialKey="LeftShift" SpecialIcon="KeyboardCaps" />
+					<keyboard:VirtualKey Grid.Column="1" NormalKey="я" ShiftKey="Я" />
+					<keyboard:VirtualKey Grid.Column="2" NormalKey="ч" ShiftKey="Ч" />
+					<keyboard:VirtualKey Grid.Column="3" NormalKey="с" ShiftKey="С" />
+					<keyboard:VirtualKey Grid.Column="4" NormalKey="м" ShiftKey="М" />
+					<keyboard:VirtualKey Grid.Column="5" NormalKey="и" ShiftKey="И" />
+					<keyboard:VirtualKey Grid.Column="6" NormalKey="т" ShiftKey="Т" />
+					<keyboard:VirtualKey Grid.Column="7" NormalKey="ь" ShiftKey="Ь" />
+					<keyboard:VirtualKey Grid.Column="8" NormalKey="б" ShiftKey="Б" />
+					<keyboard:VirtualKey Grid.Column="9" NormalKey="ю" ShiftKey="Ю" />
+					<keyboard:VirtualKey Grid.Column="10" NormalKey="." ShiftKey="." />
+					<keyboard:VirtualKey Grid.Column="11" NormalKey="Shift" SpecialKey="RightShift" />
+				</Grid>
+
+				<!-- Четвёртая строка -->
+				<Grid HorizontalAlignment="Stretch">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="6*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+
+					<keyboard:VirtualKey Grid.Column="0" SpecialKey="BrowserFavorites" NormalKey="123" />
+					<keyboard:VirtualKey Grid.Column="1" SpecialKey="RightCtrl" NormalKey="ctrl" />
+					<keyboard:VirtualKey Grid.Column="2" SpecialKey="LaunchApplication1" NormalKey="EN" />
+					<!--<keyboard:VirtualKey Grid.Column="3" NormalKey="" />-->
+					<keyboard:VirtualKey Grid.Column="3" NormalKey=" " />
+					<!-- Пробел -->
+					<!-- Исправленные кнопки со стрелками -->
+					<keyboard:VirtualKey Grid.Column="4"
+									   SpecialKey="Left"
+									   SpecialIcon="{x:Static material:MaterialIconKind.ChevronLeft}"
+									   NormalKey=""/>
+
+					<keyboard:VirtualKey Grid.Column="5"
+									   SpecialKey="Right"
+									   SpecialIcon="{x:Static material:MaterialIconKind.ChevronRight}"
+									   NormalKey=""/>
+					<keyboard:VirtualKey Grid.Column="6" SpecialKey="BrowserFavorites" NormalKey="123" />
+				</Grid>
+
 			</StackPanel>
+
 
 		</Panel>
 

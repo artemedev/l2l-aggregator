@@ -1,18 +1,16 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Input.TextInput;
 using Avalonia.Input;
+using Avalonia.Input.TextInput;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System;
 using l2l_aggregator.Controls.Keyboard.Layout;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using Avalonia.Interactivity;
+using System.Threading.Tasks;
 
 namespace l2l_aggregator.Controls.Keyboard;
 
@@ -101,12 +99,12 @@ public partial class VirtualKeyboard : UserControl
     public VirtualKeyboard()
     {
         InitializeComponent();
-        //TextBox_ = this.Get<TextBox>("TextBox");
+        TextBox_ = this.Get<TextBox>("TextBox");
         TransitioningContentControl_ = this.Get<Avalonia.Controls.TransitioningContentControl>("TransitioningContentControl");
-        //AcceptButton_ = this.Get<Button>("AcceptButton");
+        AcceptButton_ = this.Get<Button>("AcceptButton");
         CloseButton_ = this.Get<Button>("CloseButton");
 
-        //AcceptButton_.AddHandler(Button.ClickEvent, acceptClicked);
+        AcceptButton_.AddHandler(Button.ClickEvent, acceptClicked);
         CloseButton_.AddHandler(Button.ClickEvent, closeClicked);
         CloseCommand = new RelayCommand(() => Close());
         Initialized += async (sender, args) =>
@@ -157,22 +155,22 @@ public partial class VirtualKeyboard : UserControl
     {
 
 
-        //TextBox_.Text = "";
+        TextBox_.Text = "";
         IsVisible = false;
         ((Control)this.Parent).IsVisible = false;
     }
 
     public void ShowKeyboard(TextBox source)
     {
-        //Dispatcher.UIThread.Post(() =>
-        //{
-        //    TextBox_.Focus();
-        //});
-        //TextBox_.Focus();
+        Dispatcher.UIThread.Post(() =>
+        {
+            TextBox_.Focus();
+        });
+        TextBox_.Focus();
         this.source = source;
 
-        //this.TextBox_.PasswordChar = source.PasswordChar;
-        //this.TextBox_.Text = source.Text == null ? "" : source.Text;
+        this.TextBox_.PasswordChar = source.PasswordChar;
+        this.TextBox_.Text = source.Text == null ? "" : source.Text;
         //this.TextBox_.CaretIndex = this.TextBox_.Text.Length;
         this.IsVisible = true;
         ((Control)this.Parent).IsVisible = true;

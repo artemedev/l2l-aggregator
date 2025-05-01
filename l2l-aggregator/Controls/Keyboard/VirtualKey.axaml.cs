@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
 using Avalonia.Data;
@@ -7,7 +8,6 @@ using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.VisualTree;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using l2l_aggregator.Controls.Keyboard.Layout;
 using Material.Icons;
@@ -17,61 +17,71 @@ using System.Linq;
 using System.Windows.Input;
 
 namespace l2l_aggregator.Controls.Keyboard;
+
 public partial class VirtualKey : TemplatedControl
 {
-    public static readonly StyledProperty<ICommand> ButtonCommandProperty = AvaloniaProperty.Register<VirtualKey, ICommand>(nameof(ButtonCommand));
-
+    public static readonly StyledProperty<ICommand> ButtonCommandProperty =
+        AvaloniaProperty.Register<VirtualKey, ICommand>(nameof(ButtonCommand));
     public ICommand ButtonCommand
     {
-        get { return GetValue(ButtonCommandProperty); }
-        set { SetValue(ButtonCommandProperty, value); }
+        get => GetValue(ButtonCommandProperty);
+        set => SetValue(ButtonCommandProperty, value);
     }
 
-    public static readonly StyledProperty<string> NormalKeyProperty = AvaloniaProperty.Register<VirtualKey, string>(nameof(NormalKey));
-
+    public static readonly StyledProperty<string> NormalKeyProperty =
+        AvaloniaProperty.Register<VirtualKey, string>(nameof(NormalKey));
     public string NormalKey
     {
-        get { return GetValue(NormalKeyProperty); }
-        set { SetValue(NormalKeyProperty, value); }
+        get => GetValue(NormalKeyProperty);
+        set => SetValue(NormalKeyProperty, value);
     }
 
-    public static readonly StyledProperty<string> ShiftKeyProperty = AvaloniaProperty.Register<VirtualKey, string>(nameof(ShiftKey));
-
+    public static readonly StyledProperty<string> ShiftKeyProperty =
+        AvaloniaProperty.Register<VirtualKey, string>(nameof(ShiftKey));
     public string ShiftKey
     {
-        get { return GetValue(ShiftKeyProperty); }
-        set { SetValue(ShiftKeyProperty, value); }
+        get => GetValue(ShiftKeyProperty);
+        set => SetValue(ShiftKeyProperty, value);
     }
-    public static readonly StyledProperty<string> AltCtrlKeyProperty = AvaloniaProperty.Register<VirtualKey, string>(nameof(AltCtrlKey));
 
+    public static readonly StyledProperty<string> AltCtrlKeyProperty =
+        AvaloniaProperty.Register<VirtualKey, string>(nameof(AltCtrlKey));
     public string AltCtrlKey
     {
-        get { return GetValue(AltCtrlKeyProperty); }
-        set { SetValue(AltCtrlKeyProperty, value); }
+        get => GetValue(AltCtrlKeyProperty);
+        set => SetValue(AltCtrlKeyProperty, value);
     }
 
-    public static readonly StyledProperty<object> CaptionProperty = AvaloniaProperty.Register<VirtualKey, object>(nameof(Caption));
-
+    public static readonly StyledProperty<object> CaptionProperty =
+        AvaloniaProperty.Register<VirtualKey, object>(nameof(Caption));
     public object Caption
     {
-        get { return GetValue(CaptionProperty); }
-        set { SetValue(CaptionProperty, value); }
+        get => GetValue(CaptionProperty);
+        set => SetValue(CaptionProperty, value);
     }
 
-    public static readonly StyledProperty<Key> SpecialKeyProperty = AvaloniaProperty.Register<VirtualKey, Key>(nameof(SpecialKey));
-
+    public static readonly StyledProperty<Key> SpecialKeyProperty =
+        AvaloniaProperty.Register<VirtualKey, Key>(nameof(SpecialKey));
     public Key SpecialKey
     {
-        get { return GetValue(SpecialKeyProperty); }
-        set { SetValue(SpecialKeyProperty, value); }
+        get => GetValue(SpecialKeyProperty);
+        set => SetValue(SpecialKeyProperty, value);
     }
 
-    public static readonly StyledProperty<MaterialIconKind> SpecialIconProperty = AvaloniaProperty.Register<VirtualKey, MaterialIconKind>(nameof(SpecialIcon));
-
+    public static readonly StyledProperty<MaterialIconKind> SpecialIconProperty =
+        AvaloniaProperty.Register<VirtualKey, MaterialIconKind>(nameof(SpecialIcon));
     public MaterialIconKind SpecialIcon
     {
-        get { return GetValue(SpecialIconProperty); }
-        set { SetValue(SpecialIconProperty, value); }
+        get => GetValue(SpecialIconProperty);
+        set => SetValue(SpecialIconProperty, value);
+    }
+
+    public static readonly StyledProperty<double> FontSizeProperty =
+        AvaloniaProperty.Register<VirtualKey, double>(nameof(FontSize), 12);
+    public double FontSize
+    {
+        get => GetValue(FontSizeProperty);
+        set => SetValue(FontSizeProperty, value);
     }
 
     public VirtualKeyboardLayoutRU VirtualKeyboardLayout { get; set; }
@@ -82,47 +92,45 @@ public partial class VirtualKey : TemplatedControl
     {
         DataContext = this;
 
+        this.PropertyChanged += (_, e) =>
+        {
+            if (e.Property == BoundsProperty)
+            {
+                var width = Bounds.Width;
+                FontSize = width / 6;
+            }
+        };
+
+
         Initialized += (sender, args) =>
         {
             VirtualKeyboard keyboard = null;
+
             if (!Design.IsDesignMode)
             {
-                keyboard = this.GetVisualAncestors().OfType<VirtualKeyboard>().First();
-
+                keyboard = this.GetVisualAncestors().OfType<VirtualKeyboard>().FirstOrDefault();
 
                 keyboard.OnKeyboardStateChanged += (s, state) =>
                 {
                     if (!string.IsNullOrEmpty(NormalKey))
                     {
-                        switch (state)
+                        Caption = state switch
                         {
-                            case VirtualKeyboardState.Default:
-                                Caption = NormalKey;
-                                break;
-                            case VirtualKeyboardState.Shift:
-                            case VirtualKeyboardState.Capslock:
-                                Caption = ShiftKey;
-                                break;
-                            case VirtualKeyboardState.AltCtrl:
-                                Caption = AltCtrlKey;
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException(nameof(state), state, null);
-                        }
+                            VirtualKeyboardState.Default => NormalKey,
+                            VirtualKeyboardState.Shift => ShiftKey,
+                            VirtualKeyboardState.Capslock => ShiftKey,
+                            VirtualKeyboardState.AltCtrl => AltCtrlKey,
+                            _ => Caption
+                        };
                     }
                 };
 
                 ButtonCommand = new RelayCommand(() =>
                 {
                     if (SpecialKey != Key.None)
-                    {
-                        keyboard.ProcessKey(SpecialKey);
-                    }
-                    else
-                    {
-                        if (Caption is string s && !string.IsNullOrEmpty(s))
-                            keyboard.ProcessText(s);
-                    }
+                        keyboard?.ProcessKey(SpecialKey);
+                    else if (Caption is string s && !string.IsNullOrEmpty(s))
+                        keyboard?.ProcessText(s);
                 });
             }
 
@@ -131,97 +139,78 @@ public partial class VirtualKey : TemplatedControl
                 _toggleButton = new ToggleButton
                 {
                     BorderThickness = new Thickness(1),
-                    BorderBrush = new SolidColorBrush(Color.Parse("Black")),
-                    CornerRadius = new CornerRadius(5, 5, 5, 5),
-                    Background = new SolidColorBrush(Color.Parse("Black")),
-                    Foreground = new SolidColorBrush(Color.Parse("White")),
+                    BorderBrush = new SolidColorBrush(Colors.White),
+                    Background = new SolidColorBrush(Colors.White),
+                    Foreground = new SolidColorBrush(Colors.White),
+                    CornerRadius = new CornerRadius(5),
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Stretch,
+                    HorizontalContentAlignment = HorizontalAlignment.Center,
+                    VerticalContentAlignment = VerticalAlignment.Center,
+
                     [!ToggleButton.WidthProperty] = new Binding("Width"),
                     [!ToggleButton.HeightProperty] = new Binding("Height"),
                     [!ToggleButton.ContentProperty] = new Binding("Caption"),
                     [!ToggleButton.CommandProperty] = new Binding("ButtonCommand"),
+                    [!ToggleButton.FontSizeProperty] = new Binding("FontSize")
                 };
+
                 Template = new FuncControlTemplate((control, scope) => _toggleButton);
 
-                if (keyboard != null)
+                keyboard.OnKeyboardStateChanged += (s, state) =>
                 {
-                    keyboard.OnKeyboardStateChanged += (s, state) =>
+                    _toggleButton.IsChecked = state switch
                     {
-                        switch (state)
-                        {
-                            case VirtualKeyboardState.Default:
-                                _toggleButton.IsChecked = false;
-                                break;
-                            case VirtualKeyboardState.Shift:
-                                if (SpecialKey == Key.LeftShift || SpecialKey == Key.RightShift)
-                                    _toggleButton.IsChecked = true;
-                                else
-                                {
-                                    _toggleButton.IsChecked = false;
-                                }
-                                break;
-                            case VirtualKeyboardState.Capslock:
-                                _toggleButton.IsChecked = SpecialKey == Key.CapsLock;
-                                break;
-                            case VirtualKeyboardState.AltCtrl:
-                                _toggleButton.IsChecked = SpecialKey == Key.RightAlt;
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException(nameof(state), state, null);
-                        }
+                        VirtualKeyboardState.Default => false,
+                        VirtualKeyboardState.Shift => SpecialKey == Key.LeftShift || SpecialKey == Key.RightShift,
+                        VirtualKeyboardState.Capslock => SpecialKey == Key.CapsLock,
+                        VirtualKeyboardState.AltCtrl => SpecialKey == Key.RightAlt,
+                        _ => false
                     };
-                }
+                };
             }
             else
             {
                 Template = new FuncControlTemplate((control, scope) =>
                 {
+                    var presenter = new ContentPresenter
+                    {
+                        Name = "PART_ContentPresenter",
+                        [!ContentPresenter.ContentProperty] = new Binding("Caption"),
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                    };
                     return new Button
                     {
                         BorderThickness = new Thickness(1),
-                        BorderBrush = new SolidColorBrush(Color.Parse("Black")),
-                        CornerRadius = new CornerRadius(5, 5, 5, 5),
-                        //Background = new SolidColorBrush(Color.Parse("Green")),
-                        Foreground = new SolidColorBrush(Color.Parse("White")),
+                        BorderBrush = Brushes.Gray,
+                        Background = Brushes.White, // временно для видимости
+                        Foreground = Brushes.Black,
+                        CornerRadius = new CornerRadius(10),
+                        HorizontalAlignment = HorizontalAlignment.Stretch,
+                        VerticalAlignment = VerticalAlignment.Stretch,
+                        Content = presenter,
+
                         [!Button.WidthProperty] = new Binding("Width"),
                         [!Button.HeightProperty] = new Binding("Height"),
                         [!Button.ContentProperty] = new Binding("Caption"),
                         [!Button.CommandProperty] = new Binding("ButtonCommand"),
+                        [!Button.FontSizeProperty] = new Binding("FontSize")
                     };
                 });
             }
 
-            if (string.IsNullOrEmpty(NormalKey))
+            if (string.IsNullOrEmpty(NormalKey) && SpecialKey != Key.None)
             {
-                // special cases
-                switch (SpecialKey)
+                Caption = new MaterialIcon
                 {
-                    case Key.Tab:
-                        {
-                            var stackPanel = new StackPanel();
-                            stackPanel.Orientation = Orientation.Vertical;
-                            var first = new MaterialIcon();
-                            first.Kind = SpecialIcon;
-                            var second = new MaterialIcon();
-                            second.Kind = SpecialIcon;
-                            second.RenderTransform = new RotateTransform(180.0);
-                            stackPanel.Children.Add(first);
-                            stackPanel.Children.Add(second);
-                            Caption = stackPanel;
-                            IsEnabled = false;
-                        }
-                        break;
-                    case Key.Space:
-                        {
-                            Caption = null;
-                        }
-                        break;
-                    default:
-                        Caption = new MaterialIcon
-                        {
-                            Kind = SpecialIcon
-                        };
-                        break;
-                }
+                    Kind = SpecialIcon,
+                    Width = 24,
+                    Height = 24,
+                    BorderBrush = Brushes.Gray,
+                    Background = Brushes.White,
+                    Foreground = Brushes.Black, // Текст и иконки будут черными
+                };
             }
             else
             {

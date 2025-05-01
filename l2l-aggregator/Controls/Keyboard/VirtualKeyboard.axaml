@@ -10,20 +10,19 @@
 	<UserControl.Styles>
 
 		<Style Selector="keyboard|VirtualKey">
-			<Setter Property="Width" Value="141"/>
-			<Setter Property="Height" Value="135"/>
+
 			<Setter Property="Margin" Value=" 7 7 7 7"/>
 			<Setter Property="Background" Value="#33ffffff" />
-			<Setter Property="Foreground" Value="White" />
+			<Setter Property="Foreground" Value="Black" />
 
 
 		</Style>
 
 		<Style Selector="keyboard|VirtualKey /template/ Button /template/ ContentPresenter#PART_ContentPresenter">
 			<Setter Property="Background" Value="#33ffffff" />
-			<Setter Property="Foreground" Value="White" />
+			<Setter Property="Foreground" Value="Black" />
 			<Setter Property="CornerRadius" Value="15"/>
-			<Setter Property="FontSize" Value="45"/>
+			<!--<Setter Property="FontSize" Value="45"/>-->
 			<Setter Property="VerticalContentAlignment" Value="Center"/>
 			<Setter Property="HorizontalContentAlignment" Value="Center"/>
 		</Style>
@@ -31,9 +30,9 @@
 
 		<Style Selector="keyboard|VirtualKey /template/ Button">
 			<Setter Property="Background" Value="#33ffffff" />
-			<Setter Property="Foreground" Value="White" />
+			<Setter Property="Foreground" Value="Black" />
 			<Setter Property="CornerRadius" Value="15"/>
-			<Setter Property="FontSize" Value="45"/>
+			<!--<Setter Property="FontSize" Value="45"/>-->
 			<Setter Property="VerticalContentAlignment" Value="Center"/>
 			<Setter Property="HorizontalContentAlignment" Value="Center"/>
 		</Style>
@@ -44,33 +43,47 @@
 
 		<Style Selector="keyboard|VirtualKey /template/ Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
 			<Setter Property="Background" Value="#33ffffff" />
-			<Setter Property="Foreground" Value="White" />
+			<Setter Property="Foreground" Value="Black" />
 			<Setter Property="CornerRadius" Value="15"/>
-			<Setter Property="FontSize" Value="45"/>
+			<!--<Setter Property="FontSize" Value="45"/>-->
 			<Setter Property="VerticalContentAlignment" Value="Center"/>
 			<Setter Property="HorizontalContentAlignment" Value="Center"/>
 		</Style>
 	</UserControl.Styles>
 
-	<StackPanel>
-		<StackPanel DockPanel.Dock="Top" Margin="0 200 0 0">
-			<!--<Border  BorderThickness="2" BorderBrush="{DynamicResource GrayInactiveBrush}" CornerRadius="45" Width="1700" Height="120" Margin="0,0,0,100">
-				<DockPanel>
-					<TextBox Name="TextBox" DockPanel.Dock="Left" Classes="KeyboardTextBox">
-					</TextBox>
-					<Button DockPanel.Dock="Right" Name="AcceptButton"  Width="320" Height="120" CornerRadius="45" FontSize="{DynamicResource Buttons}" Foreground="White" Background="{DynamicResource HighlightBrush}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="5*"/>
+			<!-- Верхняя панель -->
+			<RowDefinition Height="5*"/>
+			<!-- Оставшееся пространство -->
+		</Grid.RowDefinitions>
+
+		<Grid Grid.Row="0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="6*"/>
+				<!-- Верхняя панель -->
+				<RowDefinition Height="4*"/>
+				<!-- Оставшееся пространство -->
+			</Grid.RowDefinitions>
+			<Border BorderThickness="2" BorderBrush="{DynamicResource GrayInactiveBrush}" CornerRadius="45" >
+				<Grid ColumnDefinitions="*,Auto">
+					<TextBox Name="TextBox" Classes="KeyboardTextBox" Grid.Column="0" Margin="10" VerticalAlignment="Center" />
+					<Button Name="AcceptButton" Grid.Column="1"  CornerRadius="45"
+							FontSize="{DynamicResource Buttons}" Foreground="White"
+							Background="{DynamicResource HighlightBrush}"
+							VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
 						Accept
 					</Button>
-				</DockPanel>
-			</Border>-->
+				</Grid>
+			</Border>
 			<Panel HorizontalAlignment="Stretch">
-				<Button  DockPanel.Dock="Right" Name="CloseButton" Classes="SettingsClose" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Right" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+				<Button DockPanel.Dock="Right" Name="CloseButton" Classes="SettingsClose" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Right" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
 					<Image Classes="Large" Source="avares://l2l_aggregator/Assets/Close_Icon.png" Width="40" Height="40"/>
 				</Button>
 			</Panel>
+		</Grid>
 
-		</StackPanel>
-
-		<TransitioningContentControl Name="TransitioningContentControl" />
-	</StackPanel>
+		<TransitioningContentControl Grid.Row="1" Name="TransitioningContentControl" />
+	</Grid>
 </UserControl>
