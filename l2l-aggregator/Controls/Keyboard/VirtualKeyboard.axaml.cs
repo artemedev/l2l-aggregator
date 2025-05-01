@@ -221,7 +221,7 @@ public partial class VirtualKeyboard : UserControl
         //InputManager.Instance.ProcessInput(new RawTextInputEventArgs(KeyboardDevice.Instance, (ulong)DateTime.Now.Ticks, (Window)TextBox.GetVisualRoot(), text));
         if (_keyboardState == VirtualKeyboardState.Shift)
         {
-            _keyboardState = VirtualKeyboardState.Default;
+            KeyboardState = VirtualKeyboardState.Default; // это вызовет событие
         }
     }
 
@@ -231,33 +231,33 @@ public partial class VirtualKeyboard : UserControl
         {
             if (_keyboardState == VirtualKeyboardState.Shift)
             {
-                _keyboardState = VirtualKeyboardState.Default;
+                KeyboardState = VirtualKeyboardState.Default;
             }
             else
             {
-                _keyboardState = VirtualKeyboardState.Shift;
+                KeyboardState = VirtualKeyboardState.Shift;
             }
         }
         else if (key == Key.RightAlt)
         {
             if (_keyboardState == VirtualKeyboardState.AltCtrl)
             {
-                _keyboardState = VirtualKeyboardState.Default;
+                KeyboardState = VirtualKeyboardState.Default;
             }
             else
             {
-                _keyboardState = VirtualKeyboardState.AltCtrl;
+                KeyboardState = VirtualKeyboardState.AltCtrl;
             }
         }
         else if (key == Key.CapsLock)
         {
             if (_keyboardState == VirtualKeyboardState.Capslock)
             {
-                _keyboardState = VirtualKeyboardState.Default;
+                KeyboardState = VirtualKeyboardState.Default;
             }
             else
             {
-                _keyboardState = VirtualKeyboardState.Capslock;
+                KeyboardState = VirtualKeyboardState.Capslock;
             }
         }
         else
@@ -337,6 +337,19 @@ public partial class VirtualKeyboard : UserControl
                 else
                 {
                     TransitioningContentControl_.Content = Activator.CreateInstance(typeof(VirtualKeyboardLayoutUS));
+                }
+            }
+            else if (key == Key.LaunchApplication2)
+            {
+                _keyboardState = VirtualKeyboardState.Default;
+
+                if (TransitioningContentControl_.Content is VirtualKeyboardLayoutRU)
+                {
+                    TransitioningContentControl_.Content = Activator.CreateInstance(DefaultLayout());
+                }
+                else
+                {
+                    TransitioningContentControl_.Content = Activator.CreateInstance(typeof(VirtualKeyboardLayoutRU));
                 }
             }
             else if (key == Key.Left)

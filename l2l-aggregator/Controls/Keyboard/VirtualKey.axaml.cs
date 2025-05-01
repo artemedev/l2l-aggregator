@@ -114,14 +114,21 @@ public partial class VirtualKey : TemplatedControl
                 {
                     if (!string.IsNullOrEmpty(NormalKey))
                     {
-                        Caption = state switch
+                        switch (state)
                         {
-                            VirtualKeyboardState.Default => NormalKey,
-                            VirtualKeyboardState.Shift => ShiftKey,
-                            VirtualKeyboardState.Capslock => ShiftKey,
-                            VirtualKeyboardState.AltCtrl => AltCtrlKey,
-                            _ => Caption
-                        };
+                            case VirtualKeyboardState.Default:
+                                Caption = NormalKey;
+                                break;
+                            case VirtualKeyboardState.Shift:
+                            case VirtualKeyboardState.Capslock:
+                                Caption = ShiftKey;
+                                break;
+                            case VirtualKeyboardState.AltCtrl:
+                                Caption = AltCtrlKey;
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException(nameof(state), state, null);
+                        }
                     }
                 };
 
@@ -141,7 +148,7 @@ public partial class VirtualKey : TemplatedControl
                     BorderThickness = new Thickness(1),
                     BorderBrush = new SolidColorBrush(Colors.White),
                     Background = new SolidColorBrush(Colors.White),
-                    Foreground = new SolidColorBrush(Colors.White),
+                    Foreground = new SolidColorBrush(Colors.Black),
                     CornerRadius = new CornerRadius(5),
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                     VerticalAlignment = VerticalAlignment.Stretch,
@@ -159,15 +166,38 @@ public partial class VirtualKey : TemplatedControl
 
                 keyboard.OnKeyboardStateChanged += (s, state) =>
                 {
-                    _toggleButton.IsChecked = state switch
+                    switch (state)
                     {
-                        VirtualKeyboardState.Default => false,
-                        VirtualKeyboardState.Shift => SpecialKey == Key.LeftShift || SpecialKey == Key.RightShift,
-                        VirtualKeyboardState.Capslock => SpecialKey == Key.CapsLock,
-                        VirtualKeyboardState.AltCtrl => SpecialKey == Key.RightAlt,
-                        _ => false
-                    };
+                        case VirtualKeyboardState.Default:
+                            _toggleButton.IsChecked = false;
+                            break;
+                        case VirtualKeyboardState.Shift:
+                            if (SpecialKey == Key.LeftShift || SpecialKey == Key.RightShift)
+                                _toggleButton.IsChecked = true;
+                            else
+                            {
+                                _toggleButton.IsChecked = false;
+                            }
+                            break;
+                        case VirtualKeyboardState.Capslock:
+                            _toggleButton.IsChecked = SpecialKey == Key.CapsLock;
+                            break;
+                        case VirtualKeyboardState.AltCtrl:
+                            _toggleButton.IsChecked = SpecialKey == Key.RightAlt;
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(state), state, null);
+                    }
                 };
+
+                //_toggleButton.IsChecked = state switch
+                //{
+                //    VirtualKeyboardState.Default => false,
+                //    VirtualKeyboardState.Shift => SpecialKey == Key.LeftShift || SpecialKey == Key.RightShift,
+                //    VirtualKeyboardState.Capslock => SpecialKey == Key.CapsLock,
+                //    VirtualKeyboardState.AltCtrl => SpecialKey == Key.RightAlt,
+                //    _ => false
+                //};
             }
             else
             {
@@ -199,23 +229,59 @@ public partial class VirtualKey : TemplatedControl
                     };
                 });
             }
-
             if (string.IsNullOrEmpty(NormalKey) && SpecialKey != Key.None)
             {
-                Caption = new MaterialIcon
+                // special cases
+                switch (SpecialKey)
                 {
-                    Kind = SpecialIcon,
-                    Width = 24,
-                    Height = 24,
-                    BorderBrush = Brushes.Gray,
-                    Background = Brushes.White,
-                    Foreground = Brushes.Black, // Текст и иконки будут черными
-                };
+                    case Key.Tab:
+                        {
+                            var stackPanel = new StackPanel();
+                            stackPanel.Orientation = Orientation.Vertical;
+                            var first = new MaterialIcon();
+                            first.Kind = SpecialIcon;
+                            var second = new MaterialIcon();
+                            second.Kind = SpecialIcon;
+                            second.RenderTransform = new RotateTransform(180.0);
+                            stackPanel.Children.Add(first);
+                            stackPanel.Children.Add(second);
+                            Caption = stackPanel;
+                            IsEnabled = false;
+                        }
+                        break;
+                    case Key.Space:
+                        {
+                            Caption = null;
+                        }
+                        break;
+                    default:
+                        Caption = new MaterialIcon
+                        {
+                            Kind = SpecialIcon
+                        };
+                        break;
+                }
             }
             else
             {
                 Caption = NormalKey;
             }
+            //if (string.IsNullOrEmpty(NormalKey) && SpecialKey == Key.None)
+            //{
+            //    Caption = new MaterialIcon
+            //    {
+            //        Kind = SpecialIcon,
+            //        Width = 24,
+            //        Height = 24,
+            //        BorderBrush = Brushes.Gray,
+            //        Background = Brushes.White,
+            //        Foreground = Brushes.Black, // Текст и иконки будут черными
+            //    };
+            //}
+            //else
+            //{
+            //    Caption = NormalKey;
+            //}
         };
     }
 }

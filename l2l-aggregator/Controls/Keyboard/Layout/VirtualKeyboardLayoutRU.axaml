@@ -1,22 +1,12 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:keyboard="clr-namespace:l2l_aggregator.Controls.Keyboard"
-             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-			 xmlns:material="clr-namespace:Material.Icons;assembly=Material.Icons"
-             xmlns:local="clr-namespace:l2l_aggregator.Controls.Keyboard.Layout"
-             xmlns:local2="clr-namespace:l2l_aggregator.Controls.Keyboard"
-             mc:Ignorable="d"
-             d:DesignWidth="800"
-             d:DesignHeight="450"
-             x:Class="l2l_aggregator.Controls.Keyboard.Layout.VirtualKeyboardLayoutRU"
-             Background="LightGray">
-
-	<UserControl.Resources>
-		<!-- Убедитесь, что конвертер объявлен только здесь или в App.xaml -->
-		<local2:StringToMaterialIconKindConverter x:Key="IconConverter" />
-	</UserControl.Resources>
+	<UserControl xmlns="https://github.com/avaloniaui"
+				 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+				 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+				 xmlns:keyboard="clr-namespace:l2l_aggregator.Controls.Keyboard"
+				 xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+				 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+				 x:Class="l2l_aggregator.Controls.Keyboard.Layout.VirtualKeyboardLayoutRU" 
+				 Background="LightGray">
 	<DockPanel >
 
 		<Panel DockPanel.Dock="Bottom">
@@ -52,7 +42,7 @@
 					<keyboard:VirtualKey Grid.Column="9" NormalKey="з" ShiftKey="З" />
 					<keyboard:VirtualKey Grid.Column="10" NormalKey="х" ShiftKey="Х" />
 					<keyboard:VirtualKey Grid.Column="11" NormalKey="ъ" ShiftKey="Ъ" />
-					<keyboard:VirtualKey Grid.Column="12" NormalKey="backspace" SpecialKey="Back" SpecialIcon="KeyboardBackspace" />
+					<keyboard:VirtualKey Grid.Column="12" SpecialKey="Back" SpecialIcon="KeyboardBackspace" />
 				</Grid>
 
 				<!-- Вторая строка -->
@@ -107,7 +97,7 @@
 						<ColumnDefinition Width="*" />
 					</Grid.ColumnDefinitions>
 
-					<keyboard:VirtualKey Grid.Column="0" NormalKey="Shift" SpecialKey="LeftShift" SpecialIcon="KeyboardCaps" />
+					<keyboard:VirtualKey Grid.Column="0" NormalKey="Shift" SpecialKey="LeftShift"  />
 					<keyboard:VirtualKey Grid.Column="1" NormalKey="я" ShiftKey="Я" />
 					<keyboard:VirtualKey Grid.Column="2" NormalKey="ч" ShiftKey="Ч" />
 					<keyboard:VirtualKey Grid.Column="3" NormalKey="с" ShiftKey="С" />
@@ -118,7 +108,7 @@
 					<keyboard:VirtualKey Grid.Column="8" NormalKey="б" ShiftKey="Б" />
 					<keyboard:VirtualKey Grid.Column="9" NormalKey="ю" ShiftKey="Ю" />
 					<keyboard:VirtualKey Grid.Column="10" NormalKey="." ShiftKey="." />
-					<keyboard:VirtualKey Grid.Column="11" NormalKey="Shift" SpecialKey="RightShift" />
+					<keyboard:VirtualKey Grid.Column="11" NormalKey="Shift" SpecialKey="LeftShift" />
 				</Grid>
 
 				<!-- Четвёртая строка -->
@@ -140,15 +130,8 @@
 					<keyboard:VirtualKey Grid.Column="3" NormalKey=" " />
 					<!-- Пробел -->
 					<!-- Исправленные кнопки со стрелками -->
-					<keyboard:VirtualKey Grid.Column="4"
-									   SpecialKey="Left"
-									   SpecialIcon="{x:Static material:MaterialIconKind.ChevronLeft}"
-									   NormalKey=""/>
-
-					<keyboard:VirtualKey Grid.Column="5"
-									   SpecialKey="Right"
-									   SpecialIcon="{x:Static material:MaterialIconKind.ChevronRight}"
-									   NormalKey=""/>
+					<keyboard:VirtualKey Grid.Column="4" SpecialKey="Left"  SpecialIcon="ChevronLeft"/>
+					<keyboard:VirtualKey Grid.Column="5" SpecialKey="Right" SpecialIcon="ChevronRight"/>
 					<keyboard:VirtualKey Grid.Column="6" SpecialKey="BrowserFavorites" NormalKey="123" />
 				</Grid>
 

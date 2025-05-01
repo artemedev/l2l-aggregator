@@ -64,6 +64,7 @@
 					<keyboard:VirtualKey NormalKey=" " Width="933"/>
 					<keyboard:VirtualKey SpecialKey="Left"  SpecialIcon="ChevronLeft"/>
 					<keyboard:VirtualKey SpecialKey="Right" SpecialIcon="ChevronRight"/>
+					<keyboard:VirtualKey Grid.Column="2" SpecialKey="LaunchApplication2" NormalKey="RU" />
 					<keyboard:VirtualKey SpecialKey="BrowserFavorites" NormalKey="123"/>
 				</StackPanel>
 			</StackPanel>

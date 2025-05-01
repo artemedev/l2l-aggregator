@@ -18,7 +18,8 @@
 			<keyboard:VirtualKey NormalKey="1" ShiftKey="!" AltCtrlKey="" />
 			<keyboard:VirtualKey NormalKey="2" ShiftKey="&quot;" AltCtrlKey="²" />
 			<keyboard:VirtualKey NormalKey="3" ShiftKey="§" AltCtrlKey="³" />
-			<keyboard:VirtualKey SpecialKey="Back" SpecialIcon="KeyboardBackspace" Width="{Binding #VirtualKey1.Bounds.Width, Converter={StaticResource VirtualKeyWidthMultiplayer}, ConverterParameter=20}"/>
+			<keyboard:VirtualKey SpecialKey="Back" SpecialIcon="KeyboardBackspace" Width="294"/>
+			<!--<keyboard:VirtualKey SpecialKey="Back" SpecialIcon="KeyboardBackspace" Width="{Binding #VirtualKey1.Bounds.Width, Converter={StaticResource VirtualKeyWidthMultiplayer}, ConverterParameter=20}"/>-->
 		</StackPanel>
 		<StackPanel Orientation="Horizontal">
 			<StackPanel Orientation="Vertical">
@@ -38,7 +39,9 @@
 				</StackPanel>
 
 			</StackPanel>
+			<!--
 			<keyboard:VirtualKey SpecialKey="Enter" SpecialIcon="KeyboardReturn" Height="{Binding #VirtualKey1.Bounds.Height, Converter={StaticResource VirtualKeyWidthMultiplayer}, ConverterParameter=20}"/>
+		-->
 		</StackPanel>
 
 		<StackPanel Orientation="Horizontal">
