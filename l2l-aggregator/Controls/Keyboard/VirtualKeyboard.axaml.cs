@@ -1,12 +1,17 @@
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Input.TextInput;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using CommunityToolkit.Mvvm.Input;
 using l2l_aggregator.Controls.Keyboard.Layout;
+using Material.Icons.Avalonia;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,7 +81,7 @@ public partial class VirtualKeyboard : UserControl
     public TextBox source { get; set; }
 
 
-    // ���� ���������
+    // Поле состояния
     private VirtualKeyboardState _keyboardState = VirtualKeyboardState.Default;
     public VirtualKeyboardState KeyboardState
     {
@@ -91,9 +96,9 @@ public partial class VirtualKeyboard : UserControl
         }
     }
 
-    // ������� ��� ���������� �� ��������� ���������
+    // Событие для оповещения об изменении состояния
     public event EventHandler<VirtualKeyboardState>? OnKeyboardStateChanged;
-    // ������� ��������
+    // Команда закрытия
     public IRelayCommand CloseCommand { get; }
 
     public VirtualKeyboard()
@@ -107,6 +112,7 @@ public partial class VirtualKeyboard : UserControl
         AcceptButton_.AddHandler(Button.ClickEvent, acceptClicked);
         CloseButton_.AddHandler(Button.ClickEvent, closeClicked);
         CloseCommand = new RelayCommand(() => Close());
+
         Initialized += async (sender, args) =>
         {
 
@@ -126,6 +132,11 @@ public partial class VirtualKeyboard : UserControl
                     TransitioningContentControl_.Content = Activator.CreateInstance(DefaultLayout.Invoke());
                 }
             }
+            // Обновить визуал после смены лейаута
+            Dispatcher.UIThread.Post(() =>
+            {
+                UpdateKeyVisuals(this.Bounds.Width);
+            }, DispatcherPriority.Render);
         };
 
         KeyDown += (sender, args) =>
@@ -143,8 +154,141 @@ public partial class VirtualKeyboard : UserControl
                 Close();
             }
         };
+        this.PropertyChanged += (_, e) =>
+        {
+            if (e.Property == BoundsProperty)
+            {
+                var rect = this.Bounds;
+                UpdateKeyVisuals(rect.Width);
+            }
+        };
+
+
+        TextBox_.PropertyChanged += (_, e) =>
+        {
+            if (e.Property == TextBox.TextProperty || e.Property == BoundsProperty)
+            {
+                AdjustTextBoxFontSize();
+            }
+        };
+        //// Замените подписку на ContentChanged в конструкторе:
+        //TransitioningContentControl_.PropertyChanged += (sender, e) =>
+        //{
+        //    if (e.Property == ContentControl.ContentProperty) // Проверяем, что изменилось именно Content
+        //    {
+        //        Dispatcher.UIThread.Post(() =>
+        //        {
+        //            UpdateKeyVisuals(this.Bounds.Width);
+        //        }, DispatcherPriority.Loaded);
+        //    }
+        //};
         _keyboardState = VirtualKeyboardState.Default;
     }
+    //private void UpdateKeyMargins(double width)
+    //{
+    //    double adaptiveMargin = Math.Clamp(width * 0.003, 0.5, 10); // Пример: 1.5% от ширины
+
+    //    var keys = this.GetVisualDescendants().OfType<VirtualKey>();
+    //    foreach (var key in keys)
+    //    {
+    //        key.Margin = new Thickness(adaptiveMargin);
+    //    }
+    //}
+    //private void UpdateKeyVisuals(double width)
+    //{
+    //    double margin = Math.Clamp(width * 0.003, 0.5, 10);
+    //    double fontSize = Math.Clamp(width * 0.02, 10, 36);      // Пример: от 10 до 36
+    //    double iconSize = Math.Clamp(width * 0.025, 16, 48);     // Пример: от 16 до 48
+    //    double textBoxFontSize = Math.Clamp(width * 0.02, 14, 36); // Текстбокс
+
+    //    if (TransitioningContentControl_.Content is Control layoutRoot)
+    //    {
+    //        var keys = layoutRoot.GetVisualDescendants().OfType<VirtualKey>();
+    //        foreach (var key in keys)
+    //        {
+    //            key.Margin = new Thickness(margin);
+    //            key.FontSize = fontSize;
+
+    //            // Обработка MaterialIcon, если используется
+    //            var icon = key.GetVisualDescendants().OfType<MaterialIcon>().FirstOrDefault();
+    //            if (icon != null)
+    //                icon.Width = icon.Height = iconSize;
+
+    //            // Или обработка Image, если у вас иконки как изображения
+    //            var image = key.GetVisualDescendants().OfType<Image>().FirstOrDefault();
+    //            if (image != null)
+    //                image.Width = image.Height = iconSize;
+    //        }
+    //    }
+    //}
+    private void UpdateKeyVisuals(double width)
+    {
+        double margin = Math.Clamp(width * 0.003, 0.5, 10);
+        double fontSize = Math.Clamp(width * 0.02, 12, 48);       // Клавиши
+        double iconSize = Math.Clamp(width * 0.025, 16, 48);      // Иконки
+
+        if (TransitioningContentControl_.Content is Control layoutRoot)
+        {
+            var keys = layoutRoot.GetVisualDescendants().OfType<VirtualKey>();
+            foreach (var key in keys)
+            {
+                key.Margin = new Thickness(margin);
+                key.FontSize = fontSize;
+
+                // MaterialIcon
+                var icon = key.GetVisualDescendants().OfType<Control>()
+                              .FirstOrDefault(c => c.GetType().Name == "MaterialIcon");
+                if (icon != null)
+                {
+                    icon.Width = icon.Height = iconSize;
+                }
+
+                // Image (если вдруг иконка через PNG)
+                var image = key.GetVisualDescendants().OfType<Image>().FirstOrDefault();
+                if (image != null)
+                {
+                    image.Width = image.Height = iconSize;
+                }
+            }
+        }
+
+        //// Адаптивный шрифт для TextBox — по его собственной ширине
+        //if (TextBox_ != null && TextBox_.Bounds.Width > 0)
+        //{
+        //    double textboxFontSize = Math.Clamp(TextBox_.Bounds.Width * 0.05, 12, 40);
+        //    TextBox_.FontSize = textboxFontSize;
+        //}
+    }
+    private void AdjustTextBoxFontSize()
+    {
+        if (TextBox_ == null || string.IsNullOrWhiteSpace(TextBox_.Text))
+            return;
+
+        double availableWidth = TextBox_.Bounds.Width - 20;
+        double availableHeight = TextBox_.Bounds.Height - 10;
+
+        string text = TextBox_.Text;
+        double fontSize = 80;
+
+        // Грубый коэффициент ширины: 0.6 — эмпирически подходит для большинства шрифтов
+        while (fontSize >= 8)
+        {
+            double estimatedWidth = text.Length * fontSize * 0.6;
+            double estimatedHeight = fontSize * 1.5;
+
+            if (estimatedWidth <= availableWidth && estimatedHeight <= availableHeight)
+                break;
+
+            fontSize -= 1;
+        }
+
+        TextBox_.FontSize = fontSize;
+    }
+
+
+
+
+
 
     private void closeClicked(object? sender, RoutedEventArgs e)
     {
@@ -175,6 +319,11 @@ public partial class VirtualKeyboard : UserControl
         this.IsVisible = true;
         ((Control)this.Parent).IsVisible = true;
         TransitioningContentControl_.Content = Activator.CreateInstance(DefaultLayout.Invoke());
+        // Обновить визуал после смены лейаута
+        Dispatcher.UIThread.Post(() =>
+        {
+            UpdateKeyVisuals(this.Bounds.Width);
+        }, DispatcherPriority.Render);
     }
     public void ShowKeyboard(TextBox source, Type layout)
     {
@@ -192,6 +341,11 @@ public partial class VirtualKeyboard : UserControl
         this.IsVisible = true;
         ((Control)this.Parent).IsVisible = true;
         TransitioningContentControl_.Content = Activator.CreateInstance(layout);
+        // Обновить визуал после смены лейаута
+        Dispatcher.UIThread.Post(() =>
+        {
+            UpdateKeyVisuals(this.Bounds.Width);
+        }, DispatcherPriority.Render);
     }
 
 
@@ -221,7 +375,7 @@ public partial class VirtualKeyboard : UserControl
         //InputManager.Instance.ProcessInput(new RawTextInputEventArgs(KeyboardDevice.Instance, (ulong)DateTime.Now.Ticks, (Window)TextBox.GetVisualRoot(), text));
         if (_keyboardState == VirtualKeyboardState.Shift)
         {
-            KeyboardState = VirtualKeyboardState.Default; // ��� ������� �������
+            KeyboardState = VirtualKeyboardState.Default; // это вызовет событие
         }
     }
 
@@ -289,6 +443,11 @@ public partial class VirtualKeyboard : UserControl
                     {
                         TransitioningContentControl_.Content = Activator.CreateInstance(Layouts[0]);
                     }
+                    // Обновить визуал после смены лейаута
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        UpdateKeyVisuals(this.Bounds.Width);
+                    }, DispatcherPriority.Render);
                 }
             }
             else if (key == Key.Back)
@@ -325,6 +484,11 @@ public partial class VirtualKeyboard : UserControl
                 {
                     TransitioningContentControl_.Content = Activator.CreateInstance(typeof(VirtualKeyboardLayoutNumpad));
                 }
+                // Обновить визуал после смены лейаута
+                Dispatcher.UIThread.Post(() =>
+                {
+                    UpdateKeyVisuals(this.Bounds.Width);
+                }, DispatcherPriority.Render);
             }
             else if (key == Key.LaunchApplication1)
             {
@@ -338,6 +502,11 @@ public partial class VirtualKeyboard : UserControl
                 {
                     TransitioningContentControl_.Content = Activator.CreateInstance(typeof(VirtualKeyboardLayoutUS));
                 }
+                // Обновить визуал после смены лейаута
+                Dispatcher.UIThread.Post(() =>
+                {
+                    UpdateKeyVisuals(this.Bounds.Width);
+                }, DispatcherPriority.Render);
             }
             else if (key == Key.LaunchApplication2)
             {
@@ -351,6 +520,11 @@ public partial class VirtualKeyboard : UserControl
                 {
                     TransitioningContentControl_.Content = Activator.CreateInstance(typeof(VirtualKeyboardLayoutRU));
                 }
+                // Обновить визуал после смены лейаута
+                Dispatcher.UIThread.Post(() =>
+                {
+                    UpdateKeyVisuals(this.Bounds.Width);
+                }, DispatcherPriority.Render);
             }
             else if (key == Key.Left)
             {

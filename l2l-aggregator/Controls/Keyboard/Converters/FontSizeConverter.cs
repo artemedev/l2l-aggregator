@@ -2,7 +2,7 @@
 using System;
 using System.Globalization;
 
-namespace l2l_aggregator.Controls.Keyboard
+namespace l2l_aggregator.Controls.Keyboard.Converters
 {
     public class FontSizeConverter : IValueConverter
     {

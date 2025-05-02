@@ -1,3 +1,4 @@
+using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -8,6 +9,11 @@ public partial class VirtualKeyboardLayoutUS : KeyboardLayout
     {
         LayoutName = "en-US";
         InitializeComponent();
+        var keyOpenBrace = this.FindControl<VirtualKey>("KeyOpenBrace");
+        var keyCloseBrace = this.FindControl<VirtualKey>("KeyCloseBrace");
+
+        if (keyOpenBrace != null) keyOpenBrace.ShiftKey = "{";
+        if (keyCloseBrace != null) keyCloseBrace.ShiftKey = "}";
     }
 
     private void InitializeComponent()

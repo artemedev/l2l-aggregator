@@ -254,6 +254,11 @@ public partial class VirtualKey : TemplatedControl
                             Caption = null;
                         }
                         break;
+                    case Key.CapsLock:
+                        {
+                            Caption = null;
+                        }
+                        break;
                     default:
                         Caption = new MaterialIcon
                         {
@@ -284,4 +289,5 @@ public partial class VirtualKey : TemplatedControl
             //}
         };
     }
+
 }
