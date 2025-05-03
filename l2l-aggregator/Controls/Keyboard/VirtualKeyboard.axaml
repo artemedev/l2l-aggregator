@@ -70,9 +70,18 @@
 				<RowDefinition Height="2*"/>
 				<!-- Оставшееся пространство -->
 			</Grid.RowDefinitions>
-			<Border Grid.Row="0" BorderThickness="2" BorderBrush="{DynamicResource GrayInactiveBrush}" CornerRadius="45" >
+			<Border Grid.Row="0" 
+					BorderThickness="2" 
+					BorderBrush="{DynamicResource GrayInactiveBrush}" 
+					CornerRadius="45" >
 				<Grid RowDefinitions="2*,*,2*" ColumnDefinitions="10*,2*" >
-					<TextBox Name="TextBox" Classes="KeyboardTextBox" Grid.Column="0" Grid.Row="1" Margin="10" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch"/>
+					<TextBox Name="TextBox" 
+							 Classes="KeyboardTextBox" 
+							 Grid.Column="0" 
+							 Grid.Row="1" Margin="10" 
+							 VerticalAlignment="Stretch"  
+							 HorizontalAlignment="Stretch"     
+							 FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource Self}, Converter={StaticResource ResponsiveMarginConverter}}"/>
 					<Button Name="AcceptButton" 
 							Grid.Column="1"  
 							Grid.Row="1"

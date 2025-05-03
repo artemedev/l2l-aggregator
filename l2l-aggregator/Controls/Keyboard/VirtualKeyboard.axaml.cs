@@ -162,7 +162,10 @@ public partial class VirtualKeyboard : UserControl
                 UpdateKeyVisuals(rect.Width);
             }
         };
-
+        Loaded += (sender, args) =>
+        {
+            AdjustTextBoxFontSize();
+        };
 
         TextBox_.PropertyChanged += (_, e) =>
         {
@@ -259,18 +262,43 @@ public partial class VirtualKeyboard : UserControl
         //    TextBox_.FontSize = textboxFontSize;
         //}
     }
+    //private void AdjustTextBoxFontSize()
+    //{
+    //    if (TextBox_ == null || string.IsNullOrWhiteSpace(TextBox_.Text))
+    //        return;
+
+    //    double availableWidth = TextBox_.Bounds.Width - 20;
+    //    double availableHeight = TextBox_.Bounds.Height - 10;
+
+    //    string text = TextBox_.Text;
+    //    double fontSize = 80;
+
+    //    // Грубый коэффициент ширины: 0.6 — эмпирически подходит для большинства шрифтов
+    //    while (fontSize >= 8)
+    //    {
+    //        double estimatedWidth = text.Length * fontSize * 0.6;
+    //        double estimatedHeight = fontSize * 1.5;
+
+    //        if (estimatedWidth <= availableWidth && estimatedHeight <= availableHeight)
+    //            break;
+
+    //        fontSize -= 1;
+    //    }
+
+    //    TextBox_.FontSize = fontSize;
+    //}
     private void AdjustTextBoxFontSize()
     {
-        if (TextBox_ == null || string.IsNullOrWhiteSpace(TextBox_.Text))
+        if (TextBox_ == null)
             return;
 
         double availableWidth = TextBox_.Bounds.Width - 20;
         double availableHeight = TextBox_.Bounds.Height - 10;
 
-        string text = TextBox_.Text;
+        // Учитываем пустой текст, используя пробел для расчета
+        string text = string.IsNullOrEmpty(TextBox_.Text) ? " " : TextBox_.Text;
         double fontSize = 80;
 
-        // Грубый коэффициент ширины: 0.6 — эмпирически подходит для большинства шрифтов
         while (fontSize >= 8)
         {
             double estimatedWidth = text.Length * fontSize * 0.6;
@@ -284,7 +312,6 @@ public partial class VirtualKeyboard : UserControl
 
         TextBox_.FontSize = fontSize;
     }
-
 
 
 

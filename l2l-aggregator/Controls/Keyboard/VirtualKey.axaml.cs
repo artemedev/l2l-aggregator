@@ -92,14 +92,14 @@ public partial class VirtualKey : TemplatedControl
     {
         DataContext = this;
 
-        this.PropertyChanged += (_, e) =>
-        {
-            if (e.Property == BoundsProperty)
-            {
-                var width = Bounds.Width;
-                FontSize = width / 6;
-            }
-        };
+        //this.PropertyChanged += (_, e) =>
+        //{
+        //    if (e.Property == BoundsProperty)
+        //    {
+        //        var width = Bounds.Width;
+        //        FontSize = width / 6;
+        //    }
+        //};
 
 
         Initialized += (sender, args) =>
