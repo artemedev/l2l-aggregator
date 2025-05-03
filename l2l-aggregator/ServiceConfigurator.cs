@@ -1,18 +1,16 @@
 ﻿using Avalonia.SimpleRouter;
-using l2l_aggregator.Services.Notification.Interface;
+using l2l_aggregator.Infrastructure.OsIntegration.Firebird;
+using l2l_aggregator.Services.Api;
+using l2l_aggregator.Services.Database;
+using l2l_aggregator.Services.Database.Repositories;
+using l2l_aggregator.Services.Database.Repositories.Interfaces;
 using l2l_aggregator.Services.Notification;
+using l2l_aggregator.Services.Notification.Interface;
 using l2l_aggregator.ViewModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using l2l_aggregator.Services.Database;
-using System.IO;
 using System;
-using l2l_aggregator.Infrastructure.OsIntegration.Firebird;
-using l2l_aggregator.Services.Database.Repositories;
-using l2l_aggregator.Services.Database.Repositories.Interfaces;
-using l2l_aggregator.Services.Database.Interfaces;
-using Refit;
-using System.Net.Http;
+using System.IO;
 
 namespace l2l_aggregator
 {
@@ -27,6 +25,7 @@ namespace l2l_aggregator
 
             // Регистрация ViewModels (они зависят от HistoryRouter)
             services.AddTransient<InitializationViewModel>();
+            services.AddTransient<AuthViewModel>();
 
 
             // Регистрируем HistoryRouter перед ViewModels
@@ -37,6 +36,8 @@ namespace l2l_aggregator
             services.AddSingleton<IUserAuthRepository, UserAuthRepository>();
             services.AddSingleton<IConfigRepository, ConfigRepository>();
             services.AddSingleton<IRegistrationDeviceRepository, RegistrationDeviceRepository>();
+
+            
 
             services.AddSingleton<DatabaseService>();
             services.AddSingleton<DatabaseInitializer>(sp =>
@@ -56,18 +57,21 @@ namespace l2l_aggregator
                 }
                 return new DatabaseInitializer(databasePath);
             });
-            // Регистрируем Refit API-клиенты
-            var refitSettings = new RefitSettings
-            {
-                HttpMessageHandlerFactory = () => new HttpClientHandler
-                {
-                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
-                }
-            };
-            services.AddRefitClient<ITaskApi>(refitSettings)
-                    .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://172.16.3.196:5005"));
-            services.AddRefitClient<IAuthApi>(refitSettings)
-                    .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://172.16.3.196:5005"));
+            //// Регистрируем Refit API-клиенты
+            //var refitSettings = new RefitSettings
+            //{
+            //    HttpMessageHandlerFactory = () => new HttpClientHandler
+            //    {
+            //        ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+            //    }
+            //};
+            //services.AddRefitClient<ITaskApi>(refitSettings)
+            //        .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://172.16.3.196:5005"));
+            //services.AddRefitClient<IAuthApi>(refitSettings)
+            //        .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://172.16.3.196:5005"));
+            // Регистрируем работу с api
+            services.AddSingleton<ApiClientFactory>();
+            services.AddSingleton<DataApiService>();
         }
     }
 }

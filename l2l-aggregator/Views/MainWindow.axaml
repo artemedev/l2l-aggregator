@@ -34,7 +34,6 @@
 		<controls:NotificationMessageContainer Manager="{Binding Manager}"  VerticalAlignment="Bottom"
 								HorizontalAlignment="Right"  ZIndex="1000"/>
 		<Panel Background="Transparent" Name="dialogpanel"  IsVisible="False">
-
 			<keyboard:VirtualKeyboard Name="VirtualKeyboardControl" IsVisible="False"></keyboard:VirtualKeyboard>
 		</Panel>
 	</Grid>

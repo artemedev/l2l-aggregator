@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using l2l_aggregator.Models;
+using l2l_aggregator.Services.Api;
 using l2l_aggregator.Services.Database;
 using l2l_aggregator.Services.Database.Interfaces;
 using Refit;
@@ -22,11 +23,14 @@ namespace l2l_aggregator.ViewModels
 
         private readonly HistoryRouter<ViewModelBase> _router;
         private readonly DatabaseService _databaseService;
+        private readonly DataApiService _dataApiService;
 
-        public InitializationViewModel(DatabaseService databaseService, HistoryRouter<ViewModelBase> router)
+        public InitializationViewModel(DatabaseService databaseService, HistoryRouter<ViewModelBase> router, DataApiService dataApiService)
         {
             _databaseService = databaseService;
             _router = router;
+            _dataApiService = dataApiService;
+
         }
 
         [RelayCommand]
@@ -40,11 +44,11 @@ namespace l2l_aggregator.ViewModels
 
             try
             {
-                // Создаём динамический Refit-клиент с нужным BaseAddress
-                var client = RestService.For<IAuthApi>(new HttpClient()
-                {
-                    BaseAddress = new Uri(ServerUri)
-                });
+                //// Создаём динамический Refit-клиент с нужным BaseAddress
+                //var client = RestService.For<IAuthApi>(new HttpClient()
+                //{
+                //    BaseAddress = new Uri(ServerUri)
+                //});
 
                 // Выполняем запрос (по условию, headers + body)
                 var request = new ArmDeviceRegistrationRequest
@@ -60,7 +64,14 @@ namespace l2l_aggregator.ViewModels
                     DEVICE_TYPE = "test"
                 };
 
-                var response = await client.RegisterDevice(request);
+                var httpClient = new HttpClient
+                {
+                    BaseAddress = new Uri(ServerUri)
+                };
+                httpClient.DefaultRequestHeaders.Add("MTDApikey", "e2fbe0f4fbe2e0fbf4ecf7f1ece5e8f020fbe2e0eff0eae5f020edeeede320fceee8ec343533343536333435212121de2cc1de"); // если нужно
+
+                var authClient = RestService.For<IAuthApi>(httpClient);
+                var response = await authClient.RegisterDevice(request);
 
                 await _databaseService.RegistrationDevice.SaveRegistrationAsync(response);
 

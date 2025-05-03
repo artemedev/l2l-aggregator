@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace MedtechtdApp.Models
+namespace l2l_aggregator.Models
 {
     public class ArmJobRequest
     {

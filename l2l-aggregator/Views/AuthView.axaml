@@ -27,7 +27,7 @@
 						<RowDefinition Height="*"/>
 					</Grid.RowDefinitions>
 
-					<Image Source="avares://MedtechtdApp/Assets/Images/Logo.png"
+					<Image Source="avares://l2l_aggregator/Assets/Images/Logo.png"
 							Margin="0,0,0,10"
 							Grid.Row="0" />
 
@@ -45,10 +45,10 @@
 
 					<TextBox Text="{Binding Login, Mode=TwoWay}"
 								HorizontalAlignment="Stretch"
-								GotFocus="OnTextBoxGotFocus"
+								
 								Grid.Row="3"
 								Grid.Column="1"/>
-
+					<!--GotFocus="OnTextBoxGotFocus"-->
 					<TextBlock Text="Пароль:"
 								HorizontalAlignment="Center"
 								Margin="0,10,0,0"
@@ -57,10 +57,10 @@
 
 					<TextBox Text="{Binding Password, Mode=TwoWay}"
 								HorizontalAlignment="Stretch"
-								GotFocus="OnTextBoxGotFocus"
+							
 								Grid.Row="5"
 								Grid.Column="1"/>
-
+	<!--GotFocus="OnTextBoxGotFocus"-->
 					<Button Content="Войти"
 							Command="{Binding LoginCommand}"
 							HorizontalAlignment="Stretch"

@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using l2l_aggregator.Models;
+using l2l_aggregator.Services.Api;
 using l2l_aggregator.Services.Database;
 using l2l_aggregator.Services.Database.Interfaces;
 using l2l_aggregator.Services.Notification.Interface;
@@ -29,14 +30,16 @@ namespace l2l_aggregator.ViewModels
 
         private readonly HistoryRouter<ViewModelBase> _router;
         private readonly DatabaseService _databaseService;
-
+        //private readonly IApiClientFactory _apiClientFactory;
+        private readonly DataApiService _dataApiService;
 
         private readonly INotificationService _notificationService;
-        public AuthViewModel(DatabaseService databaseService, HistoryRouter<ViewModelBase> router, INotificationService notificationService)
+        public AuthViewModel(DatabaseService databaseService, HistoryRouter<ViewModelBase> router, INotificationService notificationService, DataApiService dataApiService)
         {
             _databaseService = databaseService;
             _router = router;
             _notificationService = notificationService;
+            _dataApiService = dataApiService;
             _login = "TESTINNO1";
             _password = "4QrcOUm6Wau+VuBX8g+IPg==";
         }
@@ -48,7 +51,8 @@ namespace l2l_aggregator.ViewModels
             {
                 if (await _databaseService.UserAuth.ValidateAdminUserAsync(Login, Password))
                 {
-                    InfoMessage = "Админ вход. Переходим к настройкам...";
+                    //InfoMessage = "Админ вход. Переходим к настройкам...";
+                    _notificationService.ShowMessage("Админ вход. Переходим к настройкам...");
                     _router.GoTo<SettingsViewModel>();
                     return;
                 }
@@ -57,43 +61,40 @@ namespace l2l_aggregator.ViewModels
                 var serverUri = await _databaseService.Config.GetConfigValueAsync("ServerUri");
                 if (string.IsNullOrWhiteSpace(serverUri))
                 {
-                    InfoMessage = "Сервер не настроен!";
+                    //InfoMessage = "Сервер не настроен!";
+                    _notificationService.ShowMessage("Сервер не настроен!");
                     return;
                 }
-                HttpClientHandler httpClientHandler = new HttpClientHandler();
-                httpClientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
-                var client = RestService.For<IAuthApi>(new HttpClient(httpClientHandler)
-                {
-                    BaseAddress = new Uri(serverUri)
-                });
+                //HttpClientHandler httpClientHandler = new HttpClientHandler();
+                //httpClientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+                //var client = RestService.For<IAuthApi>(new HttpClient(httpClientHandler)
+                //{
+                //    BaseAddress = new Uri(serverUri)
+                //});
+                //var client = await _dataApiService.CreateClientAsync<IAuthApi>();
+                ////var response = await client.UserAuth(request);
 
-                // Пример body: {
-                //  "wid":"TESTINNO1",
-                //  "spd":"4QrcOUm6Wau+VuBX8g+IPg=="
-                // }
-
-                // Здесь условно передаём Login/Password (в зашифрованном виде, если нужно)
-                // Для примера оставим как есть
-                var request = new UserAuthRequest
-                {
-                    wid = Login,
-                    spd = Password  // Заглушка
-                };
+                //var request = new UserAuthRequest
+                //{
+                //    wid = Login,
+                //    spd = Password  // Заглушка
+                //};
                 try
                 {
-                    var response = await client.UserAuth(request);
+                    var response = await _dataApiService.LoginAsync(Login, Password);
                     if (response.AUTH_OK == "1")
                     {
                         await _databaseService.UserAuth.SaveUserAuthAsync(response);
                         // Успешная авторизация
-                        InfoMessage = "Авторизация прошла успешно!";
-                        _notificationService.ShowMessage(InfoMessage);
+                        //InfoMessage = "Авторизация прошла успешно!";
+                        _notificationService.ShowMessage("Авторизация прошла успешно!");
                         // Переходим к списку задач
                         //_router.GoTo<TaskListViewModel>();
                     }
                     else
                     {
-                        InfoMessage = $"Ошибка авторизации: {response.ERROR_TEXT}";
+                        //InfoMessage = $"Ошибка авторизации: {response.ERROR_TEXT}";
+                        _notificationService.ShowMessage($"Ошибка авторизации: {response.ERROR_TEXT}");
                     }
                 }
                 catch (Exception ex)
@@ -105,7 +106,10 @@ namespace l2l_aggregator.ViewModels
             }
             catch (ApiException apiEx)
             {
-                InfoMessage = $"API ошибка: {apiEx.Message}";
+                _notificationService.ShowMessage($"API ошибка: {apiEx.Message}");
+
+                //$"Ошибка авторизации: {response.ERROR_TEXT}"
+                //InfoMessage = $"API ошибка: {apiEx.Message}";
             }
         }
     }

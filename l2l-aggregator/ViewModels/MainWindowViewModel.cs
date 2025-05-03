@@ -2,6 +2,7 @@
 using Avalonia.SimpleRouter;
 using CommunityToolkit.Mvvm.ComponentModel;
 using l2l_aggregator.Models;
+using l2l_aggregator.Services.Api;
 using l2l_aggregator.Services.Database;
 using l2l_aggregator.Services.Database.Interfaces;
 using l2l_aggregator.Services.Notification.Interface;
@@ -55,10 +56,7 @@ namespace l2l_aggregator.ViewModels
 
             if (!string.IsNullOrEmpty(serverUri))
             {
-                var client = RestService.For<IAuthApi>(new HttpClient()
-                {
-                    BaseAddress = new Uri(serverUri)
-                });
+                //var client = await _apiClientFactory.CreateClientAsync<ITaskApi>(true);
 
                 _router.GoTo<AuthViewModel>();
             }

@@ -10,9 +10,9 @@ public partial class AuthView : UserControl
     {
         InitializeComponent();
     }
-    private void OnTextBoxGotFocus(object? sender, GotFocusEventArgs e)
-    {
-        // Âûחûגאול םאר ץוכןונ
-        SystemKeyboardHelper.ShowSystemKeyboard();
-    }
+    //private void OnTextBoxGotFocus(object? sender, GotFocusEventArgs e)
+    //{
+    //    // Âûחûגאול םאר ץוכןונ
+    //    //SystemKeyboardHelper.ShowSystemKeyboard();
+    //}
 }
