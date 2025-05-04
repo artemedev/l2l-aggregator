@@ -1,9 +1,14 @@
 ﻿using Avalonia.SimpleRouter;
+using FastReport.Barcode;
+using l2l_aggregator.Helpers.AggregationHelpers;
 using l2l_aggregator.Infrastructure.OsIntegration.Firebird;
+using l2l_aggregator.Services.AggregationService;
+using l2l_aggregator.Services;
 using l2l_aggregator.Services.Api;
 using l2l_aggregator.Services.Database;
 using l2l_aggregator.Services.Database.Repositories;
 using l2l_aggregator.Services.Database.Repositories.Interfaces;
+using l2l_aggregator.Services.DmProcessing;
 using l2l_aggregator.Services.Notification;
 using l2l_aggregator.Services.Notification.Interface;
 using l2l_aggregator.ViewModels;
@@ -18,6 +23,17 @@ namespace l2l_aggregator
     {
         public static void ConfigureServices(IServiceCollection services, IConfiguration? configuration = null)
         {
+            // Регистрация базовых сервисов
+            //services.AddSingleton<Preferences>();
+            services.AddSingleton<SessionService>();
+            services.AddSingleton<DataApiService>();
+            //services.AddSingleton<ImageProcessingHelper>();
+            services.AddSingleton<DmScanService>();
+            services.AddSingleton<TemplateService>();
+            services.AddSingleton<ScannerListenerService>();
+            services.AddSingleton<ScannerInputService>();
+            //services.AddSingleton<DMProcessingService>();
+            services.AddSingleton<ImageHelper>();
             services.AddSingleton<INotificationService, NotificationService>();
             
             // Регистрируем главную VM (она требует HistoryRouter)
@@ -26,7 +42,11 @@ namespace l2l_aggregator
             // Регистрация ViewModels (они зависят от HistoryRouter)
             services.AddTransient<InitializationViewModel>();
             services.AddTransient<AuthViewModel>();
+            services.AddTransient<TaskListViewModel>();
+            services.AddTransient<TaskDetailsViewModel>();
             services.AddTransient<SettingsViewModel>();
+            services.AddTransient<AggregationViewModel>();
+            services.AddTransient<CameraSettingsViewModel>();
 
 
             // Регистрируем HistoryRouter перед ViewModels

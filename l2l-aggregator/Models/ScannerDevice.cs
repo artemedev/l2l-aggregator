@@ -3,5 +3,6 @@
     public class ScannerDevice
     {
         public string? Id { get; set; } // DevicePath или COM-порт
+
     }
 }

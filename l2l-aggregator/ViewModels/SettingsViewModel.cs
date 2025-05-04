@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System;
 using System.IO.Ports;
 using l2l_aggregator.Services.Database;
+using l2l_aggregator.ViewModels.DOP;
 
 namespace l2l_aggregator.ViewModels
 {
@@ -55,11 +56,8 @@ namespace l2l_aggregator.ViewModels
 
         [ObservableProperty]
         private ObservableCollection<string> _printerModels = new() { "Model X", "Model Y", "Model Z" };
+
         [ObservableProperty] private string _selectedPrinterModel;
-
-
-        //[ObservableProperty]
-        //private ObservableCollection<string> _scannerModels = new() { "Model 1", "Model 2", "Model 3" };
 
         [ObservableProperty]
         private ObservableCollection<CameraViewModel> _cameras = new();
@@ -80,28 +78,9 @@ namespace l2l_aggregator.ViewModels
             _databaseService = DatabaseService;
             _router = router;
             _ = LoadSettingsAsync();
-            // Load cameras from DatabaseService or add a default one
             LoadCameras();
-            //LoadScannerModels();
             LoadAvailableScanners();
-            //var savedScanner = _databaseService.LoadScannerDevice();
 
-            //if (savedScanner != null)
-            //{
-            //    // Пробуем найти в текущем списке (например, по DevicePath / COM)
-            //    var matchedScanner = AvailableScanners.FirstOrDefault(s => s.Id == savedScanner.Id);
-
-            //    if (matchedScanner != null)
-            //    {
-            //        SelectedScanner = matchedScanner;
-            //    }
-            //    else
-            //    {
-            //        // Если в списке его нет — всё равно подставим, чтобы отобразить
-            //        //AvailableScanners.Add(savedScanner);
-            //        //SelectedScanner = savedScanner;
-            //    }
-            //}
             if (Cameras.Count == 0)
             {
                 AddCamera();
@@ -116,36 +95,12 @@ namespace l2l_aggregator.ViewModels
 
         public void LoadAvailableScanners()
         {
-            //AvailableScanners.Clear();
-            //foreach (var scanner in ScannerHelper.GetAvailableScanners())
-            //{
-            //    AvailableScanners.Add(scanner);
-            //}
-            //using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE Name LIKE '%(COM%)'"))
-            //{
-            //    AvailableScanners.Clear();
-            //    foreach (var device in searcher.Get())
-            //    {
-            //        ScannerDevice device1 = new ScannerDevice();
-            //        string name = device["Name"]?.ToString();
-            //        device1.Id = name;
-            //        device1.Type = "COMPORT";
-            //        device1.DisplayName = "Honeywell COMPORT";
-            //        //Console.WriteLine(name);
-            //        AvailableScanners.Add(device1);
-            //    }
-            //}
             string[] ports = SerialPort.GetPortNames();
             foreach (string port in ports)
             {
                 ScannerDevice device1 = new ScannerDevice();
-                //string name = port;
                 device1.Id = port;
-                //device1.Type = "COMPORT";
-                //device1.DisplayName = "Honeywell COMPORT";
-                //Console.WriteLine(name);
                 AvailableScanners.Add(device1);
-                //Console.WriteLine($"Порт: {port}");
             }
         }
 
@@ -157,18 +112,7 @@ namespace l2l_aggregator.ViewModels
         }
         private void LoadCameras()
         {
-            // Here you would implement loading the cameras from your DatabaseService
-            // For example:
-            // var cameraSettings = _databaseService.GetCameraSettings();
-            // foreach (var cameraSetting in cameraSettings)
-            // {
-            //     Cameras.Add(new CameraViewModel
-            //     {
-            //         CameraIP = cameraSetting.IP,
-            //         SelectedCameraModel = cameraSetting.Model,
-            //         IsConnected = false
-            //     });
-            // }
+
         }
 
         [RelayCommand]
@@ -215,13 +159,6 @@ namespace l2l_aggregator.ViewModels
             }
         }
 
-        //// Команда для добавления новой камеры
-        //[RelayCommand]
-        //private void AddCamera()
-        //{
-        //    Cameras.Add(new CameraConfig());
-        //}
-
         [RelayCommand]
         public async Task CheckAndSaveUriAsync()
         {
@@ -248,36 +185,6 @@ namespace l2l_aggregator.ViewModels
 
 
         }
-        //public void LoadScannerModels()
-        //{
-        //    if (OperatingSystem.IsWindows())
-        //    {
-        //        ScannerModels = GetAvailableSerialDevices();
-        //    }
-        //    //#if WINDOWS
-        //    //    ScannerModels = GetAvailableSerialDevices();
-        //    //#else
-        //    //            ScannerModels = new ObservableCollection<string>(SerialPort.GetPortNames());
-        //    //#endif
-        //    //ScannerModels = new ObservableCollection<string>(System.IO.Ports.SerialPort.GetPortNames());
-        //}
-
-        //public ObservableCollection<string> GetAvailableSerialDevices()
-        //{
-        //    var devices = new ObservableCollection<string>();
-
-        //    using var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE Name LIKE '%(COM%'");
-        //    foreach (var device in searcher.Get())
-        //    {
-        //        var name = device["Name"]?.ToString();
-        //        if (!string.IsNullOrWhiteSpace(name))
-        //        {
-        //            devices.Add(name); // Пример: "Zebra DS2208 (COM3)"
-        //        }
-        //    }
-
-        //    return devices;
-        //}
 
         //[RelayCommand]
         //private void TestCameraConnection() { /* ... */ }
@@ -299,22 +206,7 @@ namespace l2l_aggregator.ViewModels
 
             try
             {
-                //// Простейшая проверка подключения
-                //if (SelectedScanner.Type == "COM")
-                //{
-                //    using var port = new SerialPort(SelectedScanner.Id, 9600);
-                //    port.Open();
-                //    if (!port.IsOpen)
-                //        throw new Exception("Не удалось открыть COM порт");
-                //}
-                //else if (SelectedScanner.Type == "HID")
-                //{
-                //    var device = DeviceList.Local.GetHidDevices().FirstOrDefault(d => d.DevicePath == SelectedScanner.Id);
-                //    if (device == null)
-                //        throw new Exception("HID устройство не найдено");
-                //}
-
-                // ✅ Сохраняем сканер в конфиг
+                // Сохраняем сканер в конфиг
                  _databaseService.Config.SaveScannerDeviceAsync(SelectedScanner);
 
                 InfoMessage = $"Сканер '{SelectedScanner.Id}' успешно сохранён!";

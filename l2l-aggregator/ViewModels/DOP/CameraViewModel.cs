@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 
-namespace l2l_aggregator.ViewModels
+namespace l2l_aggregator.ViewModels.DOP
 {
     public partial class CameraViewModel : ObservableObject
     {

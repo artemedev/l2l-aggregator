@@ -89,7 +89,7 @@ namespace l2l_aggregator.ViewModels
                         //InfoMessage = "Авторизация прошла успешно!";
                         _notificationService.ShowMessage("Авторизация прошла успешно!");
                         // Переходим к списку задач
-                        //_router.GoTo<TaskListViewModel>();
+                        _router.GoTo<TaskListViewModel>();
                     }
                     else
                     {

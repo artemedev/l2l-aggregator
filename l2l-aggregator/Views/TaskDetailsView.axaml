@@ -1,0 +1,115 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="l2l_aggregator.Views.TaskDetailsView"
+			 x:CompileBindings="True"
+			 xmlns:vm="using:l2l_aggregator.ViewModels"
+			 x:DataType="vm:TaskDetailsViewModel">
+	<StackPanel Margin="20">
+		<TextBlock Text="Детали задачи" FontSize="16" FontWeight="Bold" />
+
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="Агрегационный код: " />
+			<TextBlock Text="{Binding Task.AGREGATION_CODE}" />
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="Тип агрегации: " />
+			<TextBlock Text="{Binding Task.AGREGATION_TYPE}" />
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="Флаг криптокода: " />
+			<TextBlock Text="{Binding Task.CRYPTO_CODE_FLAG}" />
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="Флаг агрегации: " />
+			<TextBlock Text="{Binding Task.AGGR_FLAG}" />
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="ID шаблона упаковки: " />
+			<TextBlock Text="{Binding Task.UN_TEMPLATEID}" />
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="ID резервного документа: " />
+			<TextBlock Text="{Binding Task.UN_RESERVE_DOCID}" />
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="Количество в коробке: " />
+			<TextBlock Text="{Binding Task.IN_BOX_QTY}" />
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="Количество во внутренней коробке: " />
+			<TextBlock Text="{Binding Task.IN_INNER_BOX_QTY}" />
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="Флаг внутренней коробки: " />
+			<TextBlock Text="{Binding Task.INNER_BOX_FLAG}" />
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="Флаг агрегации внутренней коробки: " />
+			<TextBlock Text="{Binding Task.INNER_BOX_AGGR_FLAG}" />
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="Количество во внутренней коробке: " />
+			<TextBlock Text="{Binding Task.INNER_BOX_QTY}" />
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="Количество на паллете: " />
+			<TextBlock Text="{Binding Task.IN_PALLET_BOX_QTY}" />
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="Последнее местоположение упаковки: " />
+			<TextBlock Text="{Binding Task.LAST_PACKAGE_LOCATION_INFO}" />
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="Флаг невключения паллет: " />
+			<TextBlock Text="{Binding Task.PALLET_NOT_USE_FLAG}" />
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="Флаг агрегации паллет: " />
+			<TextBlock Text="{Binding Task.PALLET_AGGR_FLAG}" />
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="ID типа агрегации: " />
+			<TextBlock Text="{Binding Task.AGREGATION_TYPEID}" />
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="Системный номер серии: " />
+			<TextBlock Text="{Binding Task.SERIES_SYS_NUM}" />
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="Количество слоев: " />
+			<TextBlock Text="{Binding Task.LAYERS_QTY}" />
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="Количество рядов на слое: " />
+			<TextBlock Text="{Binding Task.LAYER_ROW_QTY}" />
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="Общее количество рядов на слое: " />
+			<TextBlock Text="{Binding Task.LAYER_ROWS_QTY}" />
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="Высота упаковки: " />
+			<TextBlock Text="{Binding Task.PACK_HEIGHT}" />
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="Ширина упаковки: " />
+			<TextBlock Text="{Binding Task.PACK_WIDTH}" />
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="Длина упаковки: " />
+			<TextBlock Text="{Binding Task.PACK_LENGTH}" />
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="Вес упаковки: " />
+			<TextBlock Text="{Binding Task.PACK_WEIGHT}" />
+		</StackPanel>
+
+		<StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+			<Button Content="Назад" Command="{Binding GoBackCommand}" Margin="0,0,10,0" />
+			<Button Content="Агрегация" Command="{Binding GoAggregationCommand}" />
+		</StackPanel>
+	</StackPanel>
+</UserControl>

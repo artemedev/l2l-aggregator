@@ -25,20 +25,40 @@
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="FastReport.Core.Skia" Version="2025.1.10" />
+    <PackageReference Include="FastReport.OpenSource" Version="2025.1.0" />
+    <PackageReference Include="FastReport.OpenSource.Export.PdfSimple" Version="2025.1.0" />
     <PackageReference Include="FirebirdSql.Data.FirebirdClient" Version="10.3.2" />
+    <PackageReference Include="HidSharp" Version="2.1.0" />
     <PackageReference Include="Material.Icons" Version="2.4.1" />
     <PackageReference Include="Material.Icons.Avalonia" Version="2.4.1" />
+    <PackageReference Include="MD.Devices.Core" Version="8.3.0" />
+    <PackageReference Include="MD.Services" Version="8.2.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Notification.Avalonia" Version="2.1.0" />
     <PackageReference Include="Refit" Version="8.0.0" />
     <PackageReference Include="Refit.HttpClientFactory" Version="8.0.0" />
     <PackageReference Include="Sandreas.Avalonia.SimpleRouter" Version="0.0.5" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.8" />
     <PackageReference Include="System.IO.Ports" Version="9.0.4" />
+    <PackageReference Include="xunit" Version="2.9.3" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Update="Controls\Keyboard\Layout\VirtualKeyboardLayoutRU.axaml.cs">
       <DependentUpon>VirtualKeyboardLayoutRU.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\TaskListView.axaml.cs">
+      <DependentUpon>TaskListView.axaml</DependentUpon>
+    </Compile>
+	  <ProjectReference Include="..\DM_process_lib\DM_process_lib.csproj" />
+	  <ProjectReference Include="..\DM_wraper_lib\DM_wraper_lib.csproj" />
+	  <!--<Reference Include="DM_process_lib">
+		  <HintPath>..\DM_process_lib\bin\Debug\net8.0\DM_process_lib.dll</HintPath>
+	  </Reference>
+	  <Reference Include="DM_wrapper_lib">
+		  <HintPath>..\DM_wraper_lib\bin\Debug\net8.0\DM_wraper_lib.dll</HintPath>
+	  </Reference>-->
   </ItemGroup>
 </Project>

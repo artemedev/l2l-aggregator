@@ -173,5 +173,18 @@ namespace l2l_aggregator.Services.Api
             var client = await _apiClientFactory.CreateClientAsync<ITaskApi>();
             return await client.GetJobSscc(new ArmJobSsccRequest { docid = docId });
         }
+        public async Task<ArmJobSgtinResponse> LoadSgtinAsync(long docId)
+        {
+            var client = await _apiClientFactory.CreateClientAsync<ITaskApi>();
+            var request = new ArmJobSgtinRequest { docid = docId };
+            return await client.GetJobSgtin(request);
+        }
+
+        public async Task<ArmJobSsccResponse> LoadSsccAsync(long docId)
+        {
+            var client = await _apiClientFactory.CreateClientAsync<ITaskApi>();
+            var request = new ArmJobSsccRequest { docid = docId };
+            return await client.GetJobSscc(request);
+        }
     }
 }

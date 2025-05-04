@@ -25,8 +25,8 @@ namespace DM_process_NS
 
             Dictionary<string, bool> dataModel = ExtractDataModelFromFRX();
             List<DM_dataCell> lDMD = new List<DM_dataCell>();
-
-            string filePath = Path.Combine(@"D:\MEDTECH\MedtechtdApp\DM_process_lib", "result.json");
+            string baseDir = Path.GetDirectoryName(typeof(MainProces).Assembly.Location)!;
+            string filePath = Path.Combine(baseDir, "result.json");
             string jsonData = File.ReadAllText(filePath);
             ResultData resultData = JsonConvert.DeserializeObject<ResultData>(jsonData);
             foreach (Cell cell in resultData.cells)
@@ -38,7 +38,7 @@ namespace DM_process_NS
 
             DM_result_data dmrd = new DM_result_data();
             dmrd.DMdataArr = lDMD;
-            string imagePath = Path.Combine(@"D:\MEDTECH\MedtechtdApp\DM_process_lib", "image_raw.jpg");
+            string imagePath = Path.Combine(baseDir, "image_raw.jpg");
             byte[] imageBytes = File.ReadAllBytes(imagePath);
             using (MemoryStream ms = new MemoryStream(imageBytes))
             {

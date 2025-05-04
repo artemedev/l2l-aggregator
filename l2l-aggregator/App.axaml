@@ -17,6 +17,11 @@
 	</Application.Styles>
 	<Application.Resources>
 		<converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
+		<converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
+		<converters:CenterToLeftConverter x:Key="CenterToLeftConverter" />
+		<converters:CenterToTopConverter x:Key="CenterToTopConverter" />
+		<converters:BooleanToAggregationStatusConverter x:Key="BooleanToAggregationStatusConverter"/>
+
 	</Application.Resources>
 	<!--xmlns:localKeyboard="using:l2l_aggregator.Controls.Keyboard.Converters"-->
 	<!--<Application.Resources>
