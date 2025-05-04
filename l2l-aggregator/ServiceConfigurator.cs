@@ -26,6 +26,7 @@ namespace l2l_aggregator
             // Регистрация ViewModels (они зависят от HistoryRouter)
             services.AddTransient<InitializationViewModel>();
             services.AddTransient<AuthViewModel>();
+            services.AddTransient<SettingsViewModel>();
 
 
             // Регистрируем HistoryRouter перед ViewModels
