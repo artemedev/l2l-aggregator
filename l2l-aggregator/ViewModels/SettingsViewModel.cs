@@ -114,29 +114,29 @@ namespace l2l_aggregator.ViewModels
         private async Task ToggleDisableVirtualKeyboardAsync()
         {
             await _databaseService.Config.SetConfigValueAsync("DisableVirtualKeyboard", DisableVirtualKeyboard.ToString());
-            _sessionService.DisableVirtualKeyboard = DisableVirtualKeyboard;
+            SessionService.Instance.DisableVirtualKeyboard = DisableVirtualKeyboard;
             InfoMessage = "Настройка клавиатуры сохранена.";
             _notificationService.ShowMessage(InfoMessage);
         }
         partial void OnCheckControllerBeforeAggregationChanged(bool value)
         {
             _ = _databaseService.Config.SetConfigValueAsync("CheckController", value.ToString());
-            _sessionService.CheckController = value;
+            SessionService.Instance.CheckController = value;
         }
         partial void OnCheckCameraBeforeAggregationChanged(bool value)
         {
             _ = _databaseService.Config.SetConfigValueAsync("CheckCamera", value.ToString());
-            _sessionService.CheckCamera = value;
+            SessionService.Instance.CheckCamera = value;
         }
         partial void OnCheckPrinterBeforeAggregationChanged(bool value)
         {
             _ = _databaseService.Config.SetConfigValueAsync("CheckPrinter", value.ToString());
-            _sessionService.CheckPrinter = value;
+            SessionService.Instance.CheckPrinter = value;
         }
         partial void OnCheckScannerBeforeAggregationChanged(bool value)
         {
             _ = _databaseService.Config.SetConfigValueAsync("CheckScanner", value.ToString());
-            _sessionService.CheckScanner = value;
+            SessionService.Instance.CheckScanner = value;
         }
         private async Task LoadSettingsAsync()
         {
@@ -155,20 +155,20 @@ namespace l2l_aggregator.ViewModels
             CheckScannerBeforeAggregation = await _databaseService.Config.GetConfigValueAsync("CheckScanner") == "True";
             SelectedScannerModel = await _databaseService.Config.GetConfigValueAsync("ScannerModel");
 
-            var session = SessionService.Instance;
-            session.PrinterIP = PrinterIP;
-            session.PrinterModel = SelectedPrinterModel;
-            session.ControllerIP = ControllerIP;
-            session.CameraIP = CameraIP;
-            session.CameraModel = SelectedCameraModel;
-            session.ScannerPort = ScannerCOMPort;
+            //var session = SessionService.Instance;
+            SessionService.Instance.PrinterIP = PrinterIP;
+            SessionService.Instance.PrinterModel = SelectedPrinterModel;
+            SessionService.Instance.ControllerIP = ControllerIP;
+            SessionService.Instance.CameraIP = CameraIP;
+            SessionService.Instance.CameraModel = SelectedCameraModel;
+            SessionService.Instance.ScannerPort = ScannerCOMPort;
             // аналогично можно загрузить другие значения, если потребуется
-            session.DisableVirtualKeyboard = DisableVirtualKeyboard;
+            SessionService.Instance.DisableVirtualKeyboard = DisableVirtualKeyboard;
 
-            session.CheckCamera = CheckCameraBeforeAggregation;
-            session.CheckPrinter = CheckPrinterBeforeAggregation;
-            session.CheckController = CheckControllerBeforeAggregation;
-            session.CheckScanner = CheckScannerBeforeAggregation;
+            SessionService.Instance.CheckCamera = CheckCameraBeforeAggregation;
+            SessionService.Instance.CheckPrinter = CheckPrinterBeforeAggregation;
+            SessionService.Instance.CheckController = CheckControllerBeforeAggregation;
+            SessionService.Instance.CheckScanner = CheckScannerBeforeAggregation;
         }
 
         //public void LoadAvailableScanners()

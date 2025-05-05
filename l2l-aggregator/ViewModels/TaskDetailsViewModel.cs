@@ -14,6 +14,7 @@ using MD.Devices;
 using Microsoft.Extensions.Logging;
 using Refit;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
@@ -99,116 +100,257 @@ namespace l2l_aggregator.ViewModels
         //    // Переход на страницу агрегации
         //    _router.GoTo<AggregationViewModel>();
         //}
+        //[RelayCommand]
+        //public async Task GoAggregationAsync()
+        //{
+        //    var session = SessionService.Instance;
+        //    // Проверка камеры
+        //    if (SessionService.Instance.CheckCamera)
+        //    {
+        //        if (string.IsNullOrWhiteSpace(SessionService.Instance.CameraIP))
+        //        {
+        //            InfoMessage = "IP камеры не задан!";
+        //            _notificationService.ShowMessage(InfoMessage);
+        //            return;
+        //        }
+
+        //        bool cameraReachable = await PingDeviceAsync(SessionService.Instance.CameraIP);
+        //        if (!cameraReachable)
+        //        {
+        //            InfoMessage = $"Камера {SessionService.Instance.CameraIP} недоступна!";
+        //            _notificationService.ShowMessage(InfoMessage);
+        //            return;
+        //        }
+        //    }
+
+        //    // Проверка принтера
+        //    if (SessionService.Instance.CheckPrinter)
+        //    {
+        //        if (string.IsNullOrWhiteSpace(SessionService.Instance.PrinterIP))
+        //        {
+        //            InfoMessage = "IP принтера не задан!";
+        //            _notificationService.ShowMessage(InfoMessage);
+        //            return;
+        //        }
+
+        //        try
+        //        {
+        //            if (SessionService.Instance.PrinterModel == "Zebra")
+        //            {
+        //                var config = PrinterConfigBuilder.Build(SessionService.Instance.PrinterIP);
+        //                var logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger("PrinterCheck");
+        //                var device = new PrinterTCP("PreAggPrinter", logger);
+        //                device.Configure(config);
+
+        //                device.StartWork();
+        //                DeviceHelper.WaitForState(device, DeviceStatusCode.Run, 10);
+        //                device.StopWork();
+        //                DeviceHelper.WaitForState(device, DeviceStatusCode.Ready, 10);
+        //            }
+        //            else
+        //            {
+        //                InfoMessage = $"Принтер модели '{SessionService.Instance.PrinterModel}' не поддерживается.";
+        //                _notificationService.ShowMessage(InfoMessage);
+        //                return;
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            InfoMessage = $"Ошибка соединения с принтером: {ex.Message}";
+        //            _notificationService.ShowMessage(InfoMessage);
+        //            return;
+        //        }
+        //    }
+
+        //    // Проверка контроллера
+        //    if (SessionService.Instance.CheckController)
+        //    {
+        //        if (string.IsNullOrWhiteSpace(SessionService.Instance.ControllerIP))
+        //        {
+        //            InfoMessage = "IP контроллера не задан!";
+        //            _notificationService.ShowMessage(InfoMessage);
+        //            return;
+        //        }
+
+        //        bool controllerReachable = await PingDeviceAsync(SessionService.Instance.ControllerIP);
+        //        if (!controllerReachable)
+        //        {
+        //            InfoMessage = $"Контроллер {SessionService.Instance.ControllerIP} недоступен!";
+        //            _notificationService.ShowMessage(InfoMessage);
+        //            return;
+        //        }
+        //    }
+
+        //    // Проверка сканера
+        //    if (SessionService.Instance.CheckScanner)
+        //    {
+        //        if (string.IsNullOrWhiteSpace(SessionService.Instance.ScannerPort))
+        //        {
+        //            InfoMessage = "Порт сканера не задан!";
+        //            _notificationService.ShowMessage(InfoMessage);
+        //            return;
+        //        }
+
+        //        if (SessionService.Instance.ScannerModel == "Honeywell")
+        //        {
+        //            if (!CheckComPortExists(SessionService.Instance.ScannerPort))
+        //            {
+        //                InfoMessage = $"Сканер на порту {SessionService.Instance.ScannerPort} недоступен!";
+        //                _notificationService.ShowMessage(InfoMessage);
+        //                return;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            InfoMessage = $"Сканер модели '{SessionService.Instance.ScannerModel}' пока не поддерживается.";
+        //            _notificationService.ShowMessage(InfoMessage);
+        //            return;
+        //        }
+        //    }
+
+        //    // Все проверки пройдены — переходим к агрегации
+        //    _router.GoTo<AggregationViewModel>();
+        //}
+        //[RelayCommand]
+        //public async Task GoAggregationAsync()
+        //{
+        //    // Загружаем все настройки перед проверкой
+        //    await _sessionService.InitializeAsync(_databaseService);
+
+        //    // Проверки устройств
+        //    var cameraCheck = await CheckCameraAsync();
+        //    if (!cameraCheck.Success)
+        //    {
+        //        _notificationService.ShowMessage(cameraCheck.Message);
+        //        return;
+        //    }
+
+        //    var printerCheck = await CheckPrinterAsync();
+        //    if (!printerCheck.Success)
+        //    {
+        //        _notificationService.ShowMessage(printerCheck.Message);
+        //        return;
+        //    }
+
+        //    var controllerCheck = await CheckControllerAsync();
+        //    if (!controllerCheck.Success)
+        //    {
+        //        _notificationService.ShowMessage(controllerCheck.Message);
+        //        return;
+        //    }
+
+        //    var scannerCheck = await CheckScannerAsync();
+        //    if (!scannerCheck.Success)
+        //    {
+        //        _notificationService.ShowMessage(scannerCheck.Message);
+        //        return;
+        //    }
+
+        //    // Все проверки пройдены
+        //    _router.GoTo<AggregationViewModel>();
+        //}
         [RelayCommand]
         public async Task GoAggregationAsync()
         {
-            var session = SessionService.Instance;
-            // Проверка камеры
-            if (session.CheckCamera)
-            {
-                if (string.IsNullOrWhiteSpace(_sessionService.CameraIP))
-                {
-                    InfoMessage = "IP камеры не задан!";
-                    _notificationService.ShowMessage(InfoMessage);
-                    return;
-                }
+            // Загружаем все настройки перед проверкой
+            await _sessionService.InitializeAsync(_databaseService);
 
-                bool cameraReachable = await PingDeviceAsync(_sessionService.CameraIP);
-                if (!cameraReachable)
+            var errorMessages = new List<string>();
+
+            var cameraCheck = await CheckCameraAsync();
+            if (!cameraCheck.Success)
+                errorMessages.Add(cameraCheck.Message);
+
+            var printerCheck = await CheckPrinterAsync();
+            if (!printerCheck.Success)
+                errorMessages.Add(printerCheck.Message);
+
+            var controllerCheck = await CheckControllerAsync();
+            if (!controllerCheck.Success)
+                errorMessages.Add(controllerCheck.Message);
+
+            var scannerCheck = await CheckScannerAsync();
+            if (!scannerCheck.Success)
+                errorMessages.Add(scannerCheck.Message);
+
+            if (errorMessages.Any())
+            {
+                foreach (var msg in errorMessages)
                 {
-                    InfoMessage = $"Камера {_sessionService.CameraIP} недоступна!";
-                    _notificationService.ShowMessage(InfoMessage);
-                    return;
+                    _notificationService.ShowMessage(msg);
                 }
+                return;
             }
 
-            // Проверка принтера
-            if (session.CheckPrinter)
-            {
-                if (string.IsNullOrWhiteSpace(_sessionService.PrinterIP))
-                {
-                    InfoMessage = "IP принтера не задан!";
-                    _notificationService.ShowMessage(InfoMessage);
-                    return;
-                }
-
-                try
-                {
-                    if (_sessionService.PrinterModel == "Zebra")
-                    {
-                        var config = PrinterConfigBuilder.Build(_sessionService.PrinterIP);
-                        var logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger("PrinterCheck");
-                        var device = new PrinterTCP("PreAggPrinter", logger);
-                        device.Configure(config);
-
-                        device.StartWork();
-                        DeviceHelper.WaitForState(device, DeviceStatusCode.Run, 10);
-                        device.StopWork();
-                        DeviceHelper.WaitForState(device, DeviceStatusCode.Ready, 10);
-                    }
-                    else
-                    {
-                        InfoMessage = $"Принтер модели '{_sessionService.PrinterModel}' не поддерживается.";
-                        _notificationService.ShowMessage(InfoMessage);
-                        return;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    InfoMessage = $"Ошибка соединения с принтером: {ex.Message}";
-                    _notificationService.ShowMessage(InfoMessage);
-                    return;
-                }
-            }
-
-            // Проверка контроллера
-            if (session.CheckController)
-            {
-                if (string.IsNullOrWhiteSpace(_sessionService.ControllerIP))
-                {
-                    InfoMessage = "IP контроллера не задан!";
-                    _notificationService.ShowMessage(InfoMessage);
-                    return;
-                }
-
-                bool controllerReachable = await PingDeviceAsync(_sessionService.ControllerIP);
-                if (!controllerReachable)
-                {
-                    InfoMessage = $"Контроллер {_sessionService.ControllerIP} недоступен!";
-                    _notificationService.ShowMessage(InfoMessage);
-                    return;
-                }
-            }
-
-            // Проверка сканера
-            if (session.CheckScanner)
-            {
-                if (string.IsNullOrWhiteSpace(_sessionService.ScannerPort))
-                {
-                    InfoMessage = "Порт сканера не задан!";
-                    _notificationService.ShowMessage(InfoMessage);
-                    return;
-                }
-
-                if (_sessionService.ScannerModel == "Honeywell")
-                {
-                    if (!CheckComPortExists(_sessionService.ScannerPort))
-                    {
-                        InfoMessage = $"Сканер на порту {_sessionService.ScannerPort} недоступен!";
-                        _notificationService.ShowMessage(InfoMessage);
-                        return;
-                    }
-                }
-                else
-                {
-                    InfoMessage = $"Сканер модели '{_sessionService.ScannerModel}' пока не поддерживается.";
-                    _notificationService.ShowMessage(InfoMessage);
-                    return;
-                }
-            }
-
-            // Все проверки пройдены — переходим к агрегации
+            // Все проверки пройдены
             _router.GoTo<AggregationViewModel>();
+        }
+        private async Task<(bool Success, string Message)> CheckCameraAsync()
+        {
+            if (!_sessionService.CheckCamera)
+                return (true, null);
+
+            if (string.IsNullOrWhiteSpace(_sessionService.CameraIP))
+                return (false, "IP камеры не задан!");
+
+            if (!await PingDeviceAsync(_sessionService.CameraIP))
+                return (false, $"Камера {_sessionService.CameraIP} недоступна!");
+
+            return (true, null);
+        }
+
+        private async Task<(bool Success, string Message)> CheckPrinterAsync()
+        {
+            if (!_sessionService.CheckPrinter)
+                return (true, null);
+
+            if (string.IsNullOrWhiteSpace(_sessionService.PrinterIP))
+                return (false, "IP принтера не задан!");
+
+            try
+            {
+                if (_sessionService.PrinterModel == "Zebra")
+                {
+                    // ... код проверки принтера
+                    return (true, null);
+                }
+                return (false, $"Принтер модели '{_sessionService.PrinterModel}' не поддерживается.");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Ошибка принтера: {ex.Message}");
+            }
+        }
+
+        private async Task<(bool Success, string Message)> CheckControllerAsync()
+        {
+            if (!_sessionService.CheckController)
+                return (true, null);
+
+            if (string.IsNullOrWhiteSpace(_sessionService.ControllerIP))
+                return (false, "IP контроллера не задан!");
+
+            if (!await PingDeviceAsync(_sessionService.ControllerIP))
+                return (false, $"Контроллер {_sessionService.ControllerIP} недоступен!");
+
+            return (true, null);
+        }
+
+        private async Task<(bool Success, string Message)> CheckScannerAsync()
+        {
+            if (!_sessionService.CheckScanner)
+                return (true, null);
+
+            if (string.IsNullOrWhiteSpace(_sessionService.ScannerPort))
+                return (false, "Порт сканера не задан!");
+
+            if (_sessionService.ScannerModel != "Honeywell")
+                return (false, $"Сканер модели '{_sessionService.ScannerModel}' не поддерживается.");
+
+            if (!CheckComPortExists(_sessionService.ScannerPort))
+                return (false, $"Сканер на порту {_sessionService.ScannerPort} недоступен!");
+
+            return (true, null);
         }
         private async Task<bool> PingDeviceAsync(string ip)
         {

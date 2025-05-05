@@ -54,6 +54,32 @@ namespace l2l_aggregator.ViewModels
                 }
             };
             InitializeAsync();
+
+            _ = InitializeSessionFromDatabaseAsync();
+        }
+        //private async Task InitializeSessionFromDatabaseAsync()
+        //{
+        //    await _sessionService.InitializeCheckFlagsAsync(_databaseService);
+        //    var config = _databaseService.Config;
+
+        //    _sessionService.PrinterIP = await config.GetConfigValueAsync("PrinterIP");
+        //    _sessionService.PrinterModel = await config.GetConfigValueAsync("PrinterModel");
+        //    _sessionService.ControllerIP = await config.GetConfigValueAsync("ControllerIP");
+        //    _sessionService.CameraIP = await config.GetConfigValueAsync("CameraIP");
+        //    _sessionService.CameraModel = await config.GetConfigValueAsync("CameraModel");
+        //    _sessionService.ScannerPort = await config.GetConfigValueAsync("ScannerCOMPort");
+        //    _sessionService.ScannerModel = await config.GetConfigValueAsync("ScannerModel");
+
+        //    _sessionService.DisableVirtualKeyboard = bool.TryParse(await config.GetConfigValueAsync("DisableVirtualKeyboard"), out var parsed) && parsed;
+
+        //    _sessionService.CheckCamera = await config.GetConfigValueAsync("CheckCamera") == "True";
+        //    _sessionService.CheckPrinter = await config.GetConfigValueAsync("CheckPrinter") == "True";
+        //    _sessionService.CheckController = await config.GetConfigValueAsync("CheckController") == "True";
+        //    _sessionService.CheckScanner = await config.GetConfigValueAsync("CheckScanner") == "True";
+        //}
+        private async Task InitializeSessionFromDatabaseAsync()
+        {
+            await _sessionService.InitializeAsync(_databaseService);
         }
         private async void InitializeAsync()
         {
