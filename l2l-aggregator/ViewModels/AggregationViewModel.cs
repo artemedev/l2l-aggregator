@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DM_wraper_NS;
 using FastReport;
+using l2l_aggregator.Helpers;
 using l2l_aggregator.Helpers.AggregationHelpers;
 using l2l_aggregator.Models;
 using l2l_aggregator.Services;
@@ -191,12 +192,23 @@ namespace l2l_aggregator.ViewModels
         }
         private async void InitializeAsync()
         {
+            //переделать
             var savedScanner = await _databaseService.Config.LoadScannerDeviceAsync();
             if (savedScanner?.Id is not null)
             {
-                _scannerWorker = new ScannerWorker(savedScanner.Id);
-                _scannerWorker.BarcodeScanned += HandleScannedBarcode;
-                _scannerWorker.RunWorkerAsync();
+                var modelScanner = await _databaseService.Config.GetConfigValueAsync("ScannerModel");
+
+                if (modelScanner == "DefaultScanner")
+                {
+                    _scannerWorker = new ScannerWorker(savedScanner.Id);
+                    _scannerWorker.BarcodeScanned += HandleScannedBarcode;
+                    _scannerWorker.RunWorkerAsync();
+                }
+                else
+                {
+                    InfoMessage = $"Модель сканера '{modelScanner}' пока не поддерживается.";
+                    _notificationService.ShowMessage(InfoMessage);
+                }
             }
 
             LoadTemplateFromSession();
@@ -386,30 +398,6 @@ namespace l2l_aggregator.ViewModels
             _notificationService.ShowMessage($"> Устройство в состоянии {device.Status}.");
             _notificationService.ShowMessage("> Тест завершен");
         }
-
-        ///// <summary>
-        ///// Ожидание изменения состояния устройства.
-        ///// Если время ожидания истекло, то тест завершается с ошибкой̆
-        ///// </summary>
-        ///// <param name="device">Экземпляр устройства</param>
-        ///// <param name="state">Желаемое состояние устройства</param>
-        ///// <param name="timeout">Время ожидания состояния устройства (в секундах)</param>
-        //private void WaitingDeviceStateChange(Device device, DeviceStatusCode state, int timeout)
-        //{
-        //    var startTime = DateTime.UtcNow;
-        //    var timeSpan = TimeSpan.FromSeconds(timeout);
-
-        //    while (device.Status != state)
-        //    {
-        //        if (DateTime.UtcNow - startTime > timeSpan)
-        //        {
-        //            _notificationService.ShowMessage("> Время ожидания изменения состояния устройства истекло.");
-        //            Assert.True(false);
-        //        }
-        //        Thread.Sleep(100);
-        //    }
-
-        //}
 
         public string GenerateTemplate()
         {

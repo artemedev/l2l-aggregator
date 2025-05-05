@@ -202,6 +202,10 @@
 				</ComboBox>
 				<Button Command="{Binding TestScannerConnectionCommand}"
 						Content="Проверить и Сохранить" />
+				<ComboBox ItemsSource="{Binding ScannerModels}"
+						  SelectedItem="{Binding SelectedScannerModel}"
+						  HorizontalAlignment="Stretch"
+						  Margin="0,5,0,0" />
 				<CheckBox Content="Проверять перед агрегацией"
 						  IsChecked="{Binding CheckScannerBeforeAggregation, Mode=TwoWay}"
 						  Margin="0,5,0,0"/>

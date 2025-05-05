@@ -65,11 +65,11 @@ namespace l2l_aggregator.ViewModels
             {
                 // Показать клавиатуру, если это необходимо
                 await _databaseService.Config.SetConfigValueAsync("DisableVirtualKeyboard", "true");
-                _sessionService.DisableVirtualKeyboard = true;
+                SessionService.Instance.DisableVirtualKeyboard = true;
             }
             else
             {
-                _sessionService.DisableVirtualKeyboard = bool.TryParse(disableVirtualKeyboard, out var parsed) && parsed;
+                SessionService.Instance.DisableVirtualKeyboard = bool.TryParse(disableVirtualKeyboard, out var parsed) && parsed;
             }
             if (!string.IsNullOrEmpty(serverUri))
             {

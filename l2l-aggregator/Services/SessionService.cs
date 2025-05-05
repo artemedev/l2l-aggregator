@@ -17,7 +17,7 @@ namespace l2l_aggregator.Services
         public bool CheckPrinter { get; set; }
         public bool CheckController { get; set; }
         public bool CheckScanner { get; set; }
-
+        public string? ScannerModel { get; set; }
         public ArmJobRecord? SelectedTask { get; set; }
 
         public ArmJobInfoRecord? SelectedTaskInfo { get; set; }

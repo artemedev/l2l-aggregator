@@ -16,6 +16,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
+using l2l_aggregator.Services.ScannerService.Interfaces;
+using l2l_aggregator.Services.ScannerService;
 
 namespace l2l_aggregator
 {
@@ -93,6 +95,7 @@ namespace l2l_aggregator
             // Регистрируем работу с api
             services.AddSingleton<ApiClientFactory>();
             services.AddSingleton<DataApiService>();
+            services.AddSingleton<IScannerPortResolver>(PlatformResolverFactory.CreateScannerResolver());
         }
     }
 }

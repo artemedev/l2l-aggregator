@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace l2l_aggregator.Helpers.AggregationHelpers
+namespace l2l_aggregator.Helpers
 {
     public static class DeviceHelper
     {

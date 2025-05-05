@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FastReport.Utils;
+using l2l_aggregator.Helpers;
 using l2l_aggregator.Helpers.AggregationHelpers;
 using l2l_aggregator.Models;
 using l2l_aggregator.Services;
@@ -101,10 +102,9 @@ namespace l2l_aggregator.ViewModels
         [RelayCommand]
         public async Task GoAggregationAsync()
         {
-            //var s = _sessionService;
-
+            var session = SessionService.Instance;
             // Проверка камеры
-            if (_sessionService.CheckCamera)
+            if (session.CheckCamera)
             {
                 if (string.IsNullOrWhiteSpace(_sessionService.CameraIP))
                 {
@@ -123,7 +123,7 @@ namespace l2l_aggregator.ViewModels
             }
 
             // Проверка принтера
-            if (_sessionService.CheckPrinter)
+            if (session.CheckPrinter)
             {
                 if (string.IsNullOrWhiteSpace(_sessionService.PrinterIP))
                 {
@@ -162,7 +162,7 @@ namespace l2l_aggregator.ViewModels
             }
 
             // Проверка контроллера
-            if (_sessionService.CheckController)
+            if (session.CheckController)
             {
                 if (string.IsNullOrWhiteSpace(_sessionService.ControllerIP))
                 {
@@ -181,7 +181,7 @@ namespace l2l_aggregator.ViewModels
             }
 
             // Проверка сканера
-            if (_sessionService.CheckScanner)
+            if (session.CheckScanner)
             {
                 if (string.IsNullOrWhiteSpace(_sessionService.ScannerPort))
                 {
@@ -190,10 +190,18 @@ namespace l2l_aggregator.ViewModels
                     return;
                 }
 
-                bool scannerAvailable = CheckComPortExists(_sessionService.ScannerPort);
-                if (!scannerAvailable)
+                if (_sessionService.ScannerModel == "Honeywell")
                 {
-                    InfoMessage = $"Сканер на порту {_sessionService.ScannerPort} недоступен!";
+                    if (!CheckComPortExists(_sessionService.ScannerPort))
+                    {
+                        InfoMessage = $"Сканер на порту {_sessionService.ScannerPort} недоступен!";
+                        _notificationService.ShowMessage(InfoMessage);
+                        return;
+                    }
+                }
+                else
+                {
+                    InfoMessage = $"Сканер модели '{_sessionService.ScannerModel}' пока не поддерживается.";
                     _notificationService.ShowMessage(InfoMessage);
                     return;
                 }

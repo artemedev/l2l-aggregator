@@ -2,12 +2,14 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FastReport.Utils;
+using l2l_aggregator.Helpers;
 using l2l_aggregator.Helpers.AggregationHelpers;
 using l2l_aggregator.Models;
 using l2l_aggregator.Services;
 using l2l_aggregator.Services.Database;
 using l2l_aggregator.Services.Database.Interfaces;
 using l2l_aggregator.Services.Notification.Interface;
+using l2l_aggregator.Services.ScannerService.Interfaces;
 using l2l_aggregator.ViewModels.VisualElements;
 using MD.Devices;
 using Microsoft.Extensions.Logging;
@@ -68,6 +70,12 @@ namespace l2l_aggregator.ViewModels
         [ObservableProperty]
         private ObservableCollection<string> _cameraModels = new() { "Basler" };
 
+        [ObservableProperty]
+        private ObservableCollection<string> _scannerModels = new() { "Honeywell" };
+
+        [ObservableProperty]
+        private string _selectedScannerModel;
+
         [ObservableProperty] private bool isConnectedCamera;
         [ObservableProperty] private ObservableCollection<CameraViewModel> _cameras = new();
 
@@ -84,13 +92,14 @@ namespace l2l_aggregator.ViewModels
         private readonly INotificationService _notificationService;
         private readonly DatabaseService _databaseService;
         private readonly SessionService _sessionService;
-
-        public SettingsViewModel(DatabaseService DatabaseService, HistoryRouter<ViewModelBase> router, INotificationService notificationService, SessionService sessionService)
+        private readonly IScannerPortResolver _scannerResolver;
+        public SettingsViewModel(DatabaseService databaseService, HistoryRouter<ViewModelBase> router, INotificationService notificationService, SessionService sessionService, IScannerPortResolver scannerResolver)
         {
             _notificationService = notificationService;
-            _databaseService = DatabaseService;
+            _databaseService = databaseService;
             _router = router;
             _sessionService = sessionService;
+            _scannerResolver = scannerResolver;
 
             _ = LoadSettingsAsync();
             LoadCameras();
@@ -144,30 +153,40 @@ namespace l2l_aggregator.ViewModels
             CheckPrinterBeforeAggregation = await _databaseService.Config.GetConfigValueAsync("CheckPrinter") == "True";
             CheckControllerBeforeAggregation = await _databaseService.Config.GetConfigValueAsync("CheckController") == "True";
             CheckScannerBeforeAggregation = await _databaseService.Config.GetConfigValueAsync("CheckScanner") == "True";
+            SelectedScannerModel = await _databaseService.Config.GetConfigValueAsync("ScannerModel");
 
-            _sessionService.PrinterIP = PrinterIP;
-            _sessionService.PrinterModel = SelectedPrinterModel;
-            _sessionService.ControllerIP = ControllerIP;
-            _sessionService.CameraIP = CameraIP;
-            _sessionService.CameraModel = SelectedCameraModel;
-            _sessionService.ScannerPort = ScannerCOMPort;
+            var session = SessionService.Instance;
+            session.PrinterIP = PrinterIP;
+            session.PrinterModel = SelectedPrinterModel;
+            session.ControllerIP = ControllerIP;
+            session.CameraIP = CameraIP;
+            session.CameraModel = SelectedCameraModel;
+            session.ScannerPort = ScannerCOMPort;
             // аналогично можно загрузить другие значения, если потребуется
-            _sessionService.DisableVirtualKeyboard = DisableVirtualKeyboard;
+            session.DisableVirtualKeyboard = DisableVirtualKeyboard;
 
-            _sessionService.CheckCamera = CheckCameraBeforeAggregation;
-            _sessionService.CheckPrinter = CheckPrinterBeforeAggregation;
-            _sessionService.CheckController = CheckControllerBeforeAggregation;
-            _sessionService.CheckScanner = CheckScannerBeforeAggregation;
+            session.CheckCamera = CheckCameraBeforeAggregation;
+            session.CheckPrinter = CheckPrinterBeforeAggregation;
+            session.CheckController = CheckControllerBeforeAggregation;
+            session.CheckScanner = CheckScannerBeforeAggregation;
         }
 
+        //public void LoadAvailableScanners()
+        //{
+        //    string[] ports = SerialPort.GetPortNames();
+        //    foreach (string port in ports)
+        //    {
+        //        ScannerDevice scanerDevice = new ScannerDevice();
+        //        scanerDevice.Id = port;
+        //        AvailableScanners.Add(scanerDevice);
+        //    }
+        //}
         public void LoadAvailableScanners()
         {
-            string[] ports = SerialPort.GetPortNames();
-            foreach (string port in ports)
+            AvailableScanners.Clear();
+            foreach (var port in _scannerResolver.GetHoneywellScannerPorts())
             {
-                ScannerDevice scanerDevice = new ScannerDevice();
-                scanerDevice.Id = port;
-                AvailableScanners.Add(scanerDevice);
+                AvailableScanners.Add(new ScannerDevice { Id = port });
             }
         }
 
@@ -265,8 +284,8 @@ namespace l2l_aggregator.ViewModels
                 await _databaseService.Config.SetConfigValueAsync("ControllerIP", ControllerIP);
                 await _databaseService.Config.SetConfigValueAsync("CheckController", CheckControllerBeforeAggregation.ToString());
 
-                _sessionService.ControllerIP = ControllerIP;
-                _sessionService.CheckController = CheckControllerBeforeAggregation;
+                SessionService.Instance.ControllerIP = ControllerIP;
+                SessionService.Instance.CheckController = CheckControllerBeforeAggregation;
 
                 InfoMessage = "Контроллер успешно сохранён!";
                 _notificationService.ShowMessage(InfoMessage);
@@ -299,9 +318,9 @@ namespace l2l_aggregator.ViewModels
                 await _databaseService.Config.SetConfigValueAsync("CameraModel", camera.SelectedCameraModel);
                 await _databaseService.Config.SetConfigValueAsync("CheckCamera", CheckCameraBeforeAggregation.ToString());
 
-                _sessionService.CameraIP = camera.CameraIP;
-                _sessionService.CameraModel = camera.SelectedCameraModel;
-                _sessionService.CheckCamera = CheckCameraBeforeAggregation;
+                SessionService.Instance.CameraIP = camera.CameraIP;
+                SessionService.Instance.CameraModel = camera.SelectedCameraModel;
+                SessionService.Instance.CheckCamera = CheckCameraBeforeAggregation;
 
                 InfoMessage = $"Камера {camera.CameraIP} сохранена!";
                 _notificationService.ShowMessage(InfoMessage);
@@ -338,21 +357,21 @@ namespace l2l_aggregator.ViewModels
                     device.StartWork();
                     _notificationService.ShowMessage("> Ожидание запуска...");
 
-                    WaitingDeviceStateChange(device, DeviceStatusCode.Run, 10);
+                    DeviceHelper.WaitForState(device, DeviceStatusCode.Run, 10);
                     _notificationService.ShowMessage("> Принтер успешно запущен");
 
                     device.StopWork();
                     _notificationService.ShowMessage("> Ожидание остановки...");
-                    WaitingDeviceStateChange(device, DeviceStatusCode.Ready, 10);
+                    DeviceHelper.WaitForState(device, DeviceStatusCode.Ready, 10);
 
                     // сохраняем в БД
                     await _databaseService.Config.SetConfigValueAsync("PrinterIP", PrinterIP);
                     await _databaseService.Config.SetConfigValueAsync("PrinterModel", SelectedPrinterModel);
                     await _databaseService.Config.SetConfigValueAsync("CheckPrinter", CheckPrinterBeforeAggregation.ToString());
 
-                    _sessionService.PrinterIP = PrinterIP;
-                    _sessionService.PrinterModel = SelectedPrinterModel;
-                    _sessionService.CheckPrinter = CheckPrinterBeforeAggregation;
+                    SessionService.Instance.PrinterIP = PrinterIP;
+                    SessionService.Instance.PrinterModel = SelectedPrinterModel;
+                    SessionService.Instance.CheckPrinter = CheckPrinterBeforeAggregation;
 
                     InfoMessage = "Принтер успешно сохранён и проверен!";
                     _notificationService.ShowMessage(InfoMessage);
@@ -371,26 +390,34 @@ namespace l2l_aggregator.ViewModels
             }
         }
 
-        private void WaitingDeviceStateChange(Device device, DeviceStatusCode state, int timeoutSeconds)
-        {
-            var startTime = DateTime.UtcNow;
-            var timeout = TimeSpan.FromSeconds(timeoutSeconds);
-
-            while (device.Status != state)
-            {
-                if (DateTime.UtcNow - startTime > timeout)
-                {
-                    throw new TimeoutException($"Ожидание состояния {state} превысило {timeoutSeconds} секунд.");
-                }
-
-                Thread.Sleep(100);
-            }
-        }
-
         //Сканер - проверка соединения
         [RelayCommand]
         public async Task TestScannerConnectionAsync()
         {
+            //if (SelectedScanner == null)
+            //{
+            //    InfoMessage = "Сканер не выбран!";
+            //    _notificationService.ShowMessage(InfoMessage);
+            //    return;
+            //}
+
+            //try
+            //{
+            //    await _databaseService.Config.SaveScannerDeviceAsync(SelectedScanner);
+            //    await _databaseService.Config.SetConfigValueAsync("ScannerCOMPort", SelectedScanner.Id);
+            //    await _databaseService.Config.SetConfigValueAsync("CheckScanner", CheckScannerBeforeAggregation.ToString());
+
+            //    SessionService.Instance.ScannerPort = SelectedScanner.Id;
+            //    SessionService.Instance.CheckScanner = CheckScannerBeforeAggregation;
+
+            //    InfoMessage = $"Сканер '{SelectedScanner.Id}' сохранён!";
+            //    _notificationService.ShowMessage(InfoMessage);
+            //}
+            //catch (Exception ex)
+            //{
+            //    InfoMessage = $"Ошибка: {ex.Message}";
+            //    _notificationService.ShowMessage(InfoMessage);
+            //}
             if (SelectedScanner == null)
             {
                 InfoMessage = "Сканер не выбран!";
@@ -400,15 +427,25 @@ namespace l2l_aggregator.ViewModels
 
             try
             {
-                await _databaseService.Config.SaveScannerDeviceAsync(SelectedScanner);
-                await _databaseService.Config.SetConfigValueAsync("ScannerCOMPort", SelectedScanner.Id);
-                await _databaseService.Config.SetConfigValueAsync("CheckScanner", CheckScannerBeforeAggregation.ToString());
+                if (SelectedScannerModel == "Honeywell")
+                {
+                    await _databaseService.Config.SaveScannerDeviceAsync(SelectedScanner);
+                    await _databaseService.Config.SetConfigValueAsync("ScannerCOMPort", SelectedScanner.Id);
+                    await _databaseService.Config.SetConfigValueAsync("ScannerModel", SelectedScannerModel);
+                    await _databaseService.Config.SetConfigValueAsync("CheckScanner", CheckScannerBeforeAggregation.ToString());
 
-                _sessionService.ScannerPort = SelectedScanner.Id;
-                _sessionService.CheckScanner = CheckScannerBeforeAggregation;
+                    SessionService.Instance.ScannerPort = SelectedScanner.Id;
+                    SessionService.Instance.CheckScanner = CheckScannerBeforeAggregation;
+                    SessionService.Instance.ScannerModel = SelectedScannerModel;
 
-                InfoMessage = $"Сканер '{SelectedScanner.Id}' сохранён!";
-                _notificationService.ShowMessage(InfoMessage);
+                    InfoMessage = $"Сканер '{SelectedScanner.Id}' сохранён!";
+                    _notificationService.ShowMessage(InfoMessage);
+                }
+                else
+                {
+                    InfoMessage = $"Модель сканера '{SelectedScannerModel}' пока не поддерживается.";
+                    _notificationService.ShowMessage(InfoMessage);
+                }
             }
             catch (Exception ex)
             {
