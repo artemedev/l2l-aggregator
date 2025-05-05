@@ -4,6 +4,9 @@ namespace l2l_aggregator.Services
 {
     public class SessionService
     {
+        private static SessionService? _instance;
+        public static SessionService Instance => _instance ??= new SessionService();
+        public bool DisableVirtualKeyboard { get; set; }
         public ArmJobRecord? SelectedTask { get; set; }
 
         public ArmJobInfoRecord? SelectedTaskInfo { get; set; }

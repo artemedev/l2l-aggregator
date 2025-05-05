@@ -3,15 +3,18 @@ using Avalonia.Input;
 using l2l_aggregator.Controls.Keyboard.Layout;
 using l2l_aggregator.Controls.Keyboard;
 using System.Timers;
+using l2l_aggregator.ViewModels;
+using l2l_aggregator.Services;
 
 namespace l2l_aggregator.Views
 {
     public partial class MainWindow : Window
     {
+        private MainWindowViewModel _viewModel => this.DataContext as MainWindowViewModel;
         private VirtualKeyboardTextInputMethod virtualKeyboardTextInput = null;
         private bool iskeyboardCooldown;
         private bool iskeyboardCooldownStarted;
-
+        //private bool _isVirtualKeyboardDisabled = true;
         private l2l_aggregator.Controls.Keyboard.VirtualKeyboard keyboard;
 
         private Timer keyboardCoolDown;
@@ -40,14 +43,15 @@ namespace l2l_aggregator.Views
         }
         private void resetCoolDown(object? sender, ElapsedEventArgs e)
         {
-
-
             iskeyboardCooldown = false;
             iskeyboardCooldownStarted = false;
             keyboardCoolDown.Stop();
         }
         private void openVirtualKeyboard(object? sender, GotFocusEventArgs e)
         {
+            if (SessionService.Instance.DisableVirtualKeyboard)
+                return;
+
             if (iskeyboardCooldown && !iskeyboardCooldownStarted)
             {
                 iskeyboardCooldownStarted = true;

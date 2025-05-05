@@ -3,7 +3,7 @@ using DM_process_NS;
 using DM_wraper_NS;
 using l2l_aggregator.Models;
 using l2l_aggregator.ViewModels;
-using l2l_aggregator.ViewModels.DOP;
+using l2l_aggregator.ViewModels.VisualElements;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using System;

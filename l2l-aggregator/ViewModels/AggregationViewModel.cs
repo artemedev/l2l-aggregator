@@ -14,7 +14,7 @@ using l2l_aggregator.Services.Api;
 using l2l_aggregator.Services.Database;
 using l2l_aggregator.Services.DmProcessing;
 using l2l_aggregator.Services.Notification.Interface;
-using l2l_aggregator.ViewModels.DOP;
+using l2l_aggregator.ViewModels.VisualElements;
 using MD.Devices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -442,6 +442,8 @@ namespace l2l_aggregator.ViewModels
                     {
                         // Совпадение найдено
                         InfoMessage = $"Короб с ШК {barcode} успешно найден!";
+                        _notificationService.ShowMessage(InfoMessage);
+
                         var currentLayer = AggregatedItems.FirstOrDefault(x => x.Type == "Коробка" && !x.IsCompleted);
                         if (currentLayer != null)
                         {

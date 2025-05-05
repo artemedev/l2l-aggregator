@@ -5,6 +5,8 @@ using l2l_aggregator.Models;
 using l2l_aggregator.Services;
 using l2l_aggregator.Services.Api;
 using l2l_aggregator.Services.Database;
+using l2l_aggregator.Services.Notification;
+using l2l_aggregator.Services.Notification.Interface;
 using Refit;
 using System;
 using System.Diagnostics;
@@ -26,13 +28,16 @@ namespace l2l_aggregator.ViewModels
         private readonly HistoryRouter<ViewModelBase> _router;
         private readonly SessionService _sessionService;
         private readonly DataApiService _dataApiService;
+        private readonly INotificationService _notificationService;
 
-        public TaskDetailsViewModel(HistoryRouter<ViewModelBase> router, DatabaseService databaseService, SessionService sessionService, DataApiService dataApiService)
+        public TaskDetailsViewModel(HistoryRouter<ViewModelBase> router, DatabaseService databaseService, SessionService sessionService, DataApiService dataApiService, INotificationService notificationService)
         {
             _dataApiService = dataApiService;
             _databaseService = databaseService;
             _router = router;
             _sessionService = sessionService;
+            _notificationService = notificationService;
+
             //Task = _sessionService.SelectedTask;
             LoadTaskAsync(_sessionService.SelectedTask.DOCID);
         }
@@ -44,6 +49,8 @@ namespace l2l_aggregator.ViewModels
                 if (string.IsNullOrWhiteSpace(serverUri))
                 {
                     InfoMessage = "Сервер не настроен!";
+                    _notificationService.ShowMessage(InfoMessage);
+
                     return;
                 }
                 //HttpClientHandler httpClientHandler = new HttpClientHandler();
@@ -68,6 +75,8 @@ namespace l2l_aggregator.ViewModels
             catch (Exception ex)
             {
                 InfoMessage = $"Ошибка: {ex.Message}";
+                _notificationService.ShowMessage(InfoMessage);
+
             }
         }
 

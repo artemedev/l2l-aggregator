@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace l2l_aggregator.ViewModels.DOP
+namespace l2l_aggregator.ViewModels.VisualElements
 {
     public partial class SquareCellViewModel : ObservableObject
     {

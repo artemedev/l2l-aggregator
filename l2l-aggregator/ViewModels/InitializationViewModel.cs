@@ -5,6 +5,7 @@ using l2l_aggregator.Models;
 using l2l_aggregator.Services.Api;
 using l2l_aggregator.Services.Database;
 using l2l_aggregator.Services.Database.Interfaces;
+using l2l_aggregator.Services.Notification.Interface;
 using Refit;
 using System;
 using System.Net.Http;
@@ -24,9 +25,11 @@ namespace l2l_aggregator.ViewModels
         private readonly HistoryRouter<ViewModelBase> _router;
         private readonly DatabaseService _databaseService;
         private readonly DataApiService _dataApiService;
+        private readonly INotificationService _notificationService;
 
-        public InitializationViewModel(DatabaseService databaseService, HistoryRouter<ViewModelBase> router, DataApiService dataApiService)
+        public InitializationViewModel(DatabaseService databaseService, HistoryRouter<ViewModelBase> router, DataApiService dataApiService, INotificationService notificationService)
         {
+            _notificationService = notificationService;
             _databaseService = databaseService;
             _router = router;
             _dataApiService = dataApiService;
@@ -39,6 +42,8 @@ namespace l2l_aggregator.ViewModels
             if (string.IsNullOrWhiteSpace(ServerUri))
             {
                 InfoMessage = "Введите адрес сервера!";
+                _notificationService.ShowMessage(InfoMessage);
+
                 return;
             }
 
@@ -78,11 +83,15 @@ namespace l2l_aggregator.ViewModels
                 await _databaseService.Config.SetConfigValueAsync("ServerUri", ServerUri);
 
                 InfoMessage = "Сервер проверен, переходим к авторизации...";
+                _notificationService.ShowMessage(InfoMessage);
+
                 _router.GoTo<AuthViewModel>();
             }
             catch (ApiException apiEx)
             {
                 InfoMessage = $"Ошибка при запросе: {apiEx.StatusCode}";
+                _notificationService.ShowMessage(InfoMessage);
+
             }
         }
     }

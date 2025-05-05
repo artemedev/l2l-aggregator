@@ -10,13 +10,15 @@ using System.Threading.Tasks;
 using System;
 using System.IO.Ports;
 using l2l_aggregator.Services.Database;
-using l2l_aggregator.ViewModels.DOP;
+using l2l_aggregator.ViewModels.VisualElements;
+using l2l_aggregator.Services.Notification.Interface;
+using l2l_aggregator.Services;
+using l2l_aggregator.Services.Notification;
 
 namespace l2l_aggregator.ViewModels
 {
     public partial class SettingsViewModel : ViewModelBase
     {
-        private readonly DatabaseService _databaseService;
 
         [ObservableProperty]
         private string _serverUri;
@@ -46,8 +48,10 @@ namespace l2l_aggregator.ViewModels
 
         [ObservableProperty]
         private string _infoMessage;
-        private readonly HistoryRouter<ViewModelBase> _router;
 
+
+        [ObservableProperty]
+        private bool _disableVirtualKeyboard;
 
 
 
@@ -73,8 +77,12 @@ namespace l2l_aggregator.ViewModels
 
         [ObservableProperty] private ScannerDevice _selectedScanner;
 
-        public SettingsViewModel(DatabaseService DatabaseService, HistoryRouter<ViewModelBase> router)
+        private readonly HistoryRouter<ViewModelBase> _router;
+        private readonly INotificationService _notificationService;
+        private readonly DatabaseService _databaseService;
+        public SettingsViewModel(DatabaseService DatabaseService, HistoryRouter<ViewModelBase> router, INotificationService notificationService)
         {
+            _notificationService = notificationService;
             _databaseService = DatabaseService;
             _router = router;
             _ = LoadSettingsAsync();
@@ -86,11 +94,21 @@ namespace l2l_aggregator.ViewModels
                 AddCamera();
             }
         }
+        [RelayCommand]
+        private async Task ToggleDisableVirtualKeyboardAsync()
+        {
+            await _databaseService.Config.SetConfigValueAsync("DisableVirtualKeyboard", DisableVirtualKeyboard.ToString());
+            SessionService.Instance.DisableVirtualKeyboard = DisableVirtualKeyboard;
+            InfoMessage = "Настройка клавиатуры сохранена.";
+            _notificationService.ShowMessage(InfoMessage);
+        }
 
         private async Task LoadSettingsAsync()
         {
             ServerUri = await _databaseService.Config.GetConfigValueAsync("ServerUri");
             // аналогично можно загрузить другие значения, если потребуется
+            DisableVirtualKeyboard = bool.TryParse(await _databaseService.Config.GetConfigValueAsync("DisableVirtualKeyboard"), out var parsed) && parsed;
+            SessionService.Instance.DisableVirtualKeyboard = DisableVirtualKeyboard;
         }
 
         public void LoadAvailableScanners()
@@ -131,6 +149,7 @@ namespace l2l_aggregator.ViewModels
             else
             {
                 InfoMessage = "Как минимум одна камера должна быть настроена";
+                _notificationService.ShowMessage(InfoMessage);
             }
         }
 
@@ -140,6 +159,7 @@ namespace l2l_aggregator.ViewModels
             if (string.IsNullOrWhiteSpace(camera.CameraIP))
             {
                 InfoMessage = "Введите IP адрес камеры!";
+                _notificationService.ShowMessage(InfoMessage);
                 return;
             }
 
@@ -151,11 +171,15 @@ namespace l2l_aggregator.ViewModels
 
                 camera.IsConnected = true;
                 InfoMessage = $"Соединение с камерой {camera.CameraIP} установлено!";
+                _notificationService.ShowMessage(InfoMessage);
+
             }
             catch (Exception ex)
             {
                 camera.IsConnected = false;
                 InfoMessage = $"Ошибка соединения с камерой: {ex.Message}";
+                _notificationService.ShowMessage(InfoMessage);
+
             }
         }
 
@@ -175,11 +199,15 @@ namespace l2l_aggregator.ViewModels
                     _databaseService.Config.SetConfigValueAsync("ServerUri", ServerUri);
 
                     InfoMessage = "URI успешно сохранён!";
+                    _notificationService.ShowMessage(InfoMessage);
+
                     //_router.GoTo<AuthViewModel>();
                 }
                 catch (Exception ex)
                 {
                     InfoMessage = $"Ошибка: {ex.Message}";
+                    _notificationService.ShowMessage($"Ошибка: {ex.Message}");
+
                 }
             }
 
@@ -201,6 +229,8 @@ namespace l2l_aggregator.ViewModels
             if (SelectedScanner == null)
             {
                 InfoMessage = "Сканер не выбран!";
+                _notificationService.ShowMessage(InfoMessage);
+
                 return;
             }
 
@@ -210,10 +240,15 @@ namespace l2l_aggregator.ViewModels
                  _databaseService.Config.SaveScannerDeviceAsync(SelectedScanner);
 
                 InfoMessage = $"Сканер '{SelectedScanner.Id}' успешно сохранён!";
+                _notificationService.ShowMessage(InfoMessage);
+
             }
             catch (Exception ex)
             {
+
                 InfoMessage = $"Ошибка подключения: {ex.Message}";
+                _notificationService.ShowMessage(InfoMessage);
+
             }
         }
 
@@ -222,7 +257,7 @@ namespace l2l_aggregator.ViewModels
         private void TestControllerConnection() { /* ... */ }
 
         [RelayCommand]
-        private void SaveSettings()
+        private async void SaveSettings()
         {
             // Save all camera settings to DatabaseService
             // For each camera in Cameras collection
@@ -230,8 +265,11 @@ namespace l2l_aggregator.ViewModels
             {
                 // _databaseService.SaveCameraSettings(camera.Id, camera.CameraIP, camera.SelectedCameraModel);
             }
+            await _databaseService.Config.SetConfigValueAsync("DisableVirtualKeyboard", DisableVirtualKeyboard.ToString());
 
             InfoMessage = "Настройки успешно сохранены!";
+            _notificationService.ShowMessage(InfoMessage);
+
         }
 
 

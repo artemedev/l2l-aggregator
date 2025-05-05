@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 
-namespace l2l_aggregator.ViewModels.DOP
+namespace l2l_aggregator.ViewModels.VisualElements
 {
     public partial class AggregatedItem : ObservableObject
     {

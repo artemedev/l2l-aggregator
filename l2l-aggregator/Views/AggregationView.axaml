@@ -5,7 +5,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 x:CompileBindings="True"
 			 xmlns:vm="using:l2l_aggregator.ViewModels"
-			 xmlns:vmDOP="using:l2l_aggregator.ViewModels.DOP"
+			 xmlns:vmVE="using:l2l_aggregator.ViewModels.VisualElements"
 			 x:DataType="vm:AggregationViewModel"
              x:Class="l2l_aggregator.Views.AggregationView">
 	<DockPanel>
@@ -43,7 +43,7 @@
 									</DataTemplate>
 								</ItemsControl.ItemTemplate>
 								<ItemsControl.Styles>
-									<Style Selector="ContentPresenter" x:DataType="vmDOP:DmCellViewModel">
+									<Style Selector="ContentPresenter" x:DataType="vmVE:DmCellViewModel">
 										<Setter Property="Canvas.Left">
 											<Setter.Value>
 												<MultiBinding Converter="{StaticResource CenterToLeftConverter}">
@@ -182,7 +182,7 @@
 							</DataTemplate>
 						</ItemsControl.ItemTemplate>
 						<ItemsControl.Styles>
-							<Style Selector="ContentPresenter" x:DataType="vmDOP:SquareCellViewModel">
+							<Style Selector="ContentPresenter" x:DataType="vmVE:SquareCellViewModel">
 								<Setter Property="Canvas.Left" Value="{Binding X}"/>
 								<Setter Property="Canvas.Top" Value="{Binding Y}"/>
 								<Setter Property="Height" Value="{Binding SizeHeight}"/>

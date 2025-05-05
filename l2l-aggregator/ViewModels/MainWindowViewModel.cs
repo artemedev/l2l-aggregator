@@ -2,6 +2,7 @@
 using Avalonia.SimpleRouter;
 using CommunityToolkit.Mvvm.ComponentModel;
 using l2l_aggregator.Models;
+using l2l_aggregator.Services;
 using l2l_aggregator.Services.Api;
 using l2l_aggregator.Services.Database;
 using l2l_aggregator.Services.Database.Interfaces;
@@ -27,17 +28,21 @@ namespace l2l_aggregator.ViewModels
         [ObservableProperty]
         private UserAuthResponse? _user;
 
+        [ObservableProperty]
+        private bool _disableVirtualKeyboard;
+
         private readonly DatabaseService _databaseService;
         private readonly HistoryRouter<ViewModelBase> _router;
         private readonly INotificationService _notificationService;
-
+        private readonly SessionService _sessionService;
         public INotificationMessageManager Manager => _notificationService.Manager;
 
-        public MainWindowViewModel(HistoryRouter<ViewModelBase> router, DatabaseService databaseService, INotificationService notificationService)
+        public MainWindowViewModel(HistoryRouter<ViewModelBase> router, DatabaseService databaseService, INotificationService notificationService, SessionService sessionService)
         {
             _router = router;
             _databaseService = databaseService;
             _notificationService = notificationService;
+            _sessionService = sessionService;
 
             router.CurrentViewModelChanged += async viewModel =>
             {
@@ -53,7 +58,19 @@ namespace l2l_aggregator.ViewModels
         private async void InitializeAsync()
         {
             var serverUri = await _databaseService.Config.GetConfigValueAsync("ServerUri");
+            var disableVirtualKeyboard = await _databaseService.Config.GetConfigValueAsync("DisableVirtualKeyboard");
+            //var isVirtualKeyboardDisabled = bool.TryParse(disableVirtualKeyboard, out var vkParsed) && vkParsed;
 
+            if (string.IsNullOrEmpty(disableVirtualKeyboard))
+            {
+                // Показать клавиатуру, если это необходимо
+                await _databaseService.Config.SetConfigValueAsync("DisableVirtualKeyboard", "true");
+                SessionService.Instance.DisableVirtualKeyboard = true;
+            }
+            else
+            {
+                SessionService.Instance.DisableVirtualKeyboard = bool.TryParse(disableVirtualKeyboard, out var parsed) && parsed;
+            }
             if (!string.IsNullOrEmpty(serverUri))
             {
                 //var client = await _apiClientFactory.CreateClientAsync<ITaskApi>(true);

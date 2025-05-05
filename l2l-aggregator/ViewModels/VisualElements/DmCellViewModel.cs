@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using l2l_aggregator.ViewModels;
 using System.Collections.ObjectModel;
 
-namespace l2l_aggregator.ViewModels.DOP
+namespace l2l_aggregator.ViewModels.VisualElements
 {
     public partial class DmCellViewModel : ObservableObject
     {
