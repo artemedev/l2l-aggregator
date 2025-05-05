@@ -318,31 +318,38 @@ namespace l2l_aggregator.ViewModels
             //}
             //report.RegisterData(new List<MyLabelData> { BuildLabelData() }, "LabelData");
             //report.GetDataSource("LabelData").Enabled = true;
-
-            PrintReportToNetworkPrinter(report);
+            if (_sessionService.PrinterModel == "Zebra")
+            {
+                PrintReportToNetworkPrinter(report);
+            }
+            else
+            {
+                _notificationService.ShowMessage($"Модель принтера '{_sessionService.PrinterModel}' не поддерживается.");
+                return;
+            }
         }
 
         [RelayCommand]
         public void CompleteAggregation()
         { }
 
-        /// <summary>
-        /// Конфигурация принтера
-        /// </summary>
-        private IConfiguration config
-        {
-            get
-            {
+        ///// <summary>
+        ///// Конфигурация принтера
+        ///// </summary>
+        //private IConfiguration config
+        //{
+        //    get
+        //    {
 
-                var configBuilder = new ConfigurationBuilder();
-                var baseDir = AppContext.BaseDirectory;
-                var basePath = Directory.GetParent(baseDir)!.Parent!.Parent!.Parent!.FullName;
-                var relativePath = Path.Combine(basePath, "Config", "ConfigCameraTcp.json");
-                configBuilder.AddJsonFile(relativePath);
-                //configBuilder.AddJsonFile("D:/MedtechtdApp/MedtechtdApp/Config/ConfigCameraTcp.json");
-                return configBuilder.Build();
-            }
-        }
+        //        var configBuilder = new ConfigurationBuilder();
+        //        var baseDir = AppContext.BaseDirectory;
+        //        var basePath = Directory.GetParent(baseDir)!.Parent!.Parent!.Parent!.FullName;
+        //        var relativePath = Path.Combine(basePath, "Config", "ConfigCameraTcp.json");
+        //        configBuilder.AddJsonFile(relativePath);
+        //        //configBuilder.AddJsonFile("D:/MedtechtdApp/MedtechtdApp/Config/ConfigCameraTcp.json");
+        //        return configBuilder.Build();
+        //    }
+        //}
         public void PrintReportToNetworkPrinter(Report report)
         {
             exporter = new FastReport.Export.Zpl.ZplExport();
@@ -353,14 +360,14 @@ namespace l2l_aggregator.ViewModels
 
             // Получаем байты
             byte[] zplBytes = exportStream.ToArray();
-
+            var config = PrinterConfigBuilder.Build(_sessionService.PrinterIP);
             // Создаем и настраиваем устройство
             var device = new PrinterTCP("TestCamera", logger);
             device.Configure(config);
             device.StartWork();
             _notificationService.ShowMessage("> Ожидание запуска...");
 
-            WaitingDeviceStateChange(device, DeviceStatusCode.Run, 10);
+            DeviceHelper.WaitForState(device, DeviceStatusCode.Run, 10);
             _notificationService.ShowMessage("> Устройство запущено");
 
             // Отправляем экспортированный ZPL отчет на принтер
@@ -370,7 +377,7 @@ namespace l2l_aggregator.ViewModels
 
             device.StopWork();
             _notificationService.ShowMessage("> Ожидание остановки...");
-            WaitingDeviceStateChange(device, DeviceStatusCode.Ready, 10);
+            DeviceHelper.WaitForState(device, DeviceStatusCode.Ready, 10);
             _notificationService.ShowMessage("> Работа с устройством остановлена ");
 
             _notificationService.ShowMessage("> Ждем остановки worker 2 сек...");
@@ -380,29 +387,29 @@ namespace l2l_aggregator.ViewModels
             _notificationService.ShowMessage("> Тест завершен");
         }
 
-        /// <summary>
-        /// Ожидание изменения состояния устройства.
-        /// Если время ожидания истекло, то тест завершается с ошибкой̆
-        /// </summary>
-        /// <param name="device">Экземпляр устройства</param>
-        /// <param name="state">Желаемое состояние устройства</param>
-        /// <param name="timeout">Время ожидания состояния устройства (в секундах)</param>
-        private void WaitingDeviceStateChange(Device device, DeviceStatusCode state, int timeout)
-        {
-            var startTime = DateTime.UtcNow;
-            var timeSpan = TimeSpan.FromSeconds(timeout);
+        ///// <summary>
+        ///// Ожидание изменения состояния устройства.
+        ///// Если время ожидания истекло, то тест завершается с ошибкой̆
+        ///// </summary>
+        ///// <param name="device">Экземпляр устройства</param>
+        ///// <param name="state">Желаемое состояние устройства</param>
+        ///// <param name="timeout">Время ожидания состояния устройства (в секундах)</param>
+        //private void WaitingDeviceStateChange(Device device, DeviceStatusCode state, int timeout)
+        //{
+        //    var startTime = DateTime.UtcNow;
+        //    var timeSpan = TimeSpan.FromSeconds(timeout);
 
-            while (device.Status != state)
-            {
-                if (DateTime.UtcNow - startTime > timeSpan)
-                {
-                    _notificationService.ShowMessage("> Время ожидания изменения состояния устройства истекло.");
-                    Assert.True(false);
-                }
-                Thread.Sleep(100);
-            }
+        //    while (device.Status != state)
+        //    {
+        //        if (DateTime.UtcNow - startTime > timeSpan)
+        //        {
+        //            _notificationService.ShowMessage("> Время ожидания изменения состояния устройства истекло.");
+        //            Assert.True(false);
+        //        }
+        //        Thread.Sleep(100);
+        //    }
 
-        }
+        //}
 
         public string GenerateTemplate()
         {
