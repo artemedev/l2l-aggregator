@@ -13,7 +13,7 @@
 			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
-		<Grid Grid.Column="1">
+		<Grid Grid.Column="1" >
 			<Viewbox Stretch="Uniform">
 				<Grid>
 					<Grid.RowDefinitions>

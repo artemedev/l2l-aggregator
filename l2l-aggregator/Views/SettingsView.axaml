@@ -2,229 +2,210 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="1450"
+             mc:Ignorable="d" d:DesignWidth="1800" d:DesignHeight="1450"
 			 x:CompileBindings="True"
 			 xmlns:vm="using:l2l_aggregator.ViewModels"
 			 xmlns:vmVE="using:l2l_aggregator.ViewModels.VisualElements"
 			 x:DataType="vm:SettingsViewModel"
              x:Class="l2l_aggregator.Views.SettingsView">
-	<Grid Margin="20" x:Name="Root">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="Auto"/>
-		</Grid.RowDefinitions>
-
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*"/>
-		</Grid.ColumnDefinitions>
-
-		<!-- Заголовок на всю ширину -->
-		<TextBlock Grid.Row="0"
-                   Text="Настройки"
-                   FontSize="16"
-                   FontWeight="Bold" />
-		<Grid Grid.Row="1">
+		<Grid Margin="20" x:Name="Root">
 			<Grid.RowDefinitions>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
-			<StackPanel Spacing="5"  Grid.Row="0">
-				<!-- Подпись "Адрес сервера:" в первой колонке, строка 1 -->
-				<TextBlock Text="Адрес сервера" />
-				<!-- TextBox во второй колонке, строка 1, растягивается по горизонтали -->
-				<TextBox Text="{Binding ServerUri, Mode=TwoWay}"
-						 HorizontalAlignment="Stretch"
-						 VerticalAlignment="Center"
-						 Watermark="IP адрес сервера"/>
-				<!-- Кнопка на третьей строке, занимает две колонки -->
-				<Button Content="Проверить и Сохранить"
-						Command="{Binding CheckAndSaveUriCommand}"
-						HorizontalAlignment="Left" />
-			</StackPanel>
 
-			<StackPanel Spacing="5" Grid.Row="2">
-				<Label Classes="h2"
-					   Content="Контроллер"/>
-				<TextBox Text="{Binding ControllerIP}"
-						 Watermark="IP адрес контроллера" />
-				<Button Command="{Binding TestControllerConnectionCommand}"
-						Content="Проверить и Сохранить" />
-				<CheckBox Content="Проверять перед агрегацией"
-						  IsChecked="{Binding CheckControllerBeforeAggregation, Mode=TwoWay}"
-						  Margin="0,5,0,0"/>
-			</StackPanel>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
 
-			<!--<StackPanel Spacing="5" Grid.Row="3">
-				<Label Classes="h2" Content="Камеры" />
+			<!-- Заголовок на всю ширину -->
+			<TextBlock Grid.Row="0"
+					   Grid.Column="1"
+					   Text="Настройки"
+					   FontWeight="SemiBold"
+					   FontSize="20" />
+			<ScrollViewer  VerticalScrollBarVisibility="Auto">
+				<Grid Grid.Row="1" Grid.Column="1">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+				</Grid.RowDefinitions>
+				<Border Margin="0,5,0,10"
+						BorderBrush="LightGray"
+						BorderThickness="1"
+						CornerRadius="4"
+						Padding="10" Grid.Row="0">
+					<StackPanel Spacing="5" >
+						<!-- Подпись "Адрес сервера:" в первой колонке, строка 1 -->
+						<TextBlock Text="Адрес сервера"
+								   FontWeight="SemiBold"/>
+						<!-- TextBox во второй колонке, строка 1, растягивается по горизонтали -->
+						<TextBox Text="{Binding ServerUri, Mode=TwoWay}"
+								 HorizontalAlignment="Stretch"
+								 VerticalAlignment="Center"
+								 Watermark="IP адрес сервера"/>
+						<!-- Кнопка на третьей строке, занимает две колонки -->
+						<Button Content="Проверить и Сохранить"
+								Command="{Binding CheckAndSaveUriCommand}"
+								HorizontalAlignment="Left" />
+					</StackPanel>
+				</Border>
 
-				<ItemsControl ItemsSource="{Binding Cameras}">
-					<ItemsControl.ItemTemplate>
-						<DataTemplate>
-							<StackPanel Spacing="5" Margin="0 10 0 10">
-								<TextBox Text="{Binding CameraIP}" Watermark="IP адрес камеры" />
-								<ComboBox ItemsSource="{Binding CameraModels, DataType={x:Type vm:SettingsViewModel}}" SelectedItem="{Binding SelectedCameraModel}" /> -->
-			<!-- Можно добавить кнопку "Проверить", если нужно -->
-			<!--	</StackPanel>
-						</DataTemplate>
-					</ItemsControl.ItemTemplate>
-				</ItemsControl>-->
-
-			<!-- Кнопка добавления новой камеры -->
-			<!--<Button Content="Добавить камеру"
-						Command="{Binding AddCameraCommand}"
-						HorizontalAlignment="Left"
-						Margin="0,10,0,0"/>
-			</StackPanel>
-			-->
-			<!-- Cameras section -->
-			<Border Margin="0,5,0,10"
-					BorderBrush="LightGray"
-					BorderThickness="1"
-					CornerRadius="4"
-					Padding="10" Grid.Row="3">
-				<StackPanel  Margin="0,0,0,15">
-
-					<Grid>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="*"/>
-							<ColumnDefinition Width="Auto"/>
-						</Grid.ColumnDefinitions>
+				<Border Margin="0,5,0,10"
+						BorderBrush="LightGray"
+						BorderThickness="1"
+						CornerRadius="4"
+						Padding="10" Grid.Row="1">
+					<StackPanel Spacing="5" Grid.Row="2">
 						<Label Classes="h2"
-							   Content="Камеры"
-							   FontWeight="Bold" IsEnabled="False" Opacity="0"/>
-						<Button Grid.Column="1"
-								Content="Добавить камеру"
-								Command="{Binding AddCameraCommand}" IsEnabled="False" Opacity="0"/>
-					</Grid>
+							   Content="Контроллер"
+							   FontWeight="SemiBold"/>
+						<TextBox Text="{Binding ControllerIP}"
+								 Watermark="IP адрес контроллера" />
+						<Button Command="{Binding TestControllerConnectionCommand}"
+								Content="Проверить и Сохранить" />
+						<CheckBox Content="Проверять перед агрегацией"
+								  IsChecked="{Binding CheckControllerBeforeAggregation, Mode=TwoWay}"
+								  Margin="0,5,0,0"/>
+					</StackPanel>
+				</Border>
 
-					<ItemsControl ItemsSource="{Binding Cameras}">
-						<ItemsControl.ItemTemplate>
-							<DataTemplate x:DataType="vmVE:CameraViewModel">
-								<Border Margin="0,5,0,10"
-										BorderBrush="LightGray"
-										BorderThickness="1"
-										CornerRadius="4"
-										Padding="10">
+				<Border Margin="0,5,0,10"
+						BorderBrush="LightGray"
+						BorderThickness="1"
+						CornerRadius="4"
+						Padding="10" Grid.Row="2">
+					<StackPanel  Margin="0,0,0,15">
+						<ItemsControl ItemsSource="{Binding Cameras}">
+							<ItemsControl.ItemTemplate>
+								<DataTemplate x:DataType="vmVE:CameraViewModel">
 									<Grid>
 										<Grid.ColumnDefinitions>
 											<ColumnDefinition Width="*"/>
 											<ColumnDefinition Width="Auto"/>
 										</Grid.ColumnDefinitions>
 										<StackPanel Spacing="5">
-											<Grid>
-												<Grid.ColumnDefinitions>
-													<ColumnDefinition Width="*"/>
-													<ColumnDefinition Width="Auto"/>
-												</Grid.ColumnDefinitions>
-												<TextBlock Text="Камера" FontWeight="SemiBold"/>
-												<Ellipse Grid.Column="1"
-														 Width="12"
-														 Height="12"
-														 Fill="{Binding IsConnected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='Green,Red'}"/>
-											</Grid>
+											<TextBlock Text="Камера" FontWeight="SemiBold"/>
 											<TextBox Text="{Binding CameraIP}"
 													 Watermark="IP адрес камеры" />
 											<ComboBox ItemsSource="{Binding #Root.((vm:SettingsViewModel)DataContext).CameraModels}"
 													  SelectedItem="{Binding SelectedCameraModel}"
-													  Width="200"
-													  HorizontalAlignment="Left"/>
-											<Button Command="{Binding #Root.((vm:SettingsViewModel)DataContext).TestCameraConnectionAsync}"
-													CommandParameter="{Binding .}"
-													Content="Проверить соединение" />
+													  HorizontalAlignment="Stretch"/>
+											<Grid>
+												<Grid.ColumnDefinitions>
+													<ColumnDefinition Width="Auto"/>
+													<ColumnDefinition Width="Auto"/>
+													<ColumnDefinition Width="*"/>
+												</Grid.ColumnDefinitions>
+												<Button Grid.Column="0"
+														Command="{Binding #Root.((vm:SettingsViewModel)DataContext).TestCameraConnectionAsync}"
+														CommandParameter="{Binding .}"
+														Content="Проверить соединение" />
+												<Ellipse Grid.Column="1"
+															 Width="12"
+															 Height="12"
+															 Fill="{Binding IsConnected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='Green,Red'}"/>
+												<Button Grid.Column="2"
+														Content="Настроить"
+														Command="{Binding #Root.((vm:SettingsViewModel)DataContext).OpenCameraSettingsCommand}"
+														IsEnabled="{Binding IsConnected}"
+														Margin="0,5,0,0"
+														HorizontalAlignment="Right"/>
+											</Grid>
+
 											<CheckBox Content="Проверять перед агрегацией"
 													  IsChecked="{Binding #Root.((vm:SettingsViewModel)DataContext).CheckCameraBeforeAggregation, Mode=TwoWay}"
 													  Margin="0,5,0,0"/>
 										</StackPanel>
-										<Grid Grid.Column="1" ShowGridLines="True">
-											<Grid.RowDefinitions>
-												<RowDefinition/>
-												<RowDefinition/>
-											</Grid.RowDefinitions>
-											<Button Grid.Row="0"
-											
-													Command="{Binding #Root.((vm:SettingsViewModel)DataContext).RemoveCameraCommand}"
-													CommandParameter="{Binding .}"
-													Content="Удалить"  Opacity="0"/>
-											<Button Grid.Row="2"
-													Content="Настроить"
-													Command="{Binding #Root.((vm:SettingsViewModel)DataContext).OpenCameraSettingsCommand}"
-													IsEnabled="{Binding IsConnected}"
-													Margin="0,5,0,0"/>
-										</Grid>
 									</Grid>
-								</Border>
-							</DataTemplate>
-						</ItemsControl.ItemTemplate>
-					</ItemsControl>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+						</ItemsControl>
 
-				</StackPanel>
-			</Border>
-			<StackPanel Spacing="5"  Grid.Row="4">
-				<Label Classes="h2"
-					   Content="Принтер"/>
-				<TextBox Text="{Binding PrinterIP}"
-						 Watermark="IP адрес принтера" />
-				<ComboBox ItemsSource="{Binding PrinterModels}"
-						  SelectedItem="{Binding SelectedPrinterModel}" />
-				<Button Command="{Binding TestPrinterConnectionCommand}"
-						Content="Проверить и Сохранить" />
-				<CheckBox Content="Проверять перед агрегацией" 
-						  IsChecked="{Binding CheckPrinterBeforeAggregation, Mode=TwoWay}"
-						  Margin="0,5,0,0"/>
-			</StackPanel>
+					</StackPanel>
+				</Border>
 
-			<!--<StackPanel Spacing="5"  Grid.Row="5">
-				<Label Classes="h2"
-					   Content="Сканер"/>
-				<TextBox Text="{Binding ScannerCOMPort}"
-						 Watermark="COM Port сканера" />
-				<ComboBox ItemsSource="{Binding ScannerModels}"
-						  SelectedItem="{Binding SelectedScannerModel}" />
-				<Button Command="{Binding TestScannerConnectionCommand}"
-						Content="Проверить и Сохранить" />
-			</StackPanel>-->
-			<StackPanel Spacing="5" Grid.Row="5">
-				<Label Classes="h2" Content="Сканер"/>
-				<ComboBox ItemsSource="{Binding AvailableScanners}"
-						  SelectedItem="{Binding SelectedScanner}"
-						  HorizontalAlignment="Stretch">
-					<ComboBox.ItemTemplate>
-						<DataTemplate>
-							<TextBlock Text="{Binding Id}" />
-						</DataTemplate>
-					</ComboBox.ItemTemplate>
-				</ComboBox>
-				<Button Command="{Binding TestScannerConnectionCommand}"
-						Content="Проверить и Сохранить" />
-				<ComboBox ItemsSource="{Binding ScannerModels}"
-						  SelectedItem="{Binding SelectedScannerModel}"
-						  HorizontalAlignment="Stretch"
-						  Margin="0,5,0,0" />
-				<CheckBox Content="Проверять перед агрегацией"
-						  IsChecked="{Binding CheckScannerBeforeAggregation, Mode=TwoWay}"
-						  Margin="0,5,0,0"/>
-			</StackPanel>
+				<Border Margin="0,5,0,10"
+						BorderBrush="LightGray"
+						BorderThickness="1"
+						CornerRadius="4"
+						Padding="10" Grid.Row="3">
+					<StackPanel Spacing="5">
+						<Label Classes="h2"
+							   Content="Принтер"
+							   FontWeight="SemiBold"/>
+						<TextBox Text="{Binding PrinterIP}"
+								 Watermark="IP адрес принтера" />
+						<ComboBox ItemsSource="{Binding PrinterModels}"
+								  SelectedItem="{Binding SelectedPrinterModel}"
+								  HorizontalAlignment="Stretch"/>
+						<Button Command="{Binding TestPrinterConnectionCommand}"
+								Content="Проверить и Сохранить" />
+						<CheckBox Content="Проверять перед агрегацией"
+								  IsChecked="{Binding CheckPrinterBeforeAggregation, Mode=TwoWay}"
+								  Margin="0,5,0,0"/>
+					</StackPanel>
+				</Border>
 
-			<StackPanel Spacing="5" Grid.Row="6">
-				<CheckBox Content="Отключить экранную клавиатуру"
-						  IsChecked="{Binding DisableVirtualKeyboard, Mode=TwoWay}"
-						  Command="{Binding ToggleDisableVirtualKeyboardCommand}"
-						  HorizontalAlignment="Left"
-						  Margin="0,10,0,0"/>
-			</StackPanel>
+				<Border Margin="0,5,0,10"
+									BorderBrush="LightGray"
+									BorderThickness="1"
+									CornerRadius="4"
+									Padding="10" Grid.Row="4">
+					<StackPanel Spacing="5">
+						<Label Classes="h2"
+							   Content="Сканер"
+							   FontWeight="SemiBold"/>
+						<ComboBox ItemsSource="{Binding AvailableScanners}"
+								  SelectedItem="{Binding SelectedScanner}"
+								  HorizontalAlignment="Stretch">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding Id}" />
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
+						<ComboBox ItemsSource="{Binding ScannerModels}"
+								  SelectedItem="{Binding SelectedScannerModel}"
+								  HorizontalAlignment="Stretch"
+								  Margin="0,5,0,0" />
+						<Button Command="{Binding TestScannerConnectionCommand}"
+								Content="Проверить и Сохранить" />
+						<CheckBox Content="Проверять перед агрегацией"
+								  IsChecked="{Binding CheckScannerBeforeAggregation, Mode=TwoWay}"
+								  Margin="0,5,0,0"/>
+					</StackPanel>
+				</Border>
 
-			<!-- Информационное сообщение на четвёртой строке, также на две колонки -->
+				<Border Margin="0,5,0,10"
+						BorderBrush="LightGray"
+						BorderThickness="1"
+						CornerRadius="4"
+						Padding="10" Grid.Row="5">
+					<StackPanel Spacing="5">
+						<CheckBox Content="Отключить экранную клавиатуру"
+								  IsChecked="{Binding DisableVirtualKeyboard, Mode=TwoWay}"
+								  Command="{Binding ToggleDisableVirtualKeyboardCommand}"
+								  HorizontalAlignment="Left"
+								  Margin="0,10,0,0"/>
+					</StackPanel>
+				</Border>
+				<!-- Информационное сообщение на четвёртой строке, также на две колонки -->
+				<!--
 			<TextBlock Grid.Row="7" Grid.ColumnSpan="2"
 					   Text="{Binding InfoMessage}"
 					   Foreground="Red"
-					   Margin="0,10,0,0"/>
-			
+					   Margin="0,10,0,0"/>-->
+
+			</Grid>
+			</ScrollViewer>
+
 		</Grid>
-	</Grid>
 </UserControl>
