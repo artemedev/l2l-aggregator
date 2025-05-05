@@ -11,7 +11,7 @@ namespace DM_process_NS
     /// </summary>
     public static class _DMP
     {
-        public static DM_recogn_params _dmp { get; private set; }
+        public static recogn_params _dmp { get; private set; }
 
         public static DM_recogn_wraper _dM_recogn_wraper { get; private set; }
 
@@ -33,7 +33,7 @@ namespace DM_process_NS
         public static void init_readConfig()
         {
             //TODO make read JSON or TOML
-            DM_recogn_params newDMP = new DM_recogn_params();
+            recogn_params newDMP = new recogn_params();
             //ok
             newDMP.countOfDM = 100;
             newDMP.pixInMM = 10;

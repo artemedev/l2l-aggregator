@@ -32,7 +32,7 @@ namespace l2l_aggregator.Services.DmProcessing
             _dmProcess.Init(_recognWrapper);
         }
 
-        private DM_result_data _dmrData;
+        private result_data _dmrData;
 
         public void StartScan(string base64Template)
         {
@@ -46,7 +46,7 @@ namespace l2l_aggregator.Services.DmProcessing
             _dmrDataReady = new TaskCompletionSource<bool>();
             _recognWrapper.SendShotFrameComand();
         }
-        public async Task<DM_result_data> WaitForResultAsync()
+        public async Task<result_data> WaitForResultAsync()
         {
             await _dmrDataReady.Task;
             return _dmrData;
@@ -58,12 +58,12 @@ namespace l2l_aggregator.Services.DmProcessing
             _dmrDataReady.TrySetResult(true);
         }
 
-        public Bitmap GetCroppedImage(DM_result_data dmrData)
+        public Bitmap GetCroppedImage(result_data dmrData)
         {
-            int minX = dmrData.DMdataArr.Min(d => d.poseX);
-            int minY = dmrData.DMdataArr.Min(d => d.poseY);
-            int maxX = dmrData.DMdataArr.Max(d => d.poseX + d.width);
-            int maxY = dmrData.DMdataArr.Max(d => d.poseY + d.height);
+            int minX = dmrData.BOXs.Min(d => d.poseX);
+            int minY = dmrData.BOXs.Min(d => d.poseY);
+            int maxX = dmrData.BOXs.Max(d => d.poseX + d.width);
+            int maxY = dmrData.BOXs.Max(d => d.poseY + d.height);
 
             using var ms = new MemoryStream();
             using var cropped = dmrData.processedImage.Clone(ctx => ctx.Crop(new SixLabors.ImageSharp.Rectangle(minX, minY, maxX - minX, maxY - minY)));
@@ -74,7 +74,7 @@ namespace l2l_aggregator.Services.DmProcessing
         }
 
         public ObservableCollection<DmCellViewModel> BuildCellViewModels(
-            DM_result_data dmrData,
+            result_data dmrData,
             double scaleX, double scaleY,
             SessionService sessionService,
             ArmJobSgtinResponse response,
@@ -82,10 +82,10 @@ namespace l2l_aggregator.Services.DmProcessing
         {
             var cells = new ObservableCollection<DmCellViewModel>();
 
-            int minX = dmrData.DMdataArr.Min(d => d.poseX);
-            int minY = dmrData.DMdataArr.Min(d => d.poseY);
+            int minX = dmrData.BOXs.Min(d => d.poseX);
+            int minY = dmrData.BOXs.Min(d => d.poseY);
 
-            foreach (var dmd in dmrData.DMdataArr)
+            foreach (var dmd in dmrData.BOXs)
             {
                 var dmVm = new DmCellViewModel(thisModel)
                 {
@@ -93,7 +93,7 @@ namespace l2l_aggregator.Services.DmProcessing
                     Y = (dmd.poseY - minY) * scaleY,
                     SizeWidth = dmd.width * scaleX,
                     SizeHeight = dmd.height * scaleY,
-                    Angle = dmd.angle
+                    Angle = dmd.alpha
                 };
 
                 bool allValid = true;
@@ -102,7 +102,7 @@ namespace l2l_aggregator.Services.DmProcessing
                 {
                     var validBarcodes = new HashSet<string>();
 
-                    var propSgtin = typeof(ArmJobSgtinRecord).GetProperty(ocr.name);
+                    var propSgtin = typeof(ArmJobSgtinRecord).GetProperty(ocr.Name);
                     if (propSgtin != null)
                     {
                         foreach (var r in response.RECORDSET)
@@ -115,7 +115,7 @@ namespace l2l_aggregator.Services.DmProcessing
 
                     if (propSgtin == null)
                     {
-                        var propInfo = typeof(ArmJobInfoRecord).GetProperty(ocr.name);
+                        var propInfo = typeof(ArmJobInfoRecord).GetProperty(ocr.Name);
                         if (propInfo != null)
                         {
                             var val = propInfo.GetValue(sessionService.SelectedTaskInfo);
@@ -124,7 +124,7 @@ namespace l2l_aggregator.Services.DmProcessing
                         }
                     }
 
-                    bool isValid = validBarcodes.Contains(ocr.data);
+                    bool isValid = validBarcodes.Contains(ocr.Text);
 
                     dmVm.OcrCells.Add(new SquareCellViewModel
                     {
@@ -132,7 +132,7 @@ namespace l2l_aggregator.Services.DmProcessing
                         Y = ocr.poseY,
                         SizeWidth = ocr.width,
                         SizeHeight = ocr.height,
-                        Angle = ocr.angle,
+                        Angle = ocr.alpha,
                         IsValid = isValid
                     });
 

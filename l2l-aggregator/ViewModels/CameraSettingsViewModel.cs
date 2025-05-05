@@ -24,7 +24,7 @@ namespace l2l_aggregator.ViewModels
         [ObservableProperty] private double imageWidth;
         [ObservableProperty] private double imageHeight;
 
-        static DM_result_data dmrData;
+        static result_data dmrData;
         public CameraSettingsViewModel(HistoryRouter<ViewModelBase> router, DmScanService dmScanService)
         {
             _router = router;

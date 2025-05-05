@@ -24,20 +24,20 @@ namespace DM_process_NS
             Console.WriteLine("MainProces : Take a shot");
 
             Dictionary<string, bool> dataModel = ExtractDataModelFromFRX();
-            List<DM_dataCell> lDMD = new List<DM_dataCell>();
+            List<BOX_data> lDMD = new List<BOX_data>();
             string baseDir = Path.GetDirectoryName(typeof(MainProces).Assembly.Location)!;
             string filePath = Path.Combine(baseDir, "result.json");
             string jsonData = File.ReadAllText(filePath);
             ResultData resultData = JsonConvert.DeserializeObject<ResultData>(jsonData);
             foreach (Cell cell in resultData.cells)
             {
-                DM_dataCell dataCell = CreateDataCellFromModel(dataModel, cell);
+                BOX_data dataCell = CreateDataCellFromModel(dataModel, cell);
                 lDMD.Add(dataCell);
             }
 
 
-            DM_result_data dmrd = new DM_result_data();
-            dmrd.DMdataArr = lDMD;
+            result_data dmrd = new result_data();
+            dmrd.BOXs = lDMD;
             string imagePath = Path.Combine(baseDir, "image_raw.jpg");
             byte[] imageBytes = File.ReadAllBytes(imagePath);
             using (MemoryStream ms = new MemoryStream(imageBytes))
@@ -49,21 +49,21 @@ namespace DM_process_NS
 
         }
         /// <summary>
-        /// Отдельная функция, которая формирует DM_dataCell, заполняет его списком OCR 
+        /// Отдельная функция, которая формирует BOX_data, заполняет его списком OCR 
         /// на основе dataModel и массива predefinedData
         /// </summary>
-        private DM_dataCell CreateDataCellFromModel(Dictionary<string, bool> dataModel, Cell cell)
+        private BOX_data CreateDataCellFromModel(Dictionary<string, bool> dataModel, Cell cell)
         {
-            DM_dataCell dataCell = new DM_dataCell
+            BOX_data dataCell = new BOX_data
             {
                 poseX = cell.poseX,
                 poseY = cell.poseY,
                 width = cell.width,
                 height = cell.height,
-                angle = cell.angle,
+                alpha = cell.angle,
                 packType = "PackageType",
                 isError = false,
-                OCR = new List<DM_dataOcr>()
+                OCR = new List<OCR_data>()
             };
 
 
@@ -79,15 +79,15 @@ namespace DM_process_NS
 
                 if (shouldAdd)
                 {
-                    dataCell.OCR.Add(new DM_dataOcr
+                    dataCell.OCR.Add(new OCR_data
                     {
-                        data = entry.data,
-                        name = entry.name,
+                        Text = entry.data,
+                        Name = entry.name,
                         poseX = entry.poseX,
                         poseY = entry.poseY,
                         width = entry.width,
                         height = entry.height,
-                        angle = entry.angle,
+                        alpha = entry.alpha,
 
                     });
                 }
@@ -202,7 +202,7 @@ namespace DM_process_NS
             public int poseY { get; set; }
             public int width { get; set; }
             public int height { get; set; }
-            public int angle { get; set; }
+            public int alpha { get; set; }
 
         }
     }

@@ -97,7 +97,7 @@ namespace l2l_aggregator.ViewModels
 
         ArmJobSsccResponse responseSscc;
 
-        static DM_result_data dmrData;
+        static result_data dmrData;
         private void LoadTemplateFromSession()
         {
             Fields.Clear();
@@ -475,10 +475,10 @@ namespace l2l_aggregator.ViewModels
         }
         public async void OnCellClicked(DmCellViewModel cell)
         {
-            int minX = dmrData.DMdataArr.Min(d => d.poseX);
-            int minY = dmrData.DMdataArr.Min(d => d.poseY);
-            int maxX = dmrData.DMdataArr.Max(d => d.poseX + d.width);
-            int maxY = dmrData.DMdataArr.Max(d => d.poseY + d.height);
+            int minX = dmrData.BOXs.Min(d => d.poseX);
+            int minY = dmrData.BOXs.Min(d => d.poseY);
+            int maxX = dmrData.BOXs.Max(d => d.poseX + d.width);
+            int maxY = dmrData.BOXs.Max(d => d.poseY + d.height);
 
             SelectedSquareImage = _imageProcessingService.CropImage(
                 ScannedImage,
