@@ -55,6 +55,9 @@
 						 Watermark="IP адрес контроллера" />
 				<Button Command="{Binding TestControllerConnectionCommand}"
 						Content="Проверить и Сохранить" />
+				<CheckBox Content="Проверять перед агрегацией"
+						  IsChecked="{Binding CheckControllerBeforeAggregation, Mode=TwoWay}"
+						  Margin="0,5,0,0"/>
 			</StackPanel>
 
 			<!--<StackPanel Spacing="5" Grid.Row="3">
@@ -94,10 +97,10 @@
 						</Grid.ColumnDefinitions>
 						<Label Classes="h2"
 							   Content="Камеры"
-							   FontWeight="Bold"/>
-						<!--<Button Grid.Column="1"
+							   FontWeight="Bold" IsEnabled="False" Opacity="0"/>
+						<Button Grid.Column="1"
 								Content="Добавить камеру"
-								Command="{Binding AddCameraCommand}"/>-->
+								Command="{Binding AddCameraCommand}" IsEnabled="False" Opacity="0"/>
 					</Grid>
 
 					<ItemsControl ItemsSource="{Binding Cameras}">
@@ -134,6 +137,9 @@
 											<Button Command="{Binding #Root.((vm:SettingsViewModel)DataContext).TestCameraConnectionAsync}"
 													CommandParameter="{Binding .}"
 													Content="Проверить соединение" />
+											<CheckBox Content="Проверять перед агрегацией"
+													  IsChecked="{Binding #Root.((vm:SettingsViewModel)DataContext).CheckCameraBeforeAggregation, Mode=TwoWay}"
+													  Margin="0,5,0,0"/>
 										</StackPanel>
 										<Grid Grid.Column="1" ShowGridLines="True">
 											<Grid.RowDefinitions>
@@ -144,7 +150,7 @@
 											
 													Command="{Binding #Root.((vm:SettingsViewModel)DataContext).RemoveCameraCommand}"
 													CommandParameter="{Binding .}"
-													Content="Удалить"/>
+													Content="Удалить"  Opacity="0"/>
 											<Button Grid.Row="2"
 													Content="Настроить"
 													Command="{Binding #Root.((vm:SettingsViewModel)DataContext).OpenCameraSettingsCommand}"
@@ -168,6 +174,9 @@
 						  SelectedItem="{Binding SelectedPrinterModel}" />
 				<Button Command="{Binding TestPrinterConnectionCommand}"
 						Content="Проверить и Сохранить" />
+				<CheckBox Content="Проверять перед агрегацией" 
+						  IsChecked="{Binding CheckPrinterBeforeAggregation, Mode=TwoWay}"
+						  Margin="0,5,0,0"/>
 			</StackPanel>
 
 			<!--<StackPanel Spacing="5"  Grid.Row="5">
@@ -193,6 +202,9 @@
 				</ComboBox>
 				<Button Command="{Binding TestScannerConnectionCommand}"
 						Content="Проверить и Сохранить" />
+				<CheckBox Content="Проверять перед агрегацией"
+						  IsChecked="{Binding CheckScannerBeforeAggregation, Mode=TwoWay}"
+						  Margin="0,5,0,0"/>
 			</StackPanel>
 
 			<StackPanel Spacing="5" Grid.Row="6">

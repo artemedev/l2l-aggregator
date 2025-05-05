@@ -87,12 +87,114 @@ namespace l2l_aggregator.ViewModels
             _router.GoTo<TaskListViewModel>();
         }
 
+        //[RelayCommand]
+        //public void GoAggregation()
+        //{
+        //    Debug.WriteLine("[APP] Переход на AggregationViewModel...");
+        //    // Переход на страницу агрегации
+        //    _router.GoTo<AggregationViewModel>();
+        //}
         [RelayCommand]
-        public void GoAggregation()
+        public async Task GoAggregationAsync()
         {
-            Debug.WriteLine("[APP] Переход на AggregationViewModel...");
-            // Переход на страницу агрегации
+            var s = SessionService.Instance;
+
+            // Проверка камеры
+            if (s.CheckCamera)
+            {
+                if (string.IsNullOrWhiteSpace(s.CameraIP))
+                {
+                    InfoMessage = "IP камеры не задан!";
+                    _notificationService.ShowMessage(InfoMessage);
+                    return;
+                }
+
+                bool cameraReachable = await PingDeviceAsync(s.CameraIP);
+                if (!cameraReachable)
+                {
+                    InfoMessage = $"Камера {s.CameraIP} недоступна!";
+                    _notificationService.ShowMessage(InfoMessage);
+                    return;
+                }
+            }
+
+            // Проверка принтера
+            if (s.CheckPrinter)
+            {
+                if (string.IsNullOrWhiteSpace(s.PrinterIP))
+                {
+                    InfoMessage = "IP принтера не задан!";
+                    _notificationService.ShowMessage(InfoMessage);
+                    return;
+                }
+
+                bool printerReachable = await PingDeviceAsync(s.PrinterIP);
+                if (!printerReachable)
+                {
+                    InfoMessage = $"Принтер {s.PrinterIP} недоступен!";
+                    _notificationService.ShowMessage(InfoMessage);
+                    return;
+                }
+            }
+
+            // Проверка контроллера
+            if (s.CheckController)
+            {
+                if (string.IsNullOrWhiteSpace(s.ControllerIP))
+                {
+                    InfoMessage = "IP контроллера не задан!";
+                    _notificationService.ShowMessage(InfoMessage);
+                    return;
+                }
+
+                bool controllerReachable = await PingDeviceAsync(s.ControllerIP);
+                if (!controllerReachable)
+                {
+                    InfoMessage = $"Контроллер {s.ControllerIP} недоступен!";
+                    _notificationService.ShowMessage(InfoMessage);
+                    return;
+                }
+            }
+
+            // Проверка сканера
+            if (s.CheckScanner)
+            {
+                if (string.IsNullOrWhiteSpace(s.ScannerPort))
+                {
+                    InfoMessage = "Порт сканера не задан!";
+                    _notificationService.ShowMessage(InfoMessage);
+                    return;
+                }
+
+                bool scannerAvailable = CheckComPortExists(s.ScannerPort);
+                if (!scannerAvailable)
+                {
+                    InfoMessage = $"Сканер на порту {s.ScannerPort} недоступен!";
+                    _notificationService.ShowMessage(InfoMessage);
+                    return;
+                }
+            }
+
+            // Все проверки пройдены — переходим к агрегации
             _router.GoTo<AggregationViewModel>();
+        }
+        private async Task<bool> PingDeviceAsync(string ip)
+        {
+            try
+            {
+                using var ping = new System.Net.NetworkInformation.Ping();
+                var reply = await ping.SendPingAsync(ip, 300); // 300ms timeout
+                return reply.Status == System.Net.NetworkInformation.IPStatus.Success;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private bool CheckComPortExists(string portName)
+        {
+            return System.IO.Ports.SerialPort.GetPortNames().Contains(portName);
         }
     }
 }
