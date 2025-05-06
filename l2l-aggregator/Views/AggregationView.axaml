@@ -8,136 +8,29 @@
 			 xmlns:vmVE="using:l2l_aggregator.ViewModels.VisualElements"
 			 x:DataType="vm:AggregationViewModel"
              x:Class="l2l_aggregator.Views.AggregationView">
-	<DockPanel>
-		<!--	<TextBlock Text="{Binding Title}" FontSize="24" Margin="10" DockPanel.Dock="Top" />-->
-		<TabControl SelectedIndex="{Binding CurrentStepIndex}">
-			<!-- Step 1: Сканирование -->
-			<TabItem Header="Шаг 1: Сканирование">
-				<StackPanel Spacing="10" Margin="10" >
-					<StackPanel Orientation="Horizontal" ScrollViewer.AllowAutoHide="False" ScrollViewer.IsScrollChainingEnabled="False">
-						<Grid ScrollViewer.AllowAutoHide="False" ScrollViewer.IsScrollChainingEnabled="False" Name="scanImage">
-							<Image Source="{Binding ScannedImage}" MaxHeight="1000" Stretch="Uniform" SizeChanged="OnImageSizeChanged"/>
-							<ItemsControl ItemsSource="{Binding DMCells}">
-								<ItemsControl.ItemsPanel>
-									<ItemsPanelTemplate>
-										<Canvas />
-									</ItemsPanelTemplate>
-								</ItemsControl.ItemsPanel>
-
-								<ItemsControl.ItemTemplate>
-									<DataTemplate>
-										<Button Width="{Binding SizeWidth}"
-												Height="{Binding SizeHeight}"
-												BorderBrush="{Binding BorderColor}"
-												BorderThickness="3"
-												Background="Transparent"
-												Command="{Binding DmSquareClickedCommand}"
-												CommandParameter="{Binding}"
-												>
-											<Button.RenderTransform>
-												<RotateTransform Angle="{Binding Angle}" />
-											</Button.RenderTransform>
-											<TextBlock Text="DM"
-													   Foreground="Black" Opacity="0"/>
-										</Button>
-									</DataTemplate>
-								</ItemsControl.ItemTemplate>
-								<ItemsControl.Styles>
-									<Style Selector="ContentPresenter" x:DataType="vmVE:DmCellViewModel">
-										<Setter Property="Canvas.Left">
-											<Setter.Value>
-												<MultiBinding Converter="{StaticResource CenterToLeftConverter}">
-													<Binding Path="X"/>
-													<Binding Path="SizeWidth"/>
-												</MultiBinding>
-											</Setter.Value>
-										</Setter>
-
-										<Setter Property="Canvas.Top">
-											<Setter.Value>
-												<MultiBinding Converter="{StaticResource CenterToTopConverter}">
-													<Binding Path="Y"/>
-													<Binding Path="SizeHeight"/>
-												</MultiBinding>
-											</Setter.Value>
-										</Setter>
-
-										<Setter Property="Width" Value="{Binding SizeWidth}" />
-										<Setter Property="Height" Value="{Binding SizeHeight}" />
-									</Style>
-								</ItemsControl.Styles>
-							</ItemsControl>
-
-						</Grid>
-						<DataGrid Margin="20" ItemsSource="{Binding ScannedData}" AutoGenerateColumns="True" Height="900"  Opacity="0"/>
-						<Border Grid.Row="2" BorderBrush="Gray" BorderThickness="1" Margin="0,10" IsVisible="{Binding IsTemplateLoaded}">
-							<ScrollViewer>
-								<ItemsControl ItemsSource="{Binding Fields}">
-									<ItemsControl.ItemTemplate>
-										<DataTemplate>
-											<Grid Margin="5">
-												<Grid.ColumnDefinitions>
-													<ColumnDefinition Width="Auto"/>
-													<ColumnDefinition Width="*"/>
-													<ColumnDefinition Width="150"/>
-												</Grid.ColumnDefinitions>
-												<CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" VerticalAlignment="Center"/>
-												<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" Margin="5,0"/>
-												<TextBlock Grid.Column="2" Text="{Binding Type}" VerticalAlignment="Center" Foreground="Gray"/>
-											</Grid>
-										</DataTemplate>
-									</ItemsControl.ItemTemplate>
-								</ItemsControl>
-							</ScrollViewer>
-						</Border>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="9*"/>
+		</Grid.RowDefinitions>
+		<TabStrip x:Name="TabStripControl"
+				  ItemsSource="{Binding Tabs}"
+				  SelectedIndex="{Binding SelectedTabIndex}">
+			<TabStrip.ItemTemplate>
+				<DataTemplate>
+					<StackPanel>
+						<TextBlock Text="{Binding Header}" />
+						<TextBlock Text="{Binding Content}" />
 					</StackPanel>
-
-
-					<Button Command="{Binding ScanCommand}" Content="Сканировать" HorizontalAlignment="Center" />
-
-					<StackPanel Orientation="Horizontal" Spacing="5">
-						<Button Command="{Binding ClearBoxCommand}" Content="Очистить короб" />
-						<Button Command="{Binding CompleteStepCommand}" Content="Завершить агрегацию" />
-						<Button Command="{Binding GoToNextStepCommand}" Content="Следующий шаг: Агрегация коробки" />
-					</StackPanel>
-				</StackPanel>
-			</TabItem>
-
-			<!-- Step 2: Агрегация коробки -->
-			<TabItem Header="Шаг 2: Агрегация коробки">
-				<StackPanel Spacing="10" Margin="10">
-					<DataGrid ItemsSource="{Binding BoxAggregationData}" AutoGenerateColumns="True" />
-					<StackPanel Orientation="Horizontal" Spacing="5">
-						<Button Command="{Binding ClearBoxCommand}" Content="Очистить короб" />
-						<Button Command="{Binding CompleteStepCommand}" Content="Завершить агрегацию" />
-						<Button Command="{Binding PrintLabelCommand}" Content="Печать этикетки" />
-						<Button Command="{Binding ScanBoxBarcodeCommand}" Content="Сканировать штрихкод коробки" HorizontalAlignment="Center" />
-						<Button Command="{Binding GoToNextStepCommand}" Content="Следующий шаг: Агрегация паллеты" />
-					</StackPanel>
-				</StackPanel>
-			</TabItem>
-
-			<!-- Step 3: Агрегация паллеты -->
-			<TabItem Header="Шаг 3: Агрегация паллеты">
-				<StackPanel Spacing="10" Margin="10">
-					<DataGrid ItemsSource="{Binding PalletAggregationData}" AutoGenerateColumns="True" />
-					<StackPanel Orientation="Horizontal" Spacing="5">
-						<Button Command="{Binding ClearPalletCommand}" Content="Очистить паллету" />
-						<Button Command="{Binding CompleteAggregationCommand}" Content="Завершить агрегацию" />
-						<Button Command="{Binding PrintLabelCommand}" Content="Печать этикетки" />
-					</StackPanel>
-				</StackPanel>
-			</TabItem>
-		</TabControl>
-		<!-- 
-            Третий слой: всплывающее окно (Popup) с увеличенным изображением 
-            выбранного квадрата. Оно привязано к IsPopupOpen и SelectedSquareImage. 
-            
-            Popup в Avalonia по умолчанию позиционируется рядом с контролом, 
-            где он объявлен, поэтому возможно придётся настроить Placement, 
-            Width/Height и т.п. 
-        -->
-		<ItemsControl ItemsSource="{Binding AggregatedItems}" Margin="10">
+				</DataTemplate>
+			</TabStrip.ItemTemplate>
+		</TabStrip>
+		<!--<ItemsControl Grid.Row="0" ItemsSource="{Binding AggregatedItems}" Margin="10">
+			<ItemsControl.ItemsPanel>
+				<ItemsPanelTemplate>
+					<StackPanel Orientation="Horizontal"/>
+				</ItemsPanelTemplate>
+			</ItemsControl.ItemsPanel>
 			<ItemsControl.ItemTemplate>
 				<DataTemplate>
 					<Expander Header="{Binding Name}" Margin="5" IsExpanded="{Binding IsCompleted}">
@@ -151,47 +44,186 @@
 					</Expander>
 				</DataTemplate>
 			</ItemsControl.ItemTemplate>
-		</ItemsControl>
+		</ItemsControl>-->
 
-		<Popup IsOpen="{Binding IsPopupOpen}" PlacementTarget="{Binding #scanImage}" PlacementMode="Center" Name="scanImagePopup" PointerPressed="Popup_PointerPressed">
-			<Border Background="White" BorderBrush="Black" BorderThickness="2" >
-				<Grid SizeChanged="OnImageGridSizeCellChanged">
-					<Image Source="{Binding SelectedSquareImage}"
-						   Stretch="Uniform"
-						   Width="1300"
-						   Height="1000"
-						   SizeChanged="OnImageSizeCellChanged"
+		<Grid Grid.Row="1" Margin="10" >
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="6*"/>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+			<Grid Grid.Column="0" ScrollViewer.AllowAutoHide="False" ScrollViewer.IsScrollChainingEnabled="False" Name="scanImage" VerticalAlignment="Stretch">
+				<Image Source="{Binding ScannedImage}" Stretch="Fill" SizeChanged="OnImageSizeChanged"/>
+				<ItemsControl ItemsSource="{Binding DMCells}">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<Canvas />
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<Button Width="{Binding SizeWidth}"
+									Height="{Binding SizeHeight}"
+									BorderBrush="{Binding BorderColor}"
+									BorderThickness="3"
+									Background="Transparent"
+									Command="{Binding DmSquareClickedCommand}"
+									CommandParameter="{Binding}"
+												>
+								<Button.RenderTransform>
+									<RotateTransform Angle="{Binding Angle}" />
+								</Button.RenderTransform>
+								<TextBlock Text="DM"
+										   Foreground="Black" Opacity="0"/>
+							</Button>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+					<ItemsControl.Styles>
+						<Style Selector="ContentPresenter" x:DataType="vmVE:DmCellViewModel">
+							<Setter Property="Canvas.Left">
+								<Setter.Value>
+									<MultiBinding Converter="{StaticResource CenterToLeftConverter}">
+										<Binding Path="X"/>
+										<Binding Path="SizeWidth"/>
+									</MultiBinding>
+								</Setter.Value>
+							</Setter>
+
+							<Setter Property="Canvas.Top">
+								<Setter.Value>
+									<MultiBinding Converter="{StaticResource CenterToTopConverter}">
+										<Binding Path="Y"/>
+										<Binding Path="SizeHeight"/>
+									</MultiBinding>
+								</Setter.Value>
+							</Setter>
+
+							<Setter Property="Width" Value="{Binding SizeWidth}" />
+							<Setter Property="Height" Value="{Binding SizeHeight}" />
+						</Style>
+					</ItemsControl.Styles>
+				</ItemsControl>
+			</Grid>
+			<!--<Border Grid.Column="1" BorderBrush="Gray" BorderThickness="1" Margin="0,10" IsVisible="{Binding IsTemplateLoaded}" VerticalAlignment="Stretch">
+			<ScrollViewer>
+				<ItemsControl ItemsSource="{Binding Fields}">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<Grid Margin="5">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto"/>
+									<ColumnDefinition Width="*"/>
+									<ColumnDefinition Width="150"/>
+								</Grid.ColumnDefinitions>
+								<CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" VerticalAlignment="Center"/>
+								<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" Margin="5,0"/>
+								<TextBlock Grid.Column="2" Text="{Binding Type}" VerticalAlignment="Center" Foreground="Gray"/>
+							</Grid>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</ScrollViewer>
+		</Border>-->
+
+			<Grid Grid.Column="1" Margin="15">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="4*"/>
+				</Grid.RowDefinitions>
+				<Button Grid.Row="0" Command="{Binding ScanCommand}" Content="Сканировать" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+				<Button Grid.Row="1" Command="{Binding ClearBoxCommand}" Content="Очистить короб" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+				<Button Grid.Row="2" Command="{Binding CompleteStepCommand}" Content="Завершить агрегацию" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+				<Button Grid.Row="3" Command="{Binding GoToNextStepCommand}"  Content="Следующий шаг: Агрегация коробки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+				<Button Grid.Row="4" Command="{Binding OpenTemplateSettingsCommand}" Content="Настройки шаблона" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+				<Button Grid.Row="5" Command="{Binding ClearBoxCommand}" Content="Очистить короб" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+				<Button Grid.Row="6" Command="{Binding CompleteStepCommand}" Content="Завершить агрегацию" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+				<Button Grid.Row="7" Command="{Binding PrintLabelCommand}" Content="Печать этикетки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+				<Button Grid.Row="8" Command="{Binding ScanBoxBarcodeCommand}" Content="Сканировать штрихкод коробки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+				<Button Grid.Row="9" Command="{Binding GoToNextStepCommand}" Content="Следующий шаг: Агрегация паллеты" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+				<Button Grid.Row="10" Command="{Binding ClearPalletCommand}" Content="Очистить паллету" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+				<Button Grid.Row="11" Command="{Binding CompleteAggregationCommand}" Content="Завершить агрегацию" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+				<Button Grid.Row="12" Command="{Binding PrintLabelCommand}" Content="Печать этикетки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+				<Border Margin="0,5,0,10"
+						BorderBrush="LightGray"
+						BorderThickness="1"
+						CornerRadius="4"
+						Padding="10" Grid.Row="13">
+					<StackPanel  Margin="10">
+						<TextBlock Text="Результат " FontWeight="Bold"/>
+						<TextBlock Text="Агрегируемая серия: 50325: " FontWeight="Bold"/>
+						<TextBlock Text="Количество собранных коробов: 79"/>
+						<TextBlock Text="Номер собираемого короба: 80"/>
+						<TextBlock Text="Номер слоя: 1"/>
+						<TextBlock Text="Количество слоев в коробе: 1"/>
+						<TextBlock Text="Количество СИ, распознанное в слое: 50"/>
+						<TextBlock Text="Количество СИ, считанное в слое: 50"/>
+						<TextBlock Text="Количество СИ, ожидаемое в слое: 50"/>
+						<TextBlock Text="Количество СИ, отбраковано: 0"/>
+						<TextBlock Text="Количество СИ, отобрано: 0"/>
+					</StackPanel>
+				</Border>
+			</Grid>
+			<!-- 
+            Третий слой: всплывающее окно (Popup) с увеличенным изображением 
+            выбранного квадрата. Оно привязано к IsPopupOpen и SelectedSquareImage. 
+            
+            Popup в Avalonia по умолчанию позиционируется рядом с контролом, 
+            где он объявлен, поэтому возможно придётся настроить Placement, 
+            Width/Height и т.п. 
+        -->
+			<Popup IsOpen="{Binding IsPopupOpen}" PlacementTarget="{Binding #scanImage}" PlacementMode="Center" Name="scanImagePopup" PointerPressed="Popup_PointerPressed">
+				<Border Background="White" BorderBrush="Black" BorderThickness="2" >
+					<Grid SizeChanged="OnImageGridSizeCellChanged">
+						<Image Source="{Binding SelectedSquareImage}"
+							   Stretch="Uniform"
+							   Width="1300"
+							   Height="1000"
+							   SizeChanged="OnImageSizeCellChanged"
 						   />
-					<ItemsControl ItemsSource="{Binding SelectedDmCell.OcrCellsInPopUp}">
-						<ItemsControl.ItemsPanel>
-							<ItemsPanelTemplate>
-								<Canvas />
-							</ItemsPanelTemplate>
-						</ItemsControl.ItemsPanel>
+						<ItemsControl ItemsSource="{Binding SelectedDmCell.OcrCellsInPopUp}">
+							<ItemsControl.ItemsPanel>
+								<ItemsPanelTemplate>
+									<Canvas />
+								</ItemsPanelTemplate>
+							</ItemsControl.ItemsPanel>
 
-						<ItemsControl.ItemTemplate>
-							<DataTemplate>
-								<Button BorderBrush="{Binding BorderColor}"
-										BorderThickness="3"
-										Background="Transparent"
-										CommandParameter="{Binding}">
-									<TextBlock Text="OCR"
-											   Foreground="Black"
-											   Opacity="0"/>
-								</Button>
-							</DataTemplate>
-						</ItemsControl.ItemTemplate>
-						<ItemsControl.Styles>
-							<Style Selector="ContentPresenter" x:DataType="vmVE:SquareCellViewModel">
-								<Setter Property="Canvas.Left" Value="{Binding X}"/>
-								<Setter Property="Canvas.Top" Value="{Binding Y}"/>
-								<Setter Property="Height" Value="{Binding SizeHeight}"/>
-								<Setter Property="Width" Value="{Binding SizeWidth}"/>
-							</Style>
-						</ItemsControl.Styles>
-					</ItemsControl>
-				</Grid>
-			</Border>
-		</Popup>
-	</DockPanel>
+							<ItemsControl.ItemTemplate>
+								<DataTemplate>
+									<Button BorderBrush="{Binding BorderColor}"
+											BorderThickness="3"
+											Background="Transparent"
+											CommandParameter="{Binding}">
+										<TextBlock Text="OCR"
+												   Foreground="Black"
+												   Opacity="0"/>
+									</Button>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+							<ItemsControl.Styles>
+								<Style Selector="ContentPresenter" x:DataType="vmVE:SquareCellViewModel">
+									<Setter Property="Canvas.Left" Value="{Binding X}"/>
+									<Setter Property="Canvas.Top" Value="{Binding Y}"/>
+									<Setter Property="Height" Value="{Binding SizeHeight}"/>
+									<Setter Property="Width" Value="{Binding SizeWidth}"/>
+								</Style>
+							</ItemsControl.Styles>
+						</ItemsControl>
+					</Grid>
+				</Border>
+			</Popup>
+		</Grid>
+
+	</Grid>
 </UserControl>

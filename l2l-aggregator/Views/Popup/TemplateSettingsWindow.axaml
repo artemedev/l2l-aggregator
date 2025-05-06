@@ -1,0 +1,33 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+		Width="500" Height="400"
+        x:Class="l2l_aggregator.Views.Popup.TemplateSettingsWindow"
+		xmlns:vm="using:l2l_aggregator.ViewModels"
+		x:DataType="vm:AggregationViewModel"
+        Title="Настройки шаблона">
+	<StackPanel Margin="10">
+		<TextBlock Text="Выберите поля для шаблона:" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+		<ScrollViewer>
+			<ItemsControl ItemsSource="{Binding Fields}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Grid Margin="5">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="150"/>
+							</Grid.ColumnDefinitions>
+							<CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" VerticalAlignment="Center"/>
+							<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" Margin="5,0"/>
+							<TextBlock Grid.Column="2" Text="{Binding Type}" VerticalAlignment="Center" Foreground="Gray"/>
+						</Grid>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</ScrollViewer>
+		<Button Content="Закрыть" HorizontalAlignment="Right" Margin="0,10,0,0" Click="OnClose"/>
+	</StackPanel>
+</Window>

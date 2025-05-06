@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.SimpleRouter;
@@ -16,6 +17,7 @@ using l2l_aggregator.Services.Database;
 using l2l_aggregator.Services.DmProcessing;
 using l2l_aggregator.Services.Notification.Interface;
 using l2l_aggregator.ViewModels.VisualElements;
+using l2l_aggregator.Views.Popup;
 using MD.Devices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -31,6 +33,11 @@ using Xunit;
 
 namespace l2l_aggregator.ViewModels
 {
+    public class TabItemModel
+    {
+        public string Header { get; set; }
+        public string Content { get; set; }
+    }
     public partial class AggregationViewModel : ViewModelBase
     {
         private readonly SessionService _sessionService;
@@ -151,6 +158,11 @@ namespace l2l_aggregator.ViewModels
             responseSscc = await _dataApiService.LoadSsccAsync(_sessionService.SelectedTaskInfo.DOCID);
         }
 
+        public ObservableCollection<TabItemModel> Tabs { get; }
+        public int SelectedTabIndex { get; set; }
+
+        public TabItemModel SelectedTab => Tabs.ElementAtOrDefault(SelectedTabIndex);
+
         public AggregationViewModel(
             DataApiService dataApiService,
             ImageHelper imageProcessingService,
@@ -179,6 +191,12 @@ namespace l2l_aggregator.ViewModels
             ImageSizeChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeChanged);
             ImageSizeCellChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeCellChanged);
             ImageSizeGridCellChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeGridCellChanged);
+            Tabs = new ObservableCollection<TabItemModel>
+            {
+                new TabItemModel { Header = "Tab 1", Content = "Content for Tab 1"  },
+                new TabItemModel { Header = "Tab 2", Content = "Content for Tab 2"  },
+                new TabItemModel { Header = "Tab 3", Content = "Content for Tab 3"  },
+            };
             //var savedScanner = _databaseService.Config.LoadScannerDeviceAsync();
             //_scannerWorker = new ScannerWorker(savedScanner.Id);
 
@@ -520,6 +538,18 @@ namespace l2l_aggregator.ViewModels
 
             IsPopupOpen = true;
         }
+        [RelayCommand]
+        public void OpenTemplateSettings()
+        {
+            var window = new TemplateSettingsWindow
+            {
+                DataContext = this
+            };
 
+            if (App.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                window.ShowDialog(desktop.MainWindow);
+            }
+        }
     }
 }

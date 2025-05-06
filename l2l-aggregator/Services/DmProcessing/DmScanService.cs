@@ -37,7 +37,7 @@ namespace l2l_aggregator.Services.DmProcessing
         public void StartScan(string base64Template)
         {
             _dmrDataReady = new TaskCompletionSource<bool>();
-            _recognWrapper.SendPrintPattern(base64Template);
+            _recognWrapper.SendPrintPatternXML(base64Template);
             _DMP.update_PP();
             _recognWrapper.SendShotFrameComand();
         }
