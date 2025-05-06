@@ -17,6 +17,7 @@ using Refit;
 using System;
 using System.Collections.ObjectModel;
 using System.IO.Ports;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -77,7 +78,8 @@ namespace l2l_aggregator.ViewModels
         private string _selectedScannerModel;
 
         [ObservableProperty] private bool isConnectedCamera;
-        [ObservableProperty] private ObservableCollection<CameraViewModel> _cameras = new();
+        //[ObservableProperty] private ObservableCollection<CameraViewModel> _cameras = new();
+        [ObservableProperty] private CameraViewModel _camera = new();
 
         [ObservableProperty] private ObservableCollection<ScannerDevice> _availableScanners = new();
         [ObservableProperty] private ScannerDevice _selectedScanner;
@@ -100,15 +102,20 @@ namespace l2l_aggregator.ViewModels
             _router = router;
             _sessionService = sessionService;
             _scannerResolver = scannerResolver;
+            AddCamera();
+            //LoadCameras();
+            _ = InitializeAsync();
 
-            _ = LoadSettingsAsync();
-            LoadCameras();
-            LoadAvailableScanners();
 
-            if (Cameras.Count == 0)
-            {
-                AddCamera();
-            }
+            //if (Cameras.Count == 0)
+            //{
+
+            //}
+        }
+        private async Task InitializeAsync()
+        {
+            await LoadAvailableScannersAsync();
+            await LoadSettingsAsync();
         }
         [RelayCommand]
         private async Task ToggleDisableVirtualKeyboardAsync()
@@ -138,37 +145,79 @@ namespace l2l_aggregator.ViewModels
             _ = _databaseService.Config.SetConfigValueAsync("CheckScanner", value.ToString());
             SessionService.Instance.CheckScanner = value;
         }
+        //private async Task LoadSettingsAsync()
+        //{
+        //    ServerUri = await _databaseService.Config.GetConfigValueAsync("ServerUri");
+        //    PrinterIP = await _databaseService.Config.GetConfigValueAsync("PrinterIP");
+        //    SelectedPrinterModel = await _databaseService.Config.GetConfigValueAsync("PrinterModel");
+        //    ControllerIP = await _databaseService.Config.GetConfigValueAsync("ControllerIP");
+        //    Camera = new CameraViewModel
+        //    {
+        //        CameraIP = await _databaseService.Config.GetConfigValueAsync("CameraIP"),
+        //        SelectedCameraModel = await _databaseService.Config.GetConfigValueAsync("CameraModel")
+        //    };
+        //    SelectedScanner.Id = await _databaseService.Config.GetConfigValueAsync("ScannerCOMPort");
+        //    //SelectedScanner.Id = ScannerCOMPort;
+        //    DisableVirtualKeyboard = bool.TryParse(await _databaseService.Config.GetConfigValueAsync("DisableVirtualKeyboard"), out var parsed) && parsed;
+
+        //    CheckCameraBeforeAggregation = await _databaseService.Config.GetConfigValueAsync("CheckCamera") == "True";
+        //    CheckPrinterBeforeAggregation = await _databaseService.Config.GetConfigValueAsync("CheckPrinter") == "True";
+        //    CheckControllerBeforeAggregation = await _databaseService.Config.GetConfigValueAsync("CheckController") == "True";
+        //    CheckScannerBeforeAggregation = await _databaseService.Config.GetConfigValueAsync("CheckScanner") == "True";
+        //    SelectedScannerModel = await _databaseService.Config.GetConfigValueAsync("ScannerModel");
+
+        //    //var session = SessionService.Instance;
+        //    SessionService.Instance.PrinterIP = PrinterIP;
+        //    SessionService.Instance.PrinterModel = SelectedPrinterModel;
+        //    SessionService.Instance.ControllerIP = ControllerIP;
+        //    SessionService.Instance.CameraIP = CameraIP;
+        //    SessionService.Instance.CameraModel = SelectedCameraModel;
+        //    SessionService.Instance.ScannerPort = ScannerCOMPort;
+        //    // аналогично можно загрузить другие значения, если потребуется
+        //    SessionService.Instance.DisableVirtualKeyboard = DisableVirtualKeyboard;
+
+        //    SessionService.Instance.CheckCamera = CheckCameraBeforeAggregation;
+        //    SessionService.Instance.CheckPrinter = CheckPrinterBeforeAggregation;
+        //    SessionService.Instance.CheckController = CheckControllerBeforeAggregation;
+        //    SessionService.Instance.CheckScanner = CheckScannerBeforeAggregation;
+        //}
         private async Task LoadSettingsAsync()
         {
             ServerUri = await _databaseService.Config.GetConfigValueAsync("ServerUri");
             PrinterIP = await _databaseService.Config.GetConfigValueAsync("PrinterIP");
             SelectedPrinterModel = await _databaseService.Config.GetConfigValueAsync("PrinterModel");
             ControllerIP = await _databaseService.Config.GetConfigValueAsync("ControllerIP");
-            CameraIP = await _databaseService.Config.GetConfigValueAsync("CameraIP");
-            SelectedCameraModel = await _databaseService.Config.GetConfigValueAsync("CameraModel");
-            ScannerCOMPort = await _databaseService.Config.GetConfigValueAsync("ScannerCOMPort");
-            DisableVirtualKeyboard = bool.TryParse(await _databaseService.Config.GetConfigValueAsync("DisableVirtualKeyboard"), out var parsed) && parsed;
+
+            DisableVirtualKeyboard = bool.TryParse(
+                await _databaseService.Config.GetConfigValueAsync("DisableVirtualKeyboard"),
+                out var parsedKeyboard) && parsedKeyboard;
 
             CheckCameraBeforeAggregation = await _databaseService.Config.GetConfigValueAsync("CheckCamera") == "True";
             CheckPrinterBeforeAggregation = await _databaseService.Config.GetConfigValueAsync("CheckPrinter") == "True";
             CheckControllerBeforeAggregation = await _databaseService.Config.GetConfigValueAsync("CheckController") == "True";
             CheckScannerBeforeAggregation = await _databaseService.Config.GetConfigValueAsync("CheckScanner") == "True";
-            SelectedScannerModel = await _databaseService.Config.GetConfigValueAsync("ScannerModel");
+     
 
-            //var session = SessionService.Instance;
-            SessionService.Instance.PrinterIP = PrinterIP;
-            SessionService.Instance.PrinterModel = SelectedPrinterModel;
-            SessionService.Instance.ControllerIP = ControllerIP;
-            SessionService.Instance.CameraIP = CameraIP;
-            SessionService.Instance.CameraModel = SelectedCameraModel;
-            SessionService.Instance.ScannerPort = ScannerCOMPort;
-            // аналогично можно загрузить другие значения, если потребуется
-            SessionService.Instance.DisableVirtualKeyboard = DisableVirtualKeyboard;
+            // Камера
+            Camera = new CameraViewModel
+            {
+                CameraIP = await _databaseService.Config.GetConfigValueAsync("CameraIP"),
+                SelectedCameraModel = await _databaseService.Config.GetConfigValueAsync("CameraModel")
+            };
 
-            SessionService.Instance.CheckCamera = CheckCameraBeforeAggregation;
-            SessionService.Instance.CheckPrinter = CheckPrinterBeforeAggregation;
-            SessionService.Instance.CheckController = CheckControllerBeforeAggregation;
-            SessionService.Instance.CheckScanner = CheckScannerBeforeAggregation;
+            // Session обновление
+            var session = SessionService.Instance;
+            session.PrinterIP = PrinterIP;
+            session.PrinterModel = SelectedPrinterModel;
+            session.ControllerIP = ControllerIP;
+            session.CameraIP = Camera.CameraIP;
+            session.CameraModel = Camera.SelectedCameraModel;
+
+            session.DisableVirtualKeyboard = DisableVirtualKeyboard;
+            session.CheckCamera = CheckCameraBeforeAggregation;
+            session.CheckPrinter = CheckPrinterBeforeAggregation;
+            session.CheckController = CheckControllerBeforeAggregation;
+            session.CheckScanner = CheckScannerBeforeAggregation;
         }
 
         //public void LoadAvailableScanners()
@@ -181,12 +230,47 @@ namespace l2l_aggregator.ViewModels
         //        AvailableScanners.Add(scanerDevice);
         //    }
         //}
-        public void LoadAvailableScanners()
+        //public void LoadAvailableScanners()
+        //{
+        //    AvailableScanners.Clear();
+        //    foreach (var port in _scannerResolver.GetHoneywellScannerPorts())
+        //    {
+        //        AvailableScanners.Add(new ScannerDevice { Id = port });
+        //    }
+        //}
+        public async Task LoadAvailableScannersAsync()
         {
             AvailableScanners.Clear();
-            foreach (var port in _scannerResolver.GetHoneywellScannerPorts())
+
+            var ports = _scannerResolver.GetHoneywellScannerPorts(); // список COM-портов
+
+            foreach (var port in ports)
             {
                 AvailableScanners.Add(new ScannerDevice { Id = port });
+            }
+
+            // Подгружаем сохранённый COM-порт и выбираем нужный сканер
+            string savedPort = await _databaseService.Config.GetConfigValueAsync("ScannerCOMPort");
+            SelectedScannerModel = await _databaseService.Config.GetConfigValueAsync("ScannerModel");
+            // Найти сканер в списке
+            var foundScanner = AvailableScanners.FirstOrDefault(x => x.Id == savedPort);
+
+            if (foundScanner != null)
+            {
+                SelectedScanner = foundScanner;
+                var session = SessionService.Instance;
+                session.ScannerPort = SelectedScanner?.Id;
+                session.ScannerModel = SelectedScannerModel;
+            }
+            else
+            {
+                // Очистка, если не найден
+                SelectedScanner = null;
+                SelectedScannerModel = null;
+
+                // Очистка в сессии
+                SessionService.Instance.ScannerPort = null;
+                SessionService.Instance.ScannerModel = null;
             }
         }
 
@@ -252,10 +336,10 @@ namespace l2l_aggregator.ViewModels
         {
             // Save all camera settings to DatabaseService
             // For each camera in Cameras collection
-            foreach (var camera in Cameras)
-            {
-                // _databaseService.SaveCameraSettings(camera.Id, camera.CameraIP, camera.SelectedCameraModel);
-            }
+            //foreach (var camera in Cameras)
+            //{
+            //    // _databaseService.SaveCameraSettings(camera.Id, camera.CameraIP, camera.SelectedCameraModel);
+            //}
             await _databaseService.Config.SetConfigValueAsync("DisableVirtualKeyboard", DisableVirtualKeyboard.ToString());
 
             InfoMessage = "Настройки успешно сохранены!";
@@ -461,21 +545,21 @@ namespace l2l_aggregator.ViewModels
         [RelayCommand]
         public void AddCamera()
         {
-            Cameras.Add(new CameraViewModel());
+            //Cameras.Add(new CameraViewModel());
         }
 
         [RelayCommand]
         public void RemoveCamera(CameraViewModel camera)
         {
-            if (Cameras.Count > 1) // Ensure at least one camera remains
-            {
-                Cameras.Remove(camera);
-            }
-            else
-            {
-                InfoMessage = "Как минимум одна камера должна быть настроена";
-                _notificationService.ShowMessage(InfoMessage);
-            }
+            //if (Cameras.Count > 1) // Ensure at least one camera remains
+            //{
+            //    Cameras.Remove(camera);
+            //}
+            //else
+            //{
+            //    InfoMessage = "Как минимум одна камера должна быть настроена";
+            //    _notificationService.ShowMessage(InfoMessage);
+            //}
         }
     }
 }

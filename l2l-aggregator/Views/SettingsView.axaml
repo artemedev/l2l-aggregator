@@ -82,53 +82,37 @@
 						BorderThickness="1"
 						CornerRadius="4"
 						Padding="10" Grid.Row="2">
-					<StackPanel  Margin="0,0,0,15">
-						<ItemsControl ItemsSource="{Binding Cameras}">
-							<ItemsControl.ItemTemplate>
-								<DataTemplate x:DataType="vmVE:CameraViewModel">
-									<Grid>
-										<Grid.ColumnDefinitions>
-											<ColumnDefinition Width="*"/>
-											<ColumnDefinition Width="Auto"/>
-										</Grid.ColumnDefinitions>
-										<StackPanel Spacing="5">
-											<TextBlock Text="Камера" FontWeight="SemiBold"/>
-											<TextBox Text="{Binding CameraIP}"
-													 Watermark="IP адрес камеры" />
-											<ComboBox ItemsSource="{Binding #Root.((vm:SettingsViewModel)DataContext).CameraModels}"
-													  SelectedItem="{Binding SelectedCameraModel}"
-													  HorizontalAlignment="Stretch"/>
-											<Grid>
-												<Grid.ColumnDefinitions>
-													<ColumnDefinition Width="Auto"/>
-													<ColumnDefinition Width="Auto"/>
-													<ColumnDefinition Width="*"/>
-												</Grid.ColumnDefinitions>
-												<Button Grid.Column="0"
-														Command="{Binding #Root.((vm:SettingsViewModel)DataContext).TestCameraConnectionAsync}"
-														CommandParameter="{Binding .}"
-														Content="Проверить соединение" />
-												<Ellipse Grid.Column="1"
-															 Width="12"
-															 Height="12"
-															 Fill="{Binding IsConnected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='Green,Red'}"/>
-												<Button Grid.Column="2"
-														Content="Настроить"
-														Command="{Binding #Root.((vm:SettingsViewModel)DataContext).OpenCameraSettingsCommand}"
-														IsEnabled="{Binding IsConnected}"
-														Margin="0,5,0,0"
-														HorizontalAlignment="Right"/>
-											</Grid>
-
-											<CheckBox Content="Проверять перед агрегацией"
-													  IsChecked="{Binding #Root.((vm:SettingsViewModel)DataContext).CheckCameraBeforeAggregation, Mode=TwoWay}"
-													  Margin="0,5,0,0"/>
-										</StackPanel>
-									</Grid>
-								</DataTemplate>
-							</ItemsControl.ItemTemplate>
-						</ItemsControl>
-
+					<StackPanel Spacing="5">
+						<TextBlock Text="Камера" FontWeight="SemiBold"/>
+						<TextBox Text="{Binding Camera.CameraIP, Mode=TwoWay}"
+								 Watermark="IP адрес камеры" />
+						<ComboBox ItemsSource="{Binding CameraModels}"
+								  SelectedItem="{Binding Camera.SelectedCameraModel, Mode=TwoWay}"
+								  HorizontalAlignment="Stretch"/>
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<Button Grid.Column="0"
+									Command="{Binding TestCameraConnectionAsync}"
+									CommandParameter="{Binding Camera}"
+									Content="Проверить соединение" />
+							<Ellipse Grid.Column="1"
+									 Width="12"
+									 Height="12"
+									 Fill="{Binding Camera.IsConnected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='Green,Red'}"/>
+							<Button Grid.Column="2"
+									Content="Настроить"
+									Command="{Binding OpenCameraSettingsCommand}"
+									IsEnabled="{Binding Camera.IsConnected}"
+									Margin="0,5,0,0"
+									HorizontalAlignment="Right"/>
+						</Grid>
+						<CheckBox Content="Проверять перед агрегацией"
+								  IsChecked="{Binding CheckCameraBeforeAggregation, Mode=TwoWay}"
+								  Margin="0,5,0,0"/>
 					</StackPanel>
 				</Border>
 
