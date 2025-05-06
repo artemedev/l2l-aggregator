@@ -6,12 +6,10 @@ using l2l_aggregator.ViewModels;
 using l2l_aggregator.ViewModels.VisualElements;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace l2l_aggregator.Services.DmProcessing
@@ -40,6 +38,14 @@ namespace l2l_aggregator.Services.DmProcessing
             _recognWrapper.SendPrintPatternXML(base64Template);
             _DMP.update_PP();
             _recognWrapper.SendShotFrameComand();
+        }
+        public bool ConfigureParams(recogn_params parameters)
+        {
+            return _recognWrapper.SetParams(parameters);
+        }
+        public void StopScan()
+        {
+            _recognWrapper.SendStopShotComand();
         }
         public void getScan()
         {

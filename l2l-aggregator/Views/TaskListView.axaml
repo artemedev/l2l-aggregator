@@ -64,6 +64,6 @@
 				</ListBox.ItemTemplate>
 			</ListBox>
 		</ScrollViewer>
-		<!--<TextBlock Text="{Binding InfoMessage}" Foreground="Red" Margin="0,10,0,0" Grid.Row="2"/>-->
+		<TextBlock Text="{Binding InfoMessage}" Foreground="Red" Margin="0,10,0,0" Grid.Row="2"/>
 	</Grid>
 </UserControl>

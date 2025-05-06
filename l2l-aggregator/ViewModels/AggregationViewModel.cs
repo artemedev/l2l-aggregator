@@ -211,14 +211,14 @@ namespace l2l_aggregator.ViewModels
         private async void InitializeAsync()
         {
             //переделать
-            var savedScanner = await _databaseService.Config.LoadScannerDeviceAsync();
-            if (savedScanner?.Id is not null)
+            var savedScanner = await _databaseService.Config.GetConfigValueAsync("ScannerCOMPort");
+            if (savedScanner is not null)
             {
                 var modelScanner = await _databaseService.Config.GetConfigValueAsync("ScannerModel");
 
-                if (modelScanner == "DefaultScanner")
+                if (modelScanner == "Honeywell")
                 {
-                    _scannerWorker = new ScannerWorker(savedScanner.Id);
+                    _scannerWorker = new ScannerWorker(savedScanner);
                     _scannerWorker.BarcodeScanned += HandleScannedBarcode;
                     _scannerWorker.RunWorkerAsync();
                 }

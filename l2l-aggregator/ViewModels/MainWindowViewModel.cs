@@ -35,12 +35,14 @@ namespace l2l_aggregator.ViewModels
         private readonly HistoryRouter<ViewModelBase> _router;
         private readonly INotificationService _notificationService;
         private readonly SessionService _sessionService;
+        private readonly ConfigurationLoaderService _configLoader;
         public INotificationMessageManager Manager => _notificationService.Manager;
 
-        public MainWindowViewModel(HistoryRouter<ViewModelBase> router, DatabaseService databaseService, INotificationService notificationService, SessionService sessionService)
+        public MainWindowViewModel(HistoryRouter<ViewModelBase> router, DatabaseService databaseService, INotificationService notificationService, SessionService sessionService, ConfigurationLoaderService configLoader)
         {
             _router = router;
             _databaseService = databaseService;
+            _configLoader = configLoader;
             _notificationService = notificationService;
             _sessionService = sessionService;
 
@@ -79,28 +81,16 @@ namespace l2l_aggregator.ViewModels
         //}
         private async Task InitializeSessionFromDatabaseAsync()
         {
-            await _sessionService.InitializeAsync(_databaseService);
+            var (camera, disableVK) = await _configLoader.LoadSettingsToSessionAsync();
+            DisableVirtualKeyboard = disableVK;
         }
         private async void InitializeAsync()
         {
             var serverUri = await _databaseService.Config.GetConfigValueAsync("ServerUri");
-            var disableVirtualKeyboard = await _databaseService.Config.GetConfigValueAsync("DisableVirtualKeyboard");
-            //var isVirtualKeyboardDisabled = bool.TryParse(disableVirtualKeyboard, out var vkParsed) && vkParsed;
 
-            if (string.IsNullOrEmpty(disableVirtualKeyboard))
-            {
-                // Показать клавиатуру, если это необходимо
-                await _databaseService.Config.SetConfigValueAsync("DisableVirtualKeyboard", "true");
-                SessionService.Instance.DisableVirtualKeyboard = true;
-            }
-            else
-            {
-                SessionService.Instance.DisableVirtualKeyboard = bool.TryParse(disableVirtualKeyboard, out var parsed) && parsed;
-            }
+            // Redirect to appropriate startup page
             if (!string.IsNullOrEmpty(serverUri))
             {
-                //var client = await _apiClientFactory.CreateClientAsync<ITaskApi>(true);
-
                 _router.GoTo<AuthViewModel>();
             }
             else

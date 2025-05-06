@@ -35,15 +35,24 @@ namespace l2l_aggregator.ViewModels
         private readonly SessionService _sessionService;
         private readonly DataApiService _dataApiService;
         private readonly INotificationService _notificationService;
+        private readonly DeviceCheckService _deviceCheckService;
+        private readonly ConfigurationLoaderService _configLoader;
 
-        public TaskDetailsViewModel(HistoryRouter<ViewModelBase> router, DatabaseService databaseService, SessionService sessionService, DataApiService dataApiService, INotificationService notificationService)
+        public TaskDetailsViewModel(HistoryRouter<ViewModelBase> router, 
+            DatabaseService databaseService, 
+            SessionService sessionService, 
+            DataApiService dataApiService, 
+            INotificationService notificationService, 
+            DeviceCheckService deviceCheckService,
+            ConfigurationLoaderService configLoader)
         {
+            _configLoader = configLoader;
             _dataApiService = dataApiService;
             _databaseService = databaseService;
             _router = router;
             _sessionService = sessionService;
             _notificationService = notificationService;
-
+            _deviceCheckService = deviceCheckService;
             //Task = _sessionService.SelectedTask;
             LoadTaskAsync(_sessionService.SelectedTask.DOCID);
         }
@@ -252,123 +261,27 @@ namespace l2l_aggregator.ViewModels
         [RelayCommand]
         public async Task GoAggregationAsync()
         {
-            // Загружаем все настройки перед проверкой
+            await _configLoader.LoadSettingsToSessionAsync();
             await _sessionService.InitializeAsync(_databaseService);
+            var session = SessionService.Instance;
 
-            var errorMessages = new List<string>();
-
-            var cameraCheck = await CheckCameraAsync();
-            if (!cameraCheck.Success)
-                errorMessages.Add(cameraCheck.Message);
-
-            var printerCheck = await CheckPrinterAsync();
-            if (!printerCheck.Success)
-                errorMessages.Add(printerCheck.Message);
-
-            var controllerCheck = await CheckControllerAsync();
-            if (!controllerCheck.Success)
-                errorMessages.Add(controllerCheck.Message);
-
-            var scannerCheck = await CheckScannerAsync();
-            if (!scannerCheck.Success)
-                errorMessages.Add(scannerCheck.Message);
-
-            if (errorMessages.Any())
+            var results = new List<(bool Success, string Message)>
             {
-                foreach (var msg in errorMessages)
-                {
+                await _deviceCheckService.CheckCameraAsync(session),
+                await _deviceCheckService.CheckPrinterAsync(session),
+                await _deviceCheckService.CheckControllerAsync(session),
+                await _deviceCheckService.CheckScannerAsync(session)
+            };
+
+            var errors = results.Where(r => !r.Success).Select(r => r.Message).ToList();
+            if (errors.Any())
+            {
+                foreach (var msg in errors)
                     _notificationService.ShowMessage(msg);
-                }
                 return;
             }
 
-            // Все проверки пройдены
             _router.GoTo<AggregationViewModel>();
-        }
-        private async Task<(bool Success, string Message)> CheckCameraAsync()
-        {
-            if (!_sessionService.CheckCamera)
-                return (true, null);
-
-            if (string.IsNullOrWhiteSpace(_sessionService.CameraIP))
-                return (false, "IP камеры не задан!");
-
-            if (!await PingDeviceAsync(_sessionService.CameraIP))
-                return (false, $"Камера {_sessionService.CameraIP} недоступна!");
-
-            return (true, null);
-        }
-
-        private async Task<(bool Success, string Message)> CheckPrinterAsync()
-        {
-            if (!_sessionService.CheckPrinter)
-                return (true, null);
-
-            if (string.IsNullOrWhiteSpace(_sessionService.PrinterIP))
-                return (false, "IP принтера не задан!");
-
-            try
-            {
-                if (_sessionService.PrinterModel == "Zebra")
-                {
-                    // ... код проверки принтера
-                    return (true, null);
-                }
-                return (false, $"Принтер модели '{_sessionService.PrinterModel}' не поддерживается.");
-            }
-            catch (Exception ex)
-            {
-                return (false, $"Ошибка принтера: {ex.Message}");
-            }
-        }
-
-        private async Task<(bool Success, string Message)> CheckControllerAsync()
-        {
-            if (!_sessionService.CheckController)
-                return (true, null);
-
-            if (string.IsNullOrWhiteSpace(_sessionService.ControllerIP))
-                return (false, "IP контроллера не задан!");
-
-            if (!await PingDeviceAsync(_sessionService.ControllerIP))
-                return (false, $"Контроллер {_sessionService.ControllerIP} недоступен!");
-
-            return (true, null);
-        }
-
-        private async Task<(bool Success, string Message)> CheckScannerAsync()
-        {
-            if (!_sessionService.CheckScanner)
-                return (true, null);
-
-            if (string.IsNullOrWhiteSpace(_sessionService.ScannerPort))
-                return (false, "Порт сканера не задан!");
-
-            if (_sessionService.ScannerModel != "Honeywell")
-                return (false, $"Сканер модели '{_sessionService.ScannerModel}' не поддерживается.");
-
-            if (!CheckComPortExists(_sessionService.ScannerPort))
-                return (false, $"Сканер на порту {_sessionService.ScannerPort} недоступен!");
-
-            return (true, null);
-        }
-        private async Task<bool> PingDeviceAsync(string ip)
-        {
-            try
-            {
-                using var ping = new System.Net.NetworkInformation.Ping();
-                var reply = await ping.SendPingAsync(ip, 300); // 300ms timeout
-                return reply.Status == System.Net.NetworkInformation.IPStatus.Success;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private bool CheckComPortExists(string portName)
-        {
-            return System.IO.Ports.SerialPort.GetPortNames().Contains(portName);
         }
     }
 }

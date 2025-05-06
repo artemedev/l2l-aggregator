@@ -1,6 +1,7 @@
 ﻿using Avalonia.SimpleRouter;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DM_wraper_NS;
 using FastReport.Utils;
 using l2l_aggregator.Helpers;
 using l2l_aggregator.Helpers.AggregationHelpers;
@@ -8,6 +9,7 @@ using l2l_aggregator.Models;
 using l2l_aggregator.Services;
 using l2l_aggregator.Services.Database;
 using l2l_aggregator.Services.Database.Interfaces;
+using l2l_aggregator.Services.DmProcessing;
 using l2l_aggregator.Services.Notification.Interface;
 using l2l_aggregator.Services.ScannerService.Interfaces;
 using l2l_aggregator.ViewModels.VisualElements;
@@ -95,13 +97,18 @@ namespace l2l_aggregator.ViewModels
         private readonly DatabaseService _databaseService;
         private readonly SessionService _sessionService;
         private readonly IScannerPortResolver _scannerResolver;
-        public SettingsViewModel(DatabaseService databaseService, HistoryRouter<ViewModelBase> router, INotificationService notificationService, SessionService sessionService, IScannerPortResolver scannerResolver)
+        private readonly DmScanService _dmScanService;
+        private readonly ConfigurationLoaderService _configLoader;
+
+        public SettingsViewModel(DatabaseService databaseService, HistoryRouter<ViewModelBase> router, INotificationService notificationService, SessionService sessionService, IScannerPortResolver scannerResolver, DmScanService dmScanService, ConfigurationLoaderService configLoader)
         {
+            _configLoader = configLoader;
             _notificationService = notificationService;
             _databaseService = databaseService;
             _router = router;
             _sessionService = sessionService;
             _scannerResolver = scannerResolver;
+            _dmScanService = dmScanService;
             AddCamera();
             //LoadCameras();
             _ = InitializeAsync();
@@ -183,41 +190,20 @@ namespace l2l_aggregator.ViewModels
         //}
         private async Task LoadSettingsAsync()
         {
-            ServerUri = await _databaseService.Config.GetConfigValueAsync("ServerUri");
-            PrinterIP = await _databaseService.Config.GetConfigValueAsync("PrinterIP");
-            SelectedPrinterModel = await _databaseService.Config.GetConfigValueAsync("PrinterModel");
-            ControllerIP = await _databaseService.Config.GetConfigValueAsync("ControllerIP");
+            var (camera, disableVK) = await _configLoader.LoadSettingsToSessionAsync();
 
-            DisableVirtualKeyboard = bool.TryParse(
-                await _databaseService.Config.GetConfigValueAsync("DisableVirtualKeyboard"),
-                out var parsedKeyboard) && parsedKeyboard;
+            Camera = camera;
+            DisableVirtualKeyboard = disableVK;
 
-            CheckCameraBeforeAggregation = await _databaseService.Config.GetConfigValueAsync("CheckCamera") == "True";
-            CheckPrinterBeforeAggregation = await _databaseService.Config.GetConfigValueAsync("CheckPrinter") == "True";
-            CheckControllerBeforeAggregation = await _databaseService.Config.GetConfigValueAsync("CheckController") == "True";
-            CheckScannerBeforeAggregation = await _databaseService.Config.GetConfigValueAsync("CheckScanner") == "True";
-     
-
-            // Камера
-            Camera = new CameraViewModel
-            {
-                CameraIP = await _databaseService.Config.GetConfigValueAsync("CameraIP"),
-                SelectedCameraModel = await _databaseService.Config.GetConfigValueAsync("CameraModel")
-            };
-
-            // Session обновление
-            var session = SessionService.Instance;
-            session.PrinterIP = PrinterIP;
-            session.PrinterModel = SelectedPrinterModel;
-            session.ControllerIP = ControllerIP;
-            session.CameraIP = Camera.CameraIP;
-            session.CameraModel = Camera.SelectedCameraModel;
-
-            session.DisableVirtualKeyboard = DisableVirtualKeyboard;
-            session.CheckCamera = CheckCameraBeforeAggregation;
-            session.CheckPrinter = CheckPrinterBeforeAggregation;
-            session.CheckController = CheckControllerBeforeAggregation;
-            session.CheckScanner = CheckScannerBeforeAggregation;
+            PrinterIP = SessionService.Instance.PrinterIP;
+            SelectedPrinterModel = SessionService.Instance.PrinterModel;
+            ControllerIP = SessionService.Instance.ControllerIP;
+            SelectedCameraModel = SessionService.Instance.CameraModel;
+            CheckCameraBeforeAggregation = SessionService.Instance.CheckCamera;
+            CheckPrinterBeforeAggregation = SessionService.Instance.CheckPrinter;
+            CheckControllerBeforeAggregation = SessionService.Instance.CheckController;
+            CheckScannerBeforeAggregation = SessionService.Instance.CheckScanner;
+            SelectedScannerModel = SessionService.Instance.ScannerModel;
         }
 
         //public void LoadAvailableScanners()
@@ -394,7 +380,21 @@ namespace l2l_aggregator.ViewModels
 
             try
             {
-                await Task.Delay(300); // simulate
+                // Настроить параметры камеры для библиотеки
+                var recognParams = new recogn_params
+                {
+                    CamInterfaces = "File", // или USB, File, в зависимости от вашей конфигурации
+                    cameraName = camera.CameraIP,
+                    _Preset = new camera_preset(camera.SelectedCameraModel),
+                    softwareTrigger = true,
+                    hardwareTrigger = false,
+                    DMRecogn = false
+                };
+
+                // Установить параметры в обёртку
+                bool success = _dmScanService.ConfigureParams(recognParams);
+                if (!success)
+                    _notificationService.ShowMessage("Не удалось применить параметры камеры");
 
                 camera.IsConnected = true;
 
