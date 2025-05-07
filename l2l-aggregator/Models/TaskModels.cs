@@ -79,6 +79,7 @@ namespace l2l_aggregator.Models
         public int? QTY { get; set; }
         public int AGGR_FLAG { get; set; }
         public string? UN_TEMPLATE {  get; set; }
+        public string? UN_TEMPLATE_FR {  get; set; }
         public long UN_TEMPLATEID { get; set; }
         public long UN_RESERVE_DOCID { get; set; }
         public int IN_BOX_QTY { get; set; }

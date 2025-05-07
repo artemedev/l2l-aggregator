@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml.Linq;
 
 namespace l2l_aggregator.Services.AggregationService
@@ -27,7 +28,10 @@ namespace l2l_aggregator.Services.AggregationService
                 }
 
                 var templatePage = OriginalDocument.Descendants()
-                    .FirstOrDefault(e => e.Name.LocalName == "TfrxTemplatePage");
+                                   .FirstOrDefault(e => (
+                        e.Name.LocalName == "TfrxReportPage" ||
+                        e.Name.LocalName == "TfrxTemplatePage"
+                        ));
 
                 if (templatePage == null)
                     return fields;
@@ -96,7 +100,10 @@ namespace l2l_aggregator.Services.AggregationService
                 }
             }
 
-            var templatePage = newDocument.Descendants().FirstOrDefault(e => e.Name.LocalName == "TfrxTemplatePage");
+            var templatePage = newDocument.Descendants().FirstOrDefault(e => (
+                        e.Name.LocalName == "TfrxReportPage" ||
+                        e.Name.LocalName == "TfrxTemplatePage"
+                        ));
             if (templatePage == null)
                 return string.Empty;
 
@@ -134,9 +141,16 @@ namespace l2l_aggregator.Services.AggregationService
                 el.Remove();
             }
 
-            return EncodeToBase64(newDocument);
+            using (var stringWriter = new Utf8StringWriter())
+            {
+                newDocument.Save(stringWriter, SaveOptions.None);
+                return stringWriter.ToString();
+            }
         }
-
+        public class Utf8StringWriter : StringWriter
+        {
+            public override Encoding Encoding => Encoding.UTF8;
+        }
         private string EncodeToBase64(XDocument doc)
         {
             using (MemoryStream ms = new MemoryStream())

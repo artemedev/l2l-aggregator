@@ -36,12 +36,13 @@ namespace l2l_aggregator.Services
             {
                 var recognParams = new recogn_params
                 {
-                    CamInterfaces = "File",
+                    CamInterfaces = "GigEVision2",
                     cameraName = session.CameraIP,
                     _Preset = new camera_preset(session.CameraModel),
                     softwareTrigger = true,
                     hardwareTrigger = false,
-                    DMRecogn = false
+                    packRecogn = true,
+                    DMRecogn = true
                 };
 
                 var success = _dmScanService.ConfigureParams(recognParams);

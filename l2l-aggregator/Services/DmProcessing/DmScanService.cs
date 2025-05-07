@@ -6,10 +6,13 @@ using l2l_aggregator.ViewModels;
 using l2l_aggregator.ViewModels.VisualElements;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace l2l_aggregator.Services.DmProcessing
@@ -34,10 +37,33 @@ namespace l2l_aggregator.Services.DmProcessing
 
         public void StartScan(string base64Template)
         {
+            string filePath = "./tmp/template.xml"; // Или .fr3 — в зависимости от вашего формата
+
+            SaveXmlToFile(base64Template, filePath);
             _dmrDataReady = new TaskCompletionSource<bool>();
             _recognWrapper.SendPrintPatternXML(base64Template);
             _DMP.update_PP();
-            _recognWrapper.SendShotFrameComand();
+            //_recognWrapper.SendShotFrameComand();
+        }
+        public void SaveXmlToFile(string xmlContent, string filePath)
+        {
+            try
+            {
+                // Убедимся, что директория существует
+                string? directory = Path.GetDirectoryName(filePath);
+                if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+
+                // Записываем в UTF-8 без BOM — для Linux это стандарт
+                File.WriteAllText(filePath, xmlContent, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Ошибка при сохранении XML-файла: {ex.Message}");
+                throw;
+            }
         }
         public bool ConfigureParams(recogn_params parameters)
         {
@@ -50,6 +76,7 @@ namespace l2l_aggregator.Services.DmProcessing
         public void getScan()
         {
             _dmrDataReady = new TaskCompletionSource<bool>();
+            _recognWrapper.SendStartShotComand();
             _recognWrapper.SendShotFrameComand();
         }
         public async Task<result_data> WaitForResultAsync()

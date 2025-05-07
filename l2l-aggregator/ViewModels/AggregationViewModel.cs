@@ -108,7 +108,7 @@ namespace l2l_aggregator.ViewModels
         private void LoadTemplateFromSession()
         {
             Fields.Clear();
-            var loadedFields = _templateService.LoadTemplateFromBase64(_sessionService.SelectedTaskInfo.UN_TEMPLATE);
+            var loadedFields = _templateService.LoadTemplateFromBase64(_sessionService.SelectedTaskInfo.UN_TEMPLATE_FR);
             foreach (var f in loadedFields)
                 Fields.Add(f);
 
@@ -244,6 +244,8 @@ namespace l2l_aggregator.ViewModels
             int expectedPerLayer = _sessionService.SelectedTaskInfo.IN_BOX_QTY / _sessionService.SelectedTaskInfo.LAYERS_QTY;
 
             _dmScanService.StartScan(GenerateTemplate());
+            _dmScanService.getScan();
+
             dmrData = await _dmScanService.WaitForResultAsync();
 
             ScannedImage = _dmScanService.GetCroppedImage(dmrData);
