@@ -41,8 +41,9 @@ namespace l2l_aggregator.Services
                     _Preset = new camera_preset(session.CameraModel),
                     softwareTrigger = true,
                     hardwareTrigger = false,
-                    packRecogn = true,
-                    DMRecogn = true
+                    DMRecogn = true,
+                    OCRRecogn = true,
+                    packRecogn = true
                 };
 
                 var success = _dmScanService.ConfigureParams(recognParams);

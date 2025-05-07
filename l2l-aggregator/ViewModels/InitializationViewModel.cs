@@ -68,8 +68,11 @@ namespace l2l_aggregator.ViewModels
                     FIRMWARE_VERSION = "test",
                     DEVICE_TYPE = "test"
                 };
-
-                var httpClient = new HttpClient
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                };
+                var httpClient = new HttpClient(handler)
                 {
                     BaseAddress = new Uri(ServerUri)
                 };
