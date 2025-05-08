@@ -1,6 +1,6 @@
 ﻿namespace DM_process_NS
 {
-    using DM_wraper_NS;
+    using DM_wraper_lib;
     public class DM_process()
     {
         MainProces _MP = new MainProces();

@@ -11,8 +11,9 @@ namespace l2l_aggregator.Helpers.AggregationHelpers
             int cellWidth = (int)(sizeWidth * scaleXObrat);
             int cellHeight = (int)(sizeHeight * scaleYObrat);
 
-            int x = (int)(xCell * scaleXObrat);
-            int y = (int)(yCell * scaleYObrat);
+            int x = (int)((xCell - (sizeWidth / 2)) * scaleXObrat);
+            int y = (int)((yCell - (sizeHeight / 2)) * scaleYObrat);
+
 
             var rect = new SKRectI(x, y, x + cellWidth, y + cellHeight);
             using var sourceSK = ConvertAvaloniaBitmapToSKBitmap(source);

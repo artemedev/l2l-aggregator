@@ -5,7 +5,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.SimpleRouter;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DM_wraper_NS;
+using DM_wraper_lib;
 using FastReport;
 using l2l_aggregator.Helpers;
 using l2l_aggregator.Helpers.AggregationHelpers;
@@ -495,10 +495,10 @@ namespace l2l_aggregator.ViewModels
         }
         public async void OnCellClicked(DmCellViewModel cell)
         {
-            int minX = dmrData.BOXs.Min(d => d.poseX);
-            int minY = dmrData.BOXs.Min(d => d.poseY);
-            int maxX = dmrData.BOXs.Max(d => d.poseX + d.width);
-            int maxY = dmrData.BOXs.Max(d => d.poseY + d.height);
+            int minX = dmrData.BOXs.Min(d => d.poseX - (d.width / 2));
+            int minY = dmrData.BOXs.Min(d => d.poseY - (d.height / 2));
+            int maxX = dmrData.BOXs.Max(d => d.poseX + (d.width / 2));
+            int maxY = dmrData.BOXs.Max(d => d.poseY + (d.height / 2));
 
             SelectedSquareImage = _imageProcessingService.CropImage(
                 ScannedImage,

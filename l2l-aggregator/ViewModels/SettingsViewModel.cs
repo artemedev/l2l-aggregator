@@ -1,8 +1,7 @@
 ﻿using Avalonia.SimpleRouter;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DM_wraper_NS;
-using FastReport.Utils;
+using DM_wraper_lib;
 using l2l_aggregator.Helpers;
 using l2l_aggregator.Helpers.AggregationHelpers;
 using l2l_aggregator.Models;
@@ -18,10 +17,8 @@ using Microsoft.Extensions.Logging;
 using Refit;
 using System;
 using System.Collections.ObjectModel;
-using System.IO.Ports;
 using System.Linq;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace l2l_aggregator.ViewModels

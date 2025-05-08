@@ -25,26 +25,7 @@
 				</DataTemplate>
 			</TabStrip.ItemTemplate>
 		</TabStrip>
-		<!--<ItemsControl Grid.Row="0" ItemsSource="{Binding AggregatedItems}" Margin="10">
-			<ItemsControl.ItemsPanel>
-				<ItemsPanelTemplate>
-					<StackPanel Orientation="Horizontal"/>
-				</ItemsPanelTemplate>
-			</ItemsControl.ItemsPanel>
-			<ItemsControl.ItemTemplate>
-				<DataTemplate>
-					<Expander Header="{Binding Name}" Margin="5" IsExpanded="{Binding IsCompleted}">
-						<TextBlock>
-							<Run Text="{Binding Type}" FontWeight="Bold"/>
-							<Run Text=" — "/>
-							<Run Text="{Binding Name}"/>
-							<Run Text=" — "/>
-							<Run Text="{Binding IsCompleted, Converter={StaticResource BooleanToAggregationStatusConverter}}"/>
-						</TextBlock>
-					</Expander>
-				</DataTemplate>
-			</ItemsControl.ItemTemplate>
-		</ItemsControl>-->
+
 
 		<Grid Grid.Row="1" Margin="10" >
 			<Grid.ColumnDefinitions>
@@ -52,7 +33,7 @@
 				<ColumnDefinition Width="*"/>
 			</Grid.ColumnDefinitions>
 			<Grid Grid.Column="0" ScrollViewer.AllowAutoHide="False" ScrollViewer.IsScrollChainingEnabled="False" Name="scanImage" VerticalAlignment="Stretch">
-				<Image Source="{Binding ScannedImage}" Stretch="Fill" SizeChanged="OnImageSizeChanged"/>
+				<Image Source="{Binding ScannedImage}" Stretch="Uniform" SizeChanged="OnImageSizeChanged" HorizontalAlignment="Left"/>
 				<ItemsControl ItemsSource="{Binding DMCells}">
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>

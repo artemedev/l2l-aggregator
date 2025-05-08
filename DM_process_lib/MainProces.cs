@@ -1,4 +1,4 @@
-﻿using DM_wraper_NS;
+﻿using DM_wraper_lib;
 using Newtonsoft.Json;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;

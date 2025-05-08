@@ -1,4 +1,4 @@
-﻿using DM_wraper_NS;
+﻿using DM_wraper_lib;
 
 namespace DM_process_NS
 {

@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 //using DM_process;
 //using DM_recogn_lib; 
-namespace DM_wraper_NS
+namespace DM_wraper_lib
 {
     public class DM_recogn_wraper
     {

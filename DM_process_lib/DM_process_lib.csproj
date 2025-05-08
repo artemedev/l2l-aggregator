@@ -13,16 +13,16 @@
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.7" />
   </ItemGroup>
 
-
-	<ItemGroup>
-		<Reference Include="DM_wraper_lib">
-			<HintPath>..\DM_wraper_lib\bin\Debug\net8.0\DM_wraper_lib.dll</HintPath>
-		</Reference>
-	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DM_wraper_lib\DM_wraper_lib.csproj" />
+  </ItemGroup>
 
 
 	<ItemGroup>
 	  <None Update="image_raw.jpg">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="image_raw23.jpg">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="result.json">
