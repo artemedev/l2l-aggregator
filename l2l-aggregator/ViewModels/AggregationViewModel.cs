@@ -16,6 +16,7 @@ using l2l_aggregator.Services.Api;
 using l2l_aggregator.Services.Database;
 using l2l_aggregator.Services.DmProcessing;
 using l2l_aggregator.Services.Notification.Interface;
+using l2l_aggregator.Services.Printing;
 using l2l_aggregator.ViewModels.VisualElements;
 using l2l_aggregator.Views.Popup;
 using MD.Devices;
@@ -52,6 +53,7 @@ namespace l2l_aggregator.ViewModels
         private ScannerWorker _scannerWorker;
         private readonly INotificationService _notificationService;
         private readonly HistoryRouter<ViewModelBase> _router;
+        private readonly PrintingService _printingService;
 
         private ILogger? logger;
 
@@ -106,6 +108,73 @@ namespace l2l_aggregator.ViewModels
         ArmJobSsccResponse responseSscc;
 
         static result_data dmrData;
+        public ObservableCollection<TabItemModel> Tabs { get; }
+        public int SelectedTabIndex { get; set; }
+
+        public TabItemModel SelectedTab => Tabs.ElementAtOrDefault(SelectedTabIndex);
+
+        public AggregationViewModel(
+            DataApiService dataApiService,
+            ImageHelper imageProcessingService,
+            SessionService sessionService,
+            TemplateService templateService,
+            DmScanService dmScanService,
+            ScannerListenerService scannerListener,
+            DatabaseService databaseService,
+            ScannerInputService scannerInputService,
+            INotificationService notificationService,
+            HistoryRouter<ViewModelBase> router,
+            PrintingService printingService
+            )
+        {
+            _sessionService = sessionService;
+            _dataApiService = dataApiService;
+            _imageProcessingService = imageProcessingService;
+            _templateService = templateService;
+            _dmScanService = dmScanService;
+            _scannerListener = scannerListener;
+            _databaseService = databaseService;
+            _scannerInputService = scannerInputService;
+            _notificationService = notificationService;
+            _router = router;
+            _printingService = printingService;
+
+            ImageSizeChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeChanged);
+            ImageSizeCellChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeCellChanged);
+            ImageSizeGridCellChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeGridCellChanged);
+            Tabs = new ObservableCollection<TabItemModel>
+            {
+                new TabItemModel { Header = "Tab 1", Content = "Content for Tab 1"  },
+                new TabItemModel { Header = "Tab 2", Content = "Content for Tab 2"  },
+                new TabItemModel { Header = "Tab 3", Content = "Content for Tab 3"  },
+            };
+            InitializeAsync();
+        }
+        private async void InitializeAsync()
+        {
+            //переделать
+            var savedScanner = await _databaseService.Config.GetConfigValueAsync("ScannerCOMPort");
+            if (savedScanner is not null)
+            {
+                var modelScanner = await _databaseService.Config.GetConfigValueAsync("ScannerModel");
+
+                if (modelScanner == "Honeywell")
+                {
+                    _scannerWorker = new ScannerWorker(savedScanner);
+                    _scannerWorker.BarcodeScanned += HandleScannedBarcode;
+                    _scannerWorker.RunWorkerAsync();
+                }
+                else
+                {
+                    InfoMessage = $"Модель сканера '{modelScanner}' пока не поддерживается.";
+                    _notificationService.ShowMessage(InfoMessage);
+                }
+            }
+
+            LoadTemplateFromSession();
+            InitializeAggregationStructure();
+            InitializeSsccAsync();
+        }
         private void LoadTemplateFromSession()
         {
             Fields.Clear();
@@ -157,82 +226,6 @@ namespace l2l_aggregator.ViewModels
         private async void InitializeSsccAsync()
         {
             responseSscc = await _dataApiService.LoadSsccAsync(_sessionService.SelectedTaskInfo.DOCID);
-        }
-
-        public ObservableCollection<TabItemModel> Tabs { get; }
-        public int SelectedTabIndex { get; set; }
-
-        public TabItemModel SelectedTab => Tabs.ElementAtOrDefault(SelectedTabIndex);
-
-        public AggregationViewModel(
-            DataApiService dataApiService,
-            ImageHelper imageProcessingService,
-            SessionService sessionService,
-            TemplateService templateService,
-            DmScanService dmScanService,
-            ScannerListenerService scannerListener,
-            DatabaseService databaseService,
-            ScannerInputService scannerInputService,
-            INotificationService notificationService,
-            HistoryRouter<ViewModelBase> router
-            )
-        {
-            Debug.WriteLine("[AGGREGATION] AggregationViewModel создан");
-            _sessionService = sessionService;
-            _dataApiService = dataApiService;
-            _imageProcessingService = imageProcessingService;
-            _templateService = templateService;
-            _dmScanService = dmScanService;
-            _scannerListener = scannerListener;
-            _databaseService = databaseService;
-            _scannerInputService = scannerInputService;
-            _notificationService = notificationService;
-            _router = router;
-
-            ImageSizeChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeChanged);
-            ImageSizeCellChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeCellChanged);
-            ImageSizeGridCellChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeGridCellChanged);
-            Tabs = new ObservableCollection<TabItemModel>
-            {
-                new TabItemModel { Header = "Tab 1", Content = "Content for Tab 1"  },
-                new TabItemModel { Header = "Tab 2", Content = "Content for Tab 2"  },
-                new TabItemModel { Header = "Tab 3", Content = "Content for Tab 3"  },
-            };
-            //var savedScanner = _databaseService.Config.LoadScannerDeviceAsync();
-            //_scannerWorker = new ScannerWorker(savedScanner.Id);
-
-            //_scannerWorker.BarcodeScanned += HandleScannedBarcode;
-            //_scannerWorker.RunWorkerAsync();
-
-            //LoadTemplateFromSession();
-            //InitializeAggregationStructure();
-            //InitializeSsccAsync();
-            InitializeAsync();
-        }
-        private async void InitializeAsync()
-        {
-            //переделать
-            var savedScanner = await _databaseService.Config.GetConfigValueAsync("ScannerCOMPort");
-            if (savedScanner is not null)
-            {
-                var modelScanner = await _databaseService.Config.GetConfigValueAsync("ScannerModel");
-
-                if (modelScanner == "Honeywell")
-                {
-                    _scannerWorker = new ScannerWorker(savedScanner);
-                    _scannerWorker.BarcodeScanned += HandleScannedBarcode;
-                    _scannerWorker.RunWorkerAsync();
-                }
-                else
-                {
-                    InfoMessage = $"Модель сканера '{modelScanner}' пока не поддерживается.";
-                    _notificationService.ShowMessage(InfoMessage);
-                }
-            }
-
-            LoadTemplateFromSession();
-            InitializeAggregationStructure();
-            InitializeSsccAsync();
         }
         ~AggregationViewModel()
         {
@@ -320,47 +313,9 @@ namespace l2l_aggregator.ViewModels
         {
             var reportXML = _templateService.LoadTemplateFromBase64(_sessionService.SelectedTaskInfo.BOX_TEMPLATE);
 
-            Report report = new Report();
+            
             byte[] frxBytes = Convert.FromBase64String(_sessionService.SelectedTaskInfo.BOX_TEMPLATE);
-            //report.Load(Convert.FromBase64String(Convert.ToString(_sessionService.SelectedTaskInfo.BOX_TEMPLATE)));
-            using (MemoryStream ms = new MemoryStream(frxBytes))
-            {
-                report.Load(ms);
-            }
-            //// Получаем данные из responseSscc
-            //var displayBarcode = responseSscc?.RECORDSET?.FirstOrDefault()?.DISPLAY_BAR_CODE ?? "";
-
-            var labelData = new
-            {
-                DISPLAY_BAR_CODE = _sessionService.SelectedTaskSscc.DISPLAY_BAR_CODE,
-                IN_BOX_QTY = _sessionService.SelectedTaskInfo.IN_BOX_QTY,
-                MNF_DATE = _sessionService.SelectedTaskInfo.MNF_DATE_VAL,
-                EXPIRE_DATE = _sessionService.SelectedTaskInfo.EXPIREDATE,
-                SERIES_NAME = _sessionService.SelectedTaskInfo.SERIESNAME,
-                PRINT_NAME = _sessionService.SelectedTaskInfo.RESOURCE_NAME,
-                LEVEL_QTY = _sessionService.SelectedTaskInfo.QTY ?? 0,
-                CNT = _sessionService.SelectedTaskInfo.RES_BOXID
-            };
-            // Регистрируем данные в отчете
-            report.RegisterData(new List<object> { labelData }, "LabelQry");
-            report.GetDataSource("LabelQry").Enabled = true;
-            // Подготавливаем отчет
-            report.Prepare();
-            //foreach (var name in System.Drawing.Printing.PrinterSettings.InstalledPrinters)
-            //{
-            //    Console.WriteLine(name);
-            //}
-            //report.RegisterData(new List<MyLabelData> { BuildLabelData() }, "LabelData");
-            //report.GetDataSource("LabelData").Enabled = true;
-            if (_sessionService.PrinterModel == "Zebra")
-            {
-                PrintReportToNetworkPrinter(report);
-            }
-            else
-            {
-                _notificationService.ShowMessage($"Модель принтера '{_sessionService.PrinterModel}' не поддерживается.");
-                return;
-            }
+            _printingService.PrintReport(frxBytes);
         }
 
         [RelayCommand]

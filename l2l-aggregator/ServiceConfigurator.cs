@@ -18,6 +18,7 @@ using System;
 using System.IO;
 using l2l_aggregator.Services.ScannerService.Interfaces;
 using l2l_aggregator.Services.ScannerService;
+using l2l_aggregator.Services.Printing;
 
 namespace l2l_aggregator
 {
@@ -97,6 +98,7 @@ namespace l2l_aggregator
             services.AddSingleton<DataApiService>();
             services.AddSingleton<DeviceCheckService>(); 
             services.AddSingleton<ConfigurationLoaderService>(); 
+            services.AddSingleton<PrintingService>();
             services.AddSingleton<IScannerPortResolver>(PlatformResolverFactory.CreateScannerResolver());
         }
     }
