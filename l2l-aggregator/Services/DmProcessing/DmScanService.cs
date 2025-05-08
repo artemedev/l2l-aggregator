@@ -1,6 +1,7 @@
 ﻿using Avalonia.Media.Imaging;
-using DM_process_NS;
-using DM_wraper_lib;
+using DM_process_lib;
+using DM_wraper_NS;
+using l2l_aggregator.Helpers.AggregationHelpers;
 using l2l_aggregator.Models;
 using l2l_aggregator.ViewModels;
 using l2l_aggregator.ViewModels.VisualElements;
@@ -135,6 +136,7 @@ namespace l2l_aggregator.Services.DmProcessing
             result_data dmrData,
             double scaleX, double scaleY,
             SessionService sessionService,
+            ObservableCollection<TemplateField> fields,
             ArmJobSgtinResponse response,
             AggregationViewModel thisModel)
         {
@@ -153,7 +155,7 @@ namespace l2l_aggregator.Services.DmProcessing
                     Angle = -(dmd.alpha)
                 };
 
-                bool allValid = true;
+                bool allValid = false;
 
                 foreach (var ocr in dmd.OCR)
                 {
@@ -196,6 +198,11 @@ namespace l2l_aggregator.Services.DmProcessing
                     if (!isValid)
                         allValid = false;
                 }
+                if (dmd.OCR.Count != fields.Count)
+                {
+                    allValid = false;
+                }
+
 
                 dmVm.IsValid = allValid;
                 cells.Add(dmVm);

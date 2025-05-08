@@ -5,7 +5,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.SimpleRouter;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DM_wraper_lib;
+using DM_wraper_NS;
 using FastReport;
 using l2l_aggregator.Helpers;
 using l2l_aggregator.Helpers.AggregationHelpers;
@@ -30,6 +30,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
+using static FastReport.Export.Dbf.Record;
 
 namespace l2l_aggregator.ViewModels
 {
@@ -264,11 +265,12 @@ namespace l2l_aggregator.ViewModels
                 scaleX,
                 scaleY,
                 _sessionService,
+                Fields,
                 responseSgtin,
                 this
             );
             int validCount = DMCells.Count(c => c.IsValid);
-            if (validCount >= expectedPerLayer)
+            if (validCount == expectedPerLayer)
             {
                 var currentLayer = AggregatedItems.FirstOrDefault(x => x.Type == "Слой" && !x.IsCompleted);
                 if (currentLayer != null)
@@ -325,8 +327,8 @@ namespace l2l_aggregator.ViewModels
             {
                 report.Load(ms);
             }
-            // Получаем данные из responseSscc
-            var displayBarcode = responseSscc?.RECORDSET?.FirstOrDefault()?.DISPLAY_BAR_CODE ?? "";
+            //// Получаем данные из responseSscc
+            //var displayBarcode = responseSscc?.RECORDSET?.FirstOrDefault()?.DISPLAY_BAR_CODE ?? "";
 
             var labelData = new
             {

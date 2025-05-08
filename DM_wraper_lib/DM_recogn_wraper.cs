@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 //using DM_process;
 //using DM_recogn_lib; 
-namespace DM_wraper_lib
+namespace DM_wraper_NS
 {
     public class DM_recogn_wraper
     {
@@ -17,6 +17,7 @@ namespace DM_wraper_lib
         public event Action libTakeShot = delegate { };
         public event Action libStartShot = delegate { };
         public event Action libStopShot = delegate { };
+        public event Action libGetCameras = delegate { };
         //__________ For Software _________________
         public event NewResultContainer swNewDMResult = delegate { };
         public event AlarmEventForUser alarmEvent = delegate { };
@@ -25,6 +26,7 @@ namespace DM_wraper_lib
         private recogn_params _params;
         private string pathToPrintPattern;
         private string XMLoPrintPattern;
+        private string[] _camerasList;
         public void Init()
         {
             Console.WriteLine("DM_recogn_wraper - initialisation");
@@ -42,7 +44,8 @@ namespace DM_wraper_lib
         {
             result_data newResult;
             if (_result.TryDequeue(out newResult))
-                return newResult;
+                Console.WriteLine($"GetDMResult: {newResult.BOXs.Count()}");
+            return newResult;
             throw new Exception("DM results list is empty");
         }
         public bool SetParams(recogn_params newParams)
@@ -73,6 +76,7 @@ namespace DM_wraper_lib
         /// <param name="patternPath">XML fr3 data</param>
         public bool SendPrintPatternXML(string XMLPattern)
         {
+            Console.WriteLine(XMLPattern);
             XMLoPrintPattern = XMLPattern;
             pathToPrintPattern = "";
             libUpdatePrintPattern();
@@ -85,6 +89,7 @@ namespace DM_wraper_lib
         /// </summary>
         public bool SendShotFrameComand()
         {
+            Console.WriteLine("DM_recogn_wraper - SendShotFrameComand");
             libTakeShot();
             return true;
         }
@@ -95,6 +100,7 @@ namespace DM_wraper_lib
         /// </summary>
         public bool SendStartShotComand()
         {
+            Console.WriteLine("DM_recogn_wraper - SendStartShotComand");
             libStartShot();
             return true;
         }
@@ -109,13 +115,31 @@ namespace DM_wraper_lib
             return true;
         }
 
+        public string[] GetCameras()
+        {
+            _camerasList = [];
+            libGetCameras();
+            Thread.Sleep(1000);
+            return _camerasList;
+        }
+
         //
         //__________ For Library _________________
         //
 
+        public void SetCamerasList(string[] _camList)
+        {
+            _camerasList = _camList;
+        }
+
         public string GetPathToPrintPattern()
         {
             return pathToPrintPattern;
+        }
+
+        public string GetXMLPrintPattern()
+        {
+            return XMLoPrintPattern;
         }
         public void initForLib(recogn_params defParams)
         {
@@ -127,6 +151,7 @@ namespace DM_wraper_lib
         {
             _result.Enqueue(newResult);
             swNewDMResult(_result.Count);
+            Console.WriteLine($"Update_result_data: {newResult.BOXs.Count()}");
             return true;
         }
 
@@ -141,7 +166,7 @@ namespace DM_wraper_lib
     {
         public int countOfDM = 0;
         public int pixInMM = 10;
-        public string CamInterfaces = "File";
+        public string CamInterfaces = "GigEVision2";
         public string cameraName = "/img";
         public string CamPathToAddConf = "";
         public camera_preset _Preset = new camera_preset("Basler");
@@ -185,6 +210,7 @@ namespace DM_wraper_lib
         public Image rawImage;
         public Image processedImage;
         public List<BOX_data> BOXs;
+
         public void setDMDataList(List<BOX_data> _DMdataArr)
         {
             BOXs = _DMdataArr;

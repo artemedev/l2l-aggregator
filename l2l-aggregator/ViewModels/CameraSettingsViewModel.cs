@@ -3,7 +3,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.SimpleRouter;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DM_wraper_lib;
+using DM_wraper_NS;
 using l2l_aggregator.Services.DmProcessing;
 using SixLabors.ImageSharp;
 using System.IO;

@@ -1,11 +1,11 @@
-﻿using DM_wraper_lib;
+﻿using DM_wraper_NS;
 using Newtonsoft.Json;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
-namespace DM_process_NS
+namespace DM_process_lib
 {
     internal class MainProces : IDM_process
     {

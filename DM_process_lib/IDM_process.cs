@@ -1,6 +1,6 @@
-﻿using DM_wraper_lib;
+﻿using DM_wraper_NS;
 
-namespace DM_process_NS
+namespace DM_process_lib
 {
     internal interface IDM_process
     {

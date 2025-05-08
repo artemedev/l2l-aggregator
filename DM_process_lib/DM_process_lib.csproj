@@ -25,6 +25,9 @@
 	  <None Update="image_raw23.jpg">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	  <None Update="result222.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	  <None Update="result.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
