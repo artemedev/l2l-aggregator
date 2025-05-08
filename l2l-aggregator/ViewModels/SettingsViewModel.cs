@@ -10,6 +10,7 @@ using l2l_aggregator.Services.Database;
 using l2l_aggregator.Services.Database.Interfaces;
 using l2l_aggregator.Services.DmProcessing;
 using l2l_aggregator.Services.Notification.Interface;
+using l2l_aggregator.Services.Printing;
 using l2l_aggregator.Services.ScannerService.Interfaces;
 using l2l_aggregator.ViewModels.VisualElements;
 using MD.Devices;
@@ -96,8 +97,15 @@ namespace l2l_aggregator.ViewModels
         private readonly IScannerPortResolver _scannerResolver;
         private readonly DmScanService _dmScanService;
         private readonly ConfigurationLoaderService _configLoader;
-
-        public SettingsViewModel(DatabaseService databaseService, HistoryRouter<ViewModelBase> router, INotificationService notificationService, SessionService sessionService, IScannerPortResolver scannerResolver, DmScanService dmScanService, ConfigurationLoaderService configLoader)
+        private readonly PrintingService _printingService;
+        public SettingsViewModel(DatabaseService databaseService,
+            HistoryRouter<ViewModelBase> router,
+            INotificationService notificationService,
+            SessionService sessionService,
+            IScannerPortResolver scannerResolver,
+            DmScanService dmScanService,
+            ConfigurationLoaderService configLoader,
+            PrintingService printingService)
         {
             _configLoader = configLoader;
             _notificationService = notificationService;
@@ -106,6 +114,8 @@ namespace l2l_aggregator.ViewModels
             _sessionService = sessionService;
             _scannerResolver = scannerResolver;
             _dmScanService = dmScanService;
+            _printingService = printingService;
+
             AddCamera();
             //LoadCameras();
             _ = InitializeAsync();
@@ -149,42 +159,7 @@ namespace l2l_aggregator.ViewModels
             _ = _databaseService.Config.SetConfigValueAsync("CheckScanner", value.ToString());
             SessionService.Instance.CheckScanner = value;
         }
-        //private async Task LoadSettingsAsync()
-        //{
-        //    ServerUri = await _databaseService.Config.GetConfigValueAsync("ServerUri");
-        //    PrinterIP = await _databaseService.Config.GetConfigValueAsync("PrinterIP");
-        //    SelectedPrinterModel = await _databaseService.Config.GetConfigValueAsync("PrinterModel");
-        //    ControllerIP = await _databaseService.Config.GetConfigValueAsync("ControllerIP");
-        //    Camera = new CameraViewModel
-        //    {
-        //        CameraIP = await _databaseService.Config.GetConfigValueAsync("CameraIP"),
-        //        SelectedCameraModel = await _databaseService.Config.GetConfigValueAsync("CameraModel")
-        //    };
-        //    SelectedScanner.Id = await _databaseService.Config.GetConfigValueAsync("ScannerCOMPort");
-        //    //SelectedScanner.Id = ScannerCOMPort;
-        //    DisableVirtualKeyboard = bool.TryParse(await _databaseService.Config.GetConfigValueAsync("DisableVirtualKeyboard"), out var parsed) && parsed;
 
-        //    CheckCameraBeforeAggregation = await _databaseService.Config.GetConfigValueAsync("CheckCamera") == "True";
-        //    CheckPrinterBeforeAggregation = await _databaseService.Config.GetConfigValueAsync("CheckPrinter") == "True";
-        //    CheckControllerBeforeAggregation = await _databaseService.Config.GetConfigValueAsync("CheckController") == "True";
-        //    CheckScannerBeforeAggregation = await _databaseService.Config.GetConfigValueAsync("CheckScanner") == "True";
-        //    SelectedScannerModel = await _databaseService.Config.GetConfigValueAsync("ScannerModel");
-
-        //    //var session = SessionService.Instance;
-        //    SessionService.Instance.PrinterIP = PrinterIP;
-        //    SessionService.Instance.PrinterModel = SelectedPrinterModel;
-        //    SessionService.Instance.ControllerIP = ControllerIP;
-        //    SessionService.Instance.CameraIP = CameraIP;
-        //    SessionService.Instance.CameraModel = SelectedCameraModel;
-        //    SessionService.Instance.ScannerPort = ScannerCOMPort;
-        //    // аналогично можно загрузить другие значения, если потребуется
-        //    SessionService.Instance.DisableVirtualKeyboard = DisableVirtualKeyboard;
-
-        //    SessionService.Instance.CheckCamera = CheckCameraBeforeAggregation;
-        //    SessionService.Instance.CheckPrinter = CheckPrinterBeforeAggregation;
-        //    SessionService.Instance.CheckController = CheckControllerBeforeAggregation;
-        //    SessionService.Instance.CheckScanner = CheckScannerBeforeAggregation;
-        //}
         private async Task LoadSettingsAsync()
         {
             var (camera, disableVK) = await _configLoader.LoadSettingsToSessionAsync();
@@ -203,24 +178,6 @@ namespace l2l_aggregator.ViewModels
             SelectedScannerModel = SessionService.Instance.ScannerModel;
         }
 
-        //public void LoadAvailableScanners()
-        //{
-        //    string[] ports = SerialPort.GetPortNames();
-        //    foreach (string port in ports)
-        //    {
-        //        ScannerDevice scanerDevice = new ScannerDevice();
-        //        scanerDevice.Id = port;
-        //        AvailableScanners.Add(scanerDevice);
-        //    }
-        //}
-        //public void LoadAvailableScanners()
-        //{
-        //    AvailableScanners.Clear();
-        //    foreach (var port in _scannerResolver.GetHoneywellScannerPorts())
-        //    {
-        //        AvailableScanners.Add(new ScannerDevice { Id = port });
-        //    }
-        //}
         public async Task LoadAvailableScannersAsync()
         {
             AvailableScanners.Clear();
@@ -427,47 +384,26 @@ namespace l2l_aggregator.ViewModels
 
             try
             {
-                if (SelectedPrinterModel == "Zebra")
-                {
-                    var logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger("PrinterTest");
-                    var config = PrinterConfigBuilder.Build(PrinterIP);
+                _printingService.CheckConnectPrinter(PrinterIP, SelectedPrinterModel);
 
-                    var device = new PrinterTCP("SettingsPrinter", logger);
-                    device.Configure(config); // использует IP из SessionService
+                // сохраняем в БД
+                await _databaseService.Config.SetConfigValueAsync("PrinterIP", PrinterIP);
+                await _databaseService.Config.SetConfigValueAsync("PrinterModel", SelectedPrinterModel);
+                await _databaseService.Config.SetConfigValueAsync("CheckPrinter", CheckPrinterBeforeAggregation.ToString());
 
-                    device.StartWork();
-                    _notificationService.ShowMessage("> Ожидание запуска...");
+                SessionService.Instance.PrinterIP = PrinterIP;
+                SessionService.Instance.PrinterModel = SelectedPrinterModel;
+                SessionService.Instance.CheckPrinter = CheckPrinterBeforeAggregation;
 
-                    DeviceHelper.WaitForState(device, DeviceStatusCode.Run, 10);
-                    _notificationService.ShowMessage("> Принтер успешно запущен");
-
-                    device.StopWork();
-                    _notificationService.ShowMessage("> Ожидание остановки...");
-                    DeviceHelper.WaitForState(device, DeviceStatusCode.Ready, 10);
-
-                    // сохраняем в БД
-                    await _databaseService.Config.SetConfigValueAsync("PrinterIP", PrinterIP);
-                    await _databaseService.Config.SetConfigValueAsync("PrinterModel", SelectedPrinterModel);
-                    await _databaseService.Config.SetConfigValueAsync("CheckPrinter", CheckPrinterBeforeAggregation.ToString());
-
-                    SessionService.Instance.PrinterIP = PrinterIP;
-                    SessionService.Instance.PrinterModel = SelectedPrinterModel;
-                    SessionService.Instance.CheckPrinter = CheckPrinterBeforeAggregation;
-
-                    InfoMessage = "Принтер успешно сохранён и проверен!";
-                    _notificationService.ShowMessage(InfoMessage);
-                }
-                else
-                {
-                    InfoMessage = $"Поддержка модели принтера '{SelectedPrinterModel}' пока не реализована.";
-                    _notificationService.ShowMessage(InfoMessage);
-                    return;
-                }
+                InfoMessage = "Принтер успешно сохранён и проверен!";
+                _notificationService.ShowMessage(InfoMessage);
             }
             catch (Exception ex)
             {
                 InfoMessage = $"Ошибка проверки принтера: {ex.Message}";
                 _notificationService.ShowMessage(InfoMessage);
+                return;
+
             }
         }
 

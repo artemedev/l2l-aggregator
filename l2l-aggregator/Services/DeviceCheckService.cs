@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using l2l_aggregator.Services.Printing;
 
 namespace l2l_aggregator.Services
 {
@@ -17,11 +18,13 @@ namespace l2l_aggregator.Services
     {
         private readonly DmScanService _dmScanService;
         private readonly IScannerPortResolver _scannerPortResolver;
+        private readonly PrintingService _printingService;
 
-        public DeviceCheckService(DmScanService dmScanService, IScannerPortResolver scannerPortResolver)
+        public DeviceCheckService(DmScanService dmScanService, IScannerPortResolver scannerPortResolver, PrintingService printingService)
         {
             _dmScanService = dmScanService;
             _scannerPortResolver = scannerPortResolver;
+            _printingService = printingService;
         }
 
         public async Task<(bool Success, string Message)> CheckCameraAsync(SessionService session)
@@ -58,36 +61,24 @@ namespace l2l_aggregator.Services
             }
         }
 
-        public async Task<(bool Success, string Message)> CheckPrinterAsync(SessionService session)
+        public async Task<(bool Success, string Message)> CheckPrinterAsync(SessionService sessionService)
         {
-            if (!session.CheckPrinter)
+            if (!sessionService.CheckPrinter)
                 return (true, null);
 
-            if (string.IsNullOrWhiteSpace(session.PrinterIP))
+            if (string.IsNullOrWhiteSpace(sessionService.PrinterIP))
                 return (false, "IP принтера не задан!");
 
             try
             {
-                if (session.PrinterModel == "Zebra")
-                {
-                    var config = PrinterConfigBuilder.Build(session.PrinterIP);
-                    var logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger("PrinterCheck");
-                    var device = new PrinterTCP("CheckPrinter", logger);
-
-                    device.Configure(config);
-                    device.StartWork();
-                    DeviceHelper.WaitForState(device, DeviceStatusCode.Run, 10);
-                    device.StopWork();
-                    DeviceHelper.WaitForState(device, DeviceStatusCode.Ready, 10);
-
-                    return (true, null);
-                }
-                return (false, $"Принтер модели '{session.PrinterModel}' не поддерживается.");
+                _printingService.CheckConnectPrinter(sessionService.PrinterIP, sessionService.PrinterModel);
+                return (true, null);
             }
             catch (Exception ex)
             {
-                return (false, $"Ошибка проверки принтера: {ex.Message}");
+                return (false, $"Ошибка принтера: {ex.Message}");
             }
+
         }
 
         public async Task<(bool Success, string Message)> CheckControllerAsync(SessionService session)

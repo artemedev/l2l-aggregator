@@ -42,6 +42,116 @@ namespace l2l_aggregator.Services.Printing
                 _notificationService.ShowMessage($"Модель принтера '{_sessionService.PrinterModel}' не поддерживается.");
             }
         }
+        public void CheckConnectPrinter(string printerIP, string printerModel)
+        {
+            try
+            {
+                if (printerModel == "Zebra")
+                {
+                    ConnectToZebraPrinter(_sessionService.PrinterIP);
+                }
+                else
+                {
+                    _notificationService.ShowMessage($"Модель принтера '{_sessionService.PrinterModel}' не поддерживается.");
+                }
+            }
+            catch (Exception ex)
+            {
+                _notificationService.ShowMessage($"Ошибка подключения к принтеру: {ex.Message}");
+                throw;
+
+            }
+        }
+
+        private PrinterTCP ConnectToZebraPrinter(string printerIP)
+        {
+            var logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger("PrinterTest");
+            var config = PrinterConfigBuilder.Build(printerIP);
+            var device = new PrinterTCP("TestCamera", logger);
+
+            try
+            {
+                device.Configure(config);
+                device.StartWork();
+                _notificationService.ShowMessage("> Ожидание запуска...");
+                WaitForState(device, DeviceStatusCode.Run, 10);
+                _notificationService.ShowMessage("> Принтер успешно запущен");
+                DisconnectToZebraPrinter(device);
+                return device;
+            }
+            catch (Exception ex)
+            {
+                //_notificationService.ShowMessage($"Ошибка подключения к принтеру: {ex.Message}");
+                device.StopWork();
+                throw;
+            }
+        }
+        private void DisconnectToZebraPrinter(PrinterTCP device)
+        {
+            try
+            {
+                device.StopWork();
+                _notificationService.ShowMessage("> Ожидание остановки...");
+                WaitForState(device, DeviceStatusCode.Ready, 10);
+                Thread.Sleep(2000);
+                _notificationService.ShowMessage("> Принтер остановлен");
+            }
+            catch (Exception ex)
+            {
+                _notificationService.ShowMessage($"Ошибка остановки принтера: {ex.Message}");
+                throw;
+            }
+        }
+
+        private void PrintToZebraPrinter(byte[] frxBytes)
+        {
+            byte[] zplBytes = GenerateZplFromReport(frxBytes);
+            PrinterTCP device = null;
+            try
+            {
+                device = ConnectToZebraPrinter(_sessionService.PrinterIP);
+                PrintZpl(device, zplBytes);
+            }
+            catch (Exception ex)
+            {
+                _notificationService.ShowMessage($"Ошибка принтера: {ex.Message}");
+            }
+        }
+
+
+
+        private void PrintZpl(PrinterTCP device, byte[] zplBytes)
+        {
+            try
+            {
+                device.Send(zplBytes);
+                Thread.Sleep(1000); // подождать для завершения отправки
+                _notificationService.ShowMessage($"> Состояние устройства: {device.Status}");
+            }
+            catch (Exception ex)
+            {
+                _notificationService.ShowMessage($"Ошибка печати: {ex.Message}");
+            }
+            finally
+            {
+                DisconnectToZebraPrinter(device);
+            }
+        }
+        private void WaitForState(Device device, DeviceStatusCode desiredState, int timeoutSeconds)
+        {
+            var startTime = DateTime.UtcNow;
+            var timeout = TimeSpan.FromSeconds(timeoutSeconds);
+
+            while (device.Status != desiredState)
+            {
+                if (DateTime.UtcNow - startTime > timeout)
+                    throw new TimeoutException($"Устройство '{device.Name}' не достигло состояния {desiredState} за {timeoutSeconds} секунд.");
+
+                Thread.Sleep(100);
+            }
+        }
+
+        //перенести
         private byte[] GenerateZplFromReport(byte[] frxBytes)
         {
             using var report = new Report();
@@ -73,60 +183,6 @@ namespace l2l_aggregator.Services.Printing
             exporter.Export(report, exportStream);
 
             return exportStream.ToArray();
-        }
-        private void PrintToZebraPrinter(byte[] frxBytes)
-        {
-            byte[] zplBytes = GenerateZplFromReport(frxBytes);
-
-            var config = PrinterConfigBuilder.Build(_sessionService.PrinterIP);
-            var device = new PrinterTCP("TestCamera", logger);
-
-            try
-            {
-                device.Configure(config);
-                device.StartWork();
-                _notificationService.ShowMessage("> Ожидание запуска...");
-
-                WaitForState(device, DeviceStatusCode.Run, 10);
-                _notificationService.ShowMessage("> Устройство запущено");
-
-                // Отправляем экспортированный ZPL отчет на принтер
-                device.Send(zplBytes);
-                Thread.Sleep(1000);// подождать для завершения отправки
-                _notificationService.ShowMessage($"> Состояние устройства: {device.Status}");
-
-
-            }
-            catch (Exception ex)
-            {
-                _notificationService.ShowMessage($"Ошибка печати: {ex.Message}");
-            }
-            finally
-            {
-                device.StopWork();
-                _notificationService.ShowMessage("> Ожидание остановки...");
-                WaitForState(device, DeviceStatusCode.Ready, 10);
-                _notificationService.ShowMessage("> Работа с устройством остановлена ");
-
-                _notificationService.ShowMessage("> Ждем остановки worker 2 сек...");
-                Thread.Sleep(2000);
-
-                _notificationService.ShowMessage($"> Устройство в состоянии {device.Status}.");
-                _notificationService.ShowMessage("> Тест завершен");
-            }
-        }
-        private static void WaitForState(Device device, DeviceStatusCode desiredState, int timeoutSeconds)
-        {
-            var startTime = DateTime.UtcNow;
-            var timeout = TimeSpan.FromSeconds(timeoutSeconds);
-
-            while (device.Status != desiredState)
-            {
-                if (DateTime.UtcNow - startTime > timeout)
-                    throw new TimeoutException($"Устройство '{device.Name}' не достигло состояния {desiredState} за {timeoutSeconds} секунд.");
-
-                Thread.Sleep(100);
-            }
         }
     }
 }
