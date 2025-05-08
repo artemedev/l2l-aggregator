@@ -21,16 +21,14 @@ namespace l2l_aggregator.Services.Printing
     {
         private readonly INotificationService _notificationService;
         private readonly SessionService _sessionService;
-        private readonly ILogger _logger;
+        private ILogger logger;
 
         public PrintingService(
             INotificationService notificationService,
-            SessionService sessionService,
-            ILogger logger)
+            SessionService sessionService)
         {
             _notificationService = notificationService;
             _sessionService = sessionService;
-            _logger = logger;
         }
 
         public void PrintReport(byte[] frxBytes)
@@ -81,7 +79,7 @@ namespace l2l_aggregator.Services.Printing
             byte[] zplBytes = GenerateZplFromReport(frxBytes);
 
             var config = PrinterConfigBuilder.Build(_sessionService.PrinterIP);
-            var device = new PrinterTCP("TestCamera", _logger);
+            var device = new PrinterTCP("TestCamera", logger);
 
             try
             {
@@ -89,7 +87,7 @@ namespace l2l_aggregator.Services.Printing
                 device.StartWork();
                 _notificationService.ShowMessage("> Ожидание запуска...");
 
-                DeviceHelper.WaitForState(device, DeviceStatusCode.Run, 10);
+                WaitForState(device, DeviceStatusCode.Run, 10);
                 _notificationService.ShowMessage("> Устройство запущено");
 
                 // Отправляем экспортированный ZPL отчет на принтер
@@ -107,7 +105,7 @@ namespace l2l_aggregator.Services.Printing
             {
                 device.StopWork();
                 _notificationService.ShowMessage("> Ожидание остановки...");
-                DeviceHelper.WaitForState(device, DeviceStatusCode.Ready, 10);
+                WaitForState(device, DeviceStatusCode.Ready, 10);
                 _notificationService.ShowMessage("> Работа с устройством остановлена ");
 
                 _notificationService.ShowMessage("> Ждем остановки worker 2 сек...");
@@ -115,6 +113,19 @@ namespace l2l_aggregator.Services.Printing
 
                 _notificationService.ShowMessage($"> Устройство в состоянии {device.Status}.");
                 _notificationService.ShowMessage("> Тест завершен");
+            }
+        }
+        private static void WaitForState(Device device, DeviceStatusCode desiredState, int timeoutSeconds)
+        {
+            var startTime = DateTime.UtcNow;
+            var timeout = TimeSpan.FromSeconds(timeoutSeconds);
+
+            while (device.Status != desiredState)
+            {
+                if (DateTime.UtcNow - startTime > timeout)
+                    throw new TimeoutException($"Устройство '{device.Name}' не достигло состояния {desiredState} за {timeoutSeconds} секунд.");
+
+                Thread.Sleep(100);
             }
         }
     }

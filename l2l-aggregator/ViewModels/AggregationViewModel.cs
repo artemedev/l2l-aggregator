@@ -322,60 +322,6 @@ namespace l2l_aggregator.ViewModels
         public void CompleteAggregation()
         { }
 
-        ///// <summary>
-        ///// Конфигурация принтера
-        ///// </summary>
-        //private IConfiguration config
-        //{
-        //    get
-        //    {
-
-        //        var configBuilder = new ConfigurationBuilder();
-        //        var baseDir = AppContext.BaseDirectory;
-        //        var basePath = Directory.GetParent(baseDir)!.Parent!.Parent!.Parent!.FullName;
-        //        var relativePath = Path.Combine(basePath, "Config", "ConfigCameraTcp.json");
-        //        configBuilder.AddJsonFile(relativePath);
-        //        //configBuilder.AddJsonFile("D:/MedtechtdApp/MedtechtdApp/Config/ConfigCameraTcp.json");
-        //        return configBuilder.Build();
-        //    }
-        //}
-        public void PrintReportToNetworkPrinter(Report report)
-        {
-            exporter = new FastReport.Export.Zpl.ZplExport();
-
-            report.Prepare();
-            using var exportStream = new MemoryStream();
-            exporter.Export(report, exportStream);
-
-            // Получаем байты
-            byte[] zplBytes = exportStream.ToArray();
-            var config = PrinterConfigBuilder.Build(_sessionService.PrinterIP);
-            // Создаем и настраиваем устройство
-            var device = new PrinterTCP("TestCamera", logger);
-            device.Configure(config);
-            device.StartWork();
-            _notificationService.ShowMessage("> Ожидание запуска...");
-
-            DeviceHelper.WaitForState(device, DeviceStatusCode.Run, 10);
-            _notificationService.ShowMessage("> Устройство запущено");
-
-            // Отправляем экспортированный ZPL отчет на принтер
-            device.Send(zplBytes);
-            Thread.Sleep(1000);// подождать для завершения отправки
-            _notificationService.ShowMessage($"> Состояние устройства: {device.Status}");
-
-            device.StopWork();
-            _notificationService.ShowMessage("> Ожидание остановки...");
-            DeviceHelper.WaitForState(device, DeviceStatusCode.Ready, 10);
-            _notificationService.ShowMessage("> Работа с устройством остановлена ");
-
-            _notificationService.ShowMessage("> Ждем остановки worker 2 сек...");
-            Thread.Sleep(2000);
-
-            _notificationService.ShowMessage($"> Устройство в состоянии {device.Status}.");
-            _notificationService.ShowMessage("> Тест завершен");
-        }
-
         public string GenerateTemplate()
         {
             return _templateService.GenerateTemplateBase64(Fields.ToList());
