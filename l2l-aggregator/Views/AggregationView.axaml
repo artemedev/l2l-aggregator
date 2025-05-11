@@ -8,12 +8,13 @@
 			 xmlns:vmVE="using:l2l_aggregator.ViewModels.VisualElements"
 			 x:DataType="vm:AggregationViewModel"
              x:Class="l2l_aggregator.Views.AggregationView">
-	<Grid>
+	<!--<Grid>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
 			<RowDefinition Height="9*"/>
 		</Grid.RowDefinitions>
-		<!--<TabStrip x:Name="TabStripControl"
+		-->
+	<!--<TabStrip x:Name="TabStripControl"
 				  ItemsSource="{Binding Tabs}"
 				  SelectedIndex="{Binding SelectedTabIndex}">
 			<TabStrip.ItemTemplate>
@@ -26,6 +27,7 @@
 				</DataTemplate>
 			</TabStrip.ItemTemplate>
 		</TabStrip>-->
+	<!--
 
 		<Grid Grid.Row="0">
 			<Border Margin="10"
@@ -34,23 +36,58 @@
 					CornerRadius="4"
 					Padding="10" Grid.Row="13">
 				<Grid>
-					<Grid.RowDefinitions>
+					-->
+	<!--<Grid.RowDefinitions>
 						<RowDefinition Height="*"/>
 						<RowDefinition Height="*"/>
 						<RowDefinition Height="*"/>
-					</Grid.RowDefinitions>
-					<TextBlock Grid.Row="0" Text="{Binding InfoLayerText}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-					<TextBlock Grid.Row="1" Text="{Binding InfoDMText}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-					<TextBlock Grid.Row="2" Text="{Binding InfoHelperText}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+					</Grid.RowDefinitions>-->
+	<!--
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+					<TextBlock Grid.Column="0" Text="{Binding InfoLayerText}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="48" TextAlignment="Justify"/>
+					<TextBlock Grid.Column="1" Text="{Binding InfoDMText}" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="48" TextAlignment="Center"/>
+					<TextBlock  Grid.Column="2" Text="{Binding InfoHelperText}" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="48" TextAlignment="Start"/>
 				</Grid>
 			</Border>
-		</Grid>
-		<Grid Grid.Row="1" Margin="10" >
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="6*"/>
-				<ColumnDefinition Width="*"/>
-			</Grid.ColumnDefinitions>
-			<Grid Grid.Column="0" ScrollViewer.AllowAutoHide="False" ScrollViewer.IsScrollChainingEnabled="False" Name="scanImage" VerticalAlignment="Stretch" Background="LightGray">
+		</Grid>-->
+	<Grid Grid.Row="1" Margin="10" >
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="6*"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+		<Grid Grid.Column="0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="9*"/>
+			</Grid.RowDefinitions>
+			<Grid Grid.Row="0">
+				<Border Margin="10"
+						BorderBrush="LightGray"
+						BorderThickness="1"
+						CornerRadius="4"
+						Padding="10" Grid.Row="13">
+					<Grid>
+						<!--<Grid.RowDefinitions>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+						</Grid.RowDefinitions>-->
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+						<TextBlock Grid.Column="0" Text="{Binding InfoLayerText}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="48" TextAlignment="Justify"/>
+						<TextBlock Grid.Column="1" Text="{Binding InfoDMText}" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="48" TextAlignment="Center"/>
+						<TextBlock  Grid.Column="2" Text="{Binding InfoHelperText}" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="48" TextAlignment="Start"/>
+					</Grid>
+				</Border>
+			</Grid>
+			<Grid Grid.Row="1" ScrollViewer.AllowAutoHide="False" ScrollViewer.IsScrollChainingEnabled="False" Name="scanImage" VerticalAlignment="Stretch" Background="LightGray">
 				<Image Source="{Binding ScannedImage}" Stretch="Uniform" SizeChanged="OnImageSizeChanged" HorizontalAlignment="Left" VerticalAlignment="Top"/>
 				<ItemsControl ItemsSource="{Binding DMCells}">
 					<ItemsControl.ItemsPanel>
@@ -123,71 +160,71 @@
 				</ItemsControl>
 			</ScrollViewer>
 		</Border>-->
-
-			<Grid Grid.Column="1" Margin="15">
-				<Grid.RowDefinitions>
-					<RowDefinition Height="*"/>
-					<RowDefinition Height="*"/>
-					<RowDefinition Height="*"/>
-					<RowDefinition Height="*"/>
-					<RowDefinition Height="*"/>
-					<RowDefinition Height="*"/>
-					<RowDefinition Height="*"/>
-					<RowDefinition Height="*"/>
-					<RowDefinition Height="*"/>
-					<RowDefinition Height="*"/>
-					<RowDefinition Height="*"/>
-					<RowDefinition Height="*"/>
-					<RowDefinition Height="*"/>
-					<RowDefinition Height="4*"/>
-				</Grid.RowDefinitions>
-				<Button Grid.Row="0" Command="{Binding ScanCommand}" Content="Сканировать" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
-				<Button Grid.Row="1" Command="{Binding ClearBoxCommand}" Content="Очистить короб" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-				<Button Grid.Row="2" Command="{Binding CompleteStepCommand}" Content="Завершить агрегацию" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-				<Button Grid.Row="3" Command="{Binding GoToNextStepCommand}"  Content="Следующий шаг: Агрегация коробки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-				<Button Grid.Row="4" Command="{Binding OpenTemplateSettingsCommand}" Content="Настройки шаблона" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-				<Button Grid.Row="5" Command="{Binding ClearBoxCommand}" Content="Очистить короб" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-				<Button Grid.Row="6" Command="{Binding CompleteStepCommand}" Content="Завершить агрегацию" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-				<Button Grid.Row="7" Command="{Binding PrintLabelCommand}" Content="Печать этикетки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-				<Button Grid.Row="8" Command="{Binding ScanBoxBarcodeCommand}" Content="Сканировать штрихкод коробки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-				<Button Grid.Row="9" Command="{Binding GoToNextStepCommand}" Content="Следующий шаг: Агрегация паллеты" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-				<Button Grid.Row="10" Command="{Binding ClearPalletCommand}" Content="Очистить паллету" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-				<Button Grid.Row="11" Command="{Binding CompleteAggregationCommand}" Content="Завершить агрегацию" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-				<Button Grid.Row="12" Command="{Binding PrintLabelCommand}" Content="Печать этикетки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-				<Border Margin="0,5,0,10"
-						BorderBrush="LightGray"
-						BorderThickness="1"
-						CornerRadius="4"
-						Padding="10" Grid.Row="13">
-					<Grid  Margin="10">
-						<Grid.RowDefinitions>
-							<RowDefinition Height="*"/>
-							<RowDefinition Height="*"/>
-							<RowDefinition Height="*"/>
-							<RowDefinition Height="*"/>
-							<RowDefinition Height="*"/>
-							<RowDefinition Height="*"/>
-							<RowDefinition Height="*"/>
-							<RowDefinition Height="*"/>
-							<RowDefinition Height="*"/>
-							<RowDefinition Height="*"/>
-							<RowDefinition Height="*"/>
-						</Grid.RowDefinitions>
-						<TextBlock Grid.Row="0" Text="Результат " FontWeight="Bold"/>
-						<TextBlock Grid.Row="1" Text="Агрегируемая серия: 50325: " FontWeight="Bold"/>
-						<TextBlock Grid.Row="2" Text="Количество собранных коробов: 79"/>
-						<TextBlock Grid.Row="3" Text="Номер собираемого короба: 80"/>
-						<TextBlock Grid.Row="4" Text="Номер слоя: 1"/>
-						<TextBlock Grid.Row="5" Text="Количество слоев в коробе: 1"/>
-						<TextBlock Grid.Row="6" Text="Количество СИ, распознанное в слое: 50"/>
-						<TextBlock Grid.Row="7" Text="Количество СИ, считанное в слое: 50"/>
-						<TextBlock Grid.Row="8" Text="Количество СИ, ожидаемое в слое: 50"/>
-						<TextBlock Grid.Row="9" Text="Количество СИ, отбраковано: 0"/>
-						<TextBlock Grid.Row="10" Text="Количество СИ, отобрано: 0"/>
-					</Grid>
-				</Border>
-			</Grid>
-			<!-- 
+		</Grid>
+		<Grid Grid.Column="1" Margin="15">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="4*"/>
+			</Grid.RowDefinitions>
+			<Button Grid.Row="0" Command="{Binding ScanCommand}" Content="Сканировать" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+			<Button Grid.Row="1" Command="{Binding ClearBoxCommand}" Content="Очистить короб" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+			<Button Grid.Row="2" Command="{Binding CompleteStepCommand}" Content="Завершить агрегацию" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+			<Button Grid.Row="3" Command="{Binding GoToNextStepCommand}"  Content="Следующий шаг: Агрегация коробки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+			<Button Grid.Row="4" Command="{Binding OpenTemplateSettingsCommand}" Content="Настройки шаблона" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+			<Button Grid.Row="5" Command="{Binding ClearBoxCommand}" Content="Очистить короб" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+			<Button Grid.Row="6" Command="{Binding CompleteStepCommand}" Content="Завершить агрегацию" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+			<Button Grid.Row="7" Command="{Binding PrintLabelCommand}" Content="Печать этикетки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+			<Button Grid.Row="8" Command="{Binding ScanBoxBarcodeCommand}" Content="Сканировать штрихкод коробки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+			<Button Grid.Row="9" Command="{Binding GoToNextStepCommand}" Content="Следующий шаг: Агрегация паллеты" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+			<Button Grid.Row="10" Command="{Binding ClearPalletCommand}" Content="Очистить паллету" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+			<Button Grid.Row="11" Command="{Binding CompleteAggregationCommand}" Content="Завершить агрегацию" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+			<Button Grid.Row="12" Command="{Binding PrintLabelCommand}" Content="Печать этикетки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+			<Border Margin="0,5,0,10"
+					BorderBrush="LightGray"
+					BorderThickness="1"
+					CornerRadius="4"
+					Padding="10" Grid.Row="13">
+				<Grid  Margin="10">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="*"/>
+					</Grid.RowDefinitions>
+					<TextBlock Grid.Row="0" Text="Результат " FontWeight="Bold"/>
+					<TextBlock Grid.Row="1" Text="Агрегируемая серия: 50325: " FontWeight="Bold"/>
+					<TextBlock Grid.Row="2" Text="Количество собранных коробов: 79"/>
+					<TextBlock Grid.Row="3" Text="Номер собираемого короба: 80"/>
+					<TextBlock Grid.Row="4" Text="Номер слоя: 1"/>
+					<TextBlock Grid.Row="5" Text="Количество слоев в коробе: 1"/>
+					<TextBlock Grid.Row="6" Text="Количество СИ, распознанное в слое: 50"/>
+					<TextBlock Grid.Row="7" Text="Количество СИ, считанное в слое: 50"/>
+					<TextBlock Grid.Row="8" Text="Количество СИ, ожидаемое в слое: 50"/>
+					<TextBlock Grid.Row="9" Text="Количество СИ, отбраковано: 0"/>
+					<TextBlock Grid.Row="10" Text="Количество СИ, отобрано: 0"/>
+				</Grid>
+			</Border>
+		</Grid>
+		<!-- 
             Третий слой: всплывающее окно (Popup) с увеличенным изображением 
             выбранного квадрата. Оно привязано к IsPopupOpen и SelectedSquareImage. 
             
@@ -195,46 +232,46 @@
             где он объявлен, поэтому возможно придётся настроить Placement, 
             Width/Height и т.п. 
         -->
-			<Popup IsOpen="{Binding IsPopupOpen}" PlacementTarget="{Binding #scanImage}" PlacementMode="Center" Name="scanImagePopup" PointerPressed="Popup_PointerPressed">
-				<Border Background="White" BorderBrush="Black" BorderThickness="2" >
-					<Grid SizeChanged="OnImageGridSizeCellChanged">
-						<Image Source="{Binding SelectedSquareImage}"
-							   Stretch="Uniform"
-							   Width="1300"
-							   Height="1000"
-							   SizeChanged="OnImageSizeCellChanged"
+		<Popup IsOpen="{Binding IsPopupOpen}" PlacementTarget="{Binding #scanImage}" PlacementMode="Center" Name="scanImagePopup" PointerPressed="Popup_PointerPressed">
+			<Border Background="White" BorderBrush="Black" BorderThickness="2" >
+				<Grid SizeChanged="OnImageGridSizeCellChanged">
+					<Image Source="{Binding SelectedSquareImage}"
+						   Stretch="Uniform"
+						   Width="1300"
+						   Height="1000"
+						   SizeChanged="OnImageSizeCellChanged"
 						   />
-						<ItemsControl ItemsSource="{Binding SelectedDmCell.OcrCellsInPopUp}">
-							<ItemsControl.ItemsPanel>
-								<ItemsPanelTemplate>
-									<Canvas />
-								</ItemsPanelTemplate>
-							</ItemsControl.ItemsPanel>
+					<ItemsControl ItemsSource="{Binding SelectedDmCell.OcrCellsInPopUp}">
+						<ItemsControl.ItemsPanel>
+							<ItemsPanelTemplate>
+								<Canvas />
+							</ItemsPanelTemplate>
+						</ItemsControl.ItemsPanel>
 
-							<ItemsControl.ItemTemplate>
-								<DataTemplate>
-									<Button BorderBrush="{Binding BorderColor}"
-											BorderThickness="3"
-											Background="Transparent"
-											CommandParameter="{Binding}">
-										<TextBlock Text="OCR"
-												   Foreground="Black"
-												   Opacity="0"/>
-									</Button>
-								</DataTemplate>
-							</ItemsControl.ItemTemplate>
-							<ItemsControl.Styles>
-								<Style Selector="ContentPresenter" x:DataType="vmVE:SquareCellViewModel">
-									<Setter Property="Canvas.Left" Value="{Binding X}"/>
-									<Setter Property="Canvas.Top" Value="{Binding Y}"/>
-									<Setter Property="Height" Value="{Binding SizeHeight}"/>
-									<Setter Property="Width" Value="{Binding SizeWidth}"/>
-								</Style>
-							</ItemsControl.Styles>
-						</ItemsControl>
-					</Grid>
-				</Border>
-			</Popup>
-		</Grid>
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<Button BorderBrush="{Binding BorderColor}"
+										BorderThickness="3"
+										Background="Transparent"
+										CommandParameter="{Binding}">
+									<TextBlock Text="OCR"
+											   Foreground="Black"
+											   Opacity="0"/>
+								</Button>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+						<ItemsControl.Styles>
+							<Style Selector="ContentPresenter" x:DataType="vmVE:SquareCellViewModel">
+								<Setter Property="Canvas.Left" Value="{Binding X}"/>
+								<Setter Property="Canvas.Top" Value="{Binding Y}"/>
+								<Setter Property="Height" Value="{Binding SizeHeight}"/>
+								<Setter Property="Width" Value="{Binding SizeWidth}"/>
+							</Style>
+						</ItemsControl.Styles>
+					</ItemsControl>
+				</Grid>
+			</Border>
+		</Popup>
 	</Grid>
+	<!--</Grid>-->
 </UserControl>
