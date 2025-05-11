@@ -92,7 +92,21 @@ namespace l2l_aggregator.ViewModels
         [ObservableProperty] private int aggregatedPallets;
         [ObservableProperty] private string scannedBarcode;
 
-        public ObservableCollection<TemplateField> Fields { get; } = new();
+        //состояние кнопок
+        //Кнопока сканировать
+        [ObservableProperty] private bool canScan = true;
+        //Кнопока настройки шаблона
+        [ObservableProperty] private bool canOpenTemplateSettings = true;
+        //Кнопока печать этикетки
+        [ObservableProperty] private bool canPrintLabel = false;
+        //Очистить короб
+        [ObservableProperty] private bool canClearBox = false;
+        //Очистить паллету
+        [ObservableProperty] private bool canClearPallet = false;
+        //Завершить агрегацию
+        [ObservableProperty] private bool canCompleteAggregation = false;
+        //Fields это 
+        public ObservableCollection<TemplateField> TemplateFields { get; } = new();
         public ObservableCollection<ScannedItem> ScannedData { get; } = new();
         public ObservableCollection<object> BoxAggregationData { get; set; } = new();
         public ObservableCollection<object> PalletAggregationData { get; set; } = new();
@@ -116,12 +130,14 @@ namespace l2l_aggregator.ViewModels
         static result_data dmrData;
         public ObservableCollection<TabItemModel> Tabs { get; }
         //public int SelectedTabIndex { get; set; }
-        [ObservableProperty] private string infoLayerText = "Выберите элементы для агрегации и нажмите кнопку сканировать!";
+        [ObservableProperty] private string infoLayerText = "Выберите элементы шаблона для агрегации и нажмите кнопку сканировать!";
         [ObservableProperty] private string infoDMText = "Распознано 0 из 0";
         [ObservableProperty] private string infoHelperText;
         [ObservableProperty] private bool isHelperTextVisible;
-        [ObservableProperty] private int currentLayer = 0;
-        public TabItemModel SelectedTab => Tabs.ElementAtOrDefault(SelectedTabIndex);
+        [ObservableProperty] private int currentLayer = 1;
+        [ObservableProperty] private int currentBox = 1;
+        [ObservableProperty] private int currentPallet = 1;
+        //public TabItemModel SelectedTab => Tabs.ElementAtOrDefault(SelectedTabIndex);
 
         public AggregationViewModel(
             DataApiService dataApiService,
@@ -152,12 +168,6 @@ namespace l2l_aggregator.ViewModels
             ImageSizeChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeChanged);
             ImageSizeCellChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeCellChanged);
             ImageSizeGridCellChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeGridCellChanged);
-            //Tabs = new ObservableCollection<TabItemModel>
-            //{
-            //    new TabItemModel { Header = "Tab 1", Content = "Content for Tab 1",  Content2 = "Content for Tab 3"  },
-            //    new TabItemModel { Header = "Tab 2", Content = "Content for Tab 2",  Content2 = "Content for Tab 3"  },
-            //    new TabItemModel { Header = "Tab 3", Content = "Content for Tab 3",  Content2 = "Content for Tab 3"},
-            //};
             InitializeAsync();
         }
         private async void InitializeAsync()
@@ -180,19 +190,19 @@ namespace l2l_aggregator.ViewModels
                     _notificationService.ShowMessage(InfoMessage);
                 }
             }
-
+            numberOfLayers = _sessionService.SelectedTaskInfo.IN_BOX_QTY / _sessionService.SelectedTaskInfo.LAYERS_QTY;
             LoadTemplateFromSession(); //заполнение из шаблона в модальное окно для выбора элементов для сканирования
             InitializeSsccAsync();
         }
         private void LoadTemplateFromSession()
         {
-           
-            Fields.Clear();
+
+            TemplateFields.Clear();
             var loadedFields = _templateService.LoadTemplate(_sessionService.SelectedTaskInfo.UN_TEMPLATE_FR);
             foreach (var f in loadedFields)
-                Fields.Add(f);
+                TemplateFields.Add(f);
 
-            IsTemplateLoaded = Fields.Count > 0;
+            IsTemplateLoaded = TemplateFields.Count > 0;
 
         }
        
@@ -208,10 +218,8 @@ namespace l2l_aggregator.ViewModels
         [RelayCommand]
         public async Task Scan()
         {
-            int numberOfLayers = _sessionService.SelectedTaskInfo.IN_BOX_QTY / _sessionService.SelectedTaskInfo.LAYERS_QTY;
-
             // Генерация шаблона
-            var currentTemplate = _templateService.GenerateTemplate(Fields.ToList());
+            var currentTemplate = _templateService.GenerateTemplate(TemplateFields.ToList());
 
             // Сравнение текущего шаблона с последним использованным
             if (_lastUsedTemplateJson != currentTemplate)
@@ -248,22 +256,23 @@ namespace l2l_aggregator.ViewModels
                 scaleX,
                 scaleY,
                 _sessionService,
-                Fields,
+                TemplateFields,
                 responseSgtin,
                 this,
                 minX, 
                 minY
             );
-            // Обновление информационных текстов
+            
             int validCountDMCells = DMCells.Count(c => c.IsValid);
-            CurrentLayer++;
+            // Обновление информационных текстов
             UpdateLayerInfo(validCountDMCells, numberOfLayers);
 
             if (validCountDMCells == numberOfLayers)
             {
-                if(CurrentLayer == _sessionService.SelectedTaskInfo.LAYERS_QTY)
+                CurrentLayer++;
+                if (CurrentLayer == _sessionService.SelectedTaskInfo.LAYERS_QTY)
                 {
-                    CurrentLayer = 0;
+                    CurrentLayer = 1;
                 }
                 //var currentLayer = AggregatedItems.FirstOrDefault(x => x.Type == "Слой" && !x.IsCompleted);
                 //if (currentLayer != null)
@@ -292,49 +301,68 @@ namespace l2l_aggregator.ViewModels
                 ? "Короб агрегирован. Запечатайте, наклейте этикетку и считайте сканером."
                 : string.Empty;
         }
-        [RelayCommand]
-        public async Task ScanBoxBarcode()
-        {
+        //[RelayCommand]
+        //public async Task ScanBoxBarcode()
+        //{
 
-        }
+        //}
 
-        [RelayCommand]
-        public void ClearBox() => ScannedData.Clear();
 
-        [RelayCommand]
-        public void CompleteStep()
-        {
-            if (CurrentStepIndex == 0)
-                BoxAggregationData = new ObservableCollection<object>(ScannedData);
-            else if (CurrentStepIndex == 1)
-                PalletAggregationData = new ObservableCollection<object>(BoxAggregationData);
-        }
 
-        [RelayCommand]
-        public void GoToNextStep()
-        {
-            if (CurrentStepIndex < 2)
-                CurrentStepIndex++;
-            if (SelectedTabIndex < 2)
-                SelectedTabIndex++;
-        }
+        ////[RelayCommand]
+        //public void CompleteStep()
+        //{
+        //    //if (CurrentStepIndex == 0)
+        //    //    BoxAggregationData = new ObservableCollection<object>(ScannedData);
+        //    //else if (CurrentStepIndex == 1)
+        //    //    PalletAggregationData = new ObservableCollection<object>(BoxAggregationData);
+        //}
 
-        [RelayCommand]
-        public void ClearPallet() => PalletAggregationData.Clear();
+        ////[RelayCommand]
+        //public void GoToNextStep()
+        //{
+        //    //if (CurrentStepIndex < 2)
+        //    //    CurrentStepIndex++;
+        //    //if (SelectedTabIndex < 2)
+        //    //    SelectedTabIndex++;
+        //}
 
+
+        //Печать этикетки
         [RelayCommand]
         public void PrintLabel()
         {
             //var reportXML = _templateService.LoadTemplate(_sessionService.SelectedTaskInfo.BOX_TEMPLATE);
 
-            
+            //
             byte[] frxBytes = Convert.FromBase64String(_sessionService.SelectedTaskInfo.BOX_TEMPLATE);
             _printingService.PrintReport(frxBytes);
         }
-
+        //Очистить короб
+        [RelayCommand]
+        public void ClearBox()
+        {
+            //ScannedData.Clear();
+        }
+        //Очистить паллету
+        [RelayCommand]
+        public void ClearPallet()
+        {
+            //PalletAggregationData.Clear();
+        }
+        //Завершить агрегацию
         [RelayCommand]
         public void CompleteAggregation()
-        { }
+        { 
+
+        }
+        //отменить агрегацию
+        [RelayCommand]
+        public void CancelAggregation()
+        {
+
+        }
+
 
         //сканирование кода этикетки
         public void HandleScannedBarcode(string barcode)

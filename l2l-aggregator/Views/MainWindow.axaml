@@ -16,19 +16,35 @@
 			<Grid.RowDefinitions>
 				<RowDefinition Height="70"/>
 				<RowDefinition Height="*"/>
-				<RowDefinition Height="20"/>
+				<RowDefinition Height="30"/>
 			</Grid.RowDefinitions>
 			<Grid Background="{DynamicResource ResourceKey=PrimaryBackground}" Grid.Row="0" IsVisible="{Binding IsNotLoginPage}">
-				<Border Padding="10" >
-					<StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center" VerticalAlignment="Center">
-						<Image Source="{SvgImage /Assets/Images/logo.svg}"></Image>
-						<Button Command="{Binding ButtonExit}" Content="Выход"/>
-					</StackPanel>
+
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="8*"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				<!--<StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center" VerticalAlignment="Center">-->
+				<Border Padding="10" Grid.Column="1">
+					<Image Source="{SvgImage /Assets/Images/logo.svg}"
+						   HorizontalAlignment="Center"
+						   VerticalAlignment="Center"
+					   />
 				</Border>
+				<Button Grid.Column="2"
+						Command="{Binding ButtonExit}"
+						Content="Выход"
+						HorizontalAlignment="Stretch"
+						HorizontalContentAlignment="Center"
+						VerticalAlignment="Stretch"
+						VerticalContentAlignment="Center"
+						Margin="0"/>
+
 			</Grid>
 			<ContentControl  Grid.Row="1" Content="{Binding Content}"></ContentControl>
-			<Grid Grid.Row="2" Background="LightBlue" IsVisible="{Binding IsNotLoginPage}">
-				<TextBlock Text="{Binding User.USER_NAME}" FontSize="16" FontWeight="Bold"/>
+			<Grid Grid.Row="2" Background="LightBlue" IsVisible="{Binding IsNotLoginPage}" >
+				<TextBlock Text="{Binding User.USER_NAME}" FontSize="16" FontWeight="Bold" Padding="5"/>
 			</Grid>
 		</Grid>
 		<controls:NotificationMessageContainer Manager="{Binding Manager}"  VerticalAlignment="Bottom"

@@ -99,32 +99,35 @@
 				<RowDefinition Height="*"/>
 				<RowDefinition Height="*"/>
 				<RowDefinition Height="*"/>
+				<!--<RowDefinition Height="*"/>-->
+				<!--<RowDefinition Height="*"/>
+				<RowDefinition Height="*"/>-->
+				<!--<RowDefinition Height="*"/>
 				<RowDefinition Height="*"/>
 				<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>
+				<RowDefinition Height="*"/>-->
 				<RowDefinition Height="4*"/>
 			</Grid.RowDefinitions>
-			<Button Grid.Row="0" Command="{Binding ScanCommand}" Content="Сканировать" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
-			<Button Grid.Row="1" Command="{Binding ClearBoxCommand}" Content="Очистить короб" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-			<Button Grid.Row="2" Command="{Binding CompleteStepCommand}" Content="Завершить агрегацию" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-			<Button Grid.Row="3" Command="{Binding GoToNextStepCommand}"  Content="Следующий шаг: Агрегация коробки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-			<Button Grid.Row="4" Command="{Binding OpenTemplateSettingsCommand}" Content="Настройки шаблона" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-			<Button Grid.Row="5" Command="{Binding ClearBoxCommand}" Content="Очистить короб" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-			<Button Grid.Row="6" Command="{Binding CompleteStepCommand}" Content="Завершить агрегацию" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-			<Button Grid.Row="7" Command="{Binding PrintLabelCommand}" Content="Печать этикетки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-			<Button Grid.Row="8" Command="{Binding ScanBoxBarcodeCommand}" Content="Сканировать штрихкод коробки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-			<Button Grid.Row="9" Command="{Binding GoToNextStepCommand}" Content="Следующий шаг: Агрегация паллеты" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-			<Button Grid.Row="10" Command="{Binding ClearPalletCommand}" Content="Очистить паллету" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-			<Button Grid.Row="11" Command="{Binding CompleteAggregationCommand}" Content="Завершить агрегацию" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-			<Button Grid.Row="12" Command="{Binding PrintLabelCommand}" Content="Печать этикетки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+			<Button Grid.Row="0" Command="{Binding ScanCommand}"  IsEnabled="{Binding CanScan}" Content="Сканировать" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+			<!--<Button Grid.Row="2" Command="{Binding CompleteStepCommand}" Content="Завершить агрегацию" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>-->
+			<!--<Button Grid.Row="3" Command="{Binding GoToNextStepCommand}"  Content="Следующий шаг: Агрегация коробки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>-->
+			<Button Grid.Row="1" Command="{Binding OpenTemplateSettingsCommand}" IsEnabled="{Binding CanOpenTemplateSettings}" Content="Настройки шаблона" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+			<!--<Button Grid.Row="5" Command="{Binding ClearBoxCommand}" Content="Очистить короб" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>-->
+			<!--<Button Grid.Row="6" Command="{Binding CompleteStepCommand}" Content="Завершить агрегацию" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>-->
+			<Button Grid.Row="2" Command="{Binding PrintLabelCommand}" IsEnabled="{Binding CanPrintLabel}" Content="Печать этикетки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+			<!--<Button Grid.Row="6" Command="{Binding ScanBoxBarcodeCommand}" Content="Сканировать штрихкод коробки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>-->
+			<!--<Button Grid.Row="9" Command="{Binding GoToNextStepCommand}" Content="Следующий шаг: Агрегация паллеты" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>-->
+			<Button Grid.Row="3" Command="{Binding ClearBoxCommand}" IsEnabled="{Binding CanClearBox}" Content="Очистить короб" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+
+			<Button Grid.Row="4" Command="{Binding ClearPalletCommand}" IsEnabled="{Binding CanClearPallet}" Content="Очистить паллету" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+			<Button Grid.Row="5" Command="{Binding CompleteAggregationCommand}" IsEnabled="{Binding CanCompleteAggregation}" Content="Завершить агрегацию" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+			<Button Grid.Row="6" Command="{Binding CancelAggregationCommand}" Content="Отменить агрегацию" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+			<!--<Button Grid.Row="12" Command="{Binding PrintLabelCommand}" Content="Печать этикетки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>-->
 			<Border Margin="0,5,0,10"
 					BorderBrush="LightGray"
 					BorderThickness="1"
 					CornerRadius="4"
-					Padding="10" Grid.Row="13">
+					Padding="10" Grid.Row="7">
 				<Grid  Margin="10">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="*"/>
