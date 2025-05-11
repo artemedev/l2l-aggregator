@@ -97,8 +97,10 @@ namespace l2l_aggregator.ViewModels
         [ObservableProperty] private bool canScan = true;
         //Кнопока настройки шаблона
         [ObservableProperty] private bool canOpenTemplateSettings = true;
-        //Кнопока печать этикетки
-        [ObservableProperty] private bool canPrintLabel = false;
+        //Доступ к кнопоке печать этикетки коробки
+        [ObservableProperty] private bool сanPrintBoxLabel = false;
+        //Доступ к кнопоке печать этикетки паллеты
+        [ObservableProperty] private bool сanPrintPalletLabel = false;
         //Очистить короб
         [ObservableProperty] private bool canClearBox = false;
         //Очистить паллету
@@ -121,15 +123,18 @@ namespace l2l_aggregator.ViewModels
         public IRelayCommand<SizeChangedEventArgs> ImageSizeGridCellChangedCommand { get; }
 
         private string? _lastUsedTemplateJson;
+
         private int numberOfLayers;
         private int numberOfBoxes;
         private int numberOfPallets;
-
+        private byte[] frxBoxBytes;
+        private byte[] frxPalletBytes;
         ArmJobSsccResponse responseSscc;
 
         static result_data dmrData;
         public ObservableCollection<TabItemModel> Tabs { get; }
-        //public int SelectedTabIndex { get; set; }
+
+
         [ObservableProperty] private string infoLayerText = "Выберите элементы шаблона для агрегации и нажмите кнопку сканировать!";
         [ObservableProperty] private string infoDMText = "Распознано 0 из 0";
         [ObservableProperty] private string infoHelperText;
@@ -137,7 +142,6 @@ namespace l2l_aggregator.ViewModels
         [ObservableProperty] private int currentLayer = 1;
         [ObservableProperty] private int currentBox = 1;
         [ObservableProperty] private int currentPallet = 1;
-        //public TabItemModel SelectedTab => Tabs.ElementAtOrDefault(SelectedTabIndex);
 
         public AggregationViewModel(
             DataApiService dataApiService,
@@ -190,9 +194,15 @@ namespace l2l_aggregator.ViewModels
                     _notificationService.ShowMessage(InfoMessage);
                 }
             }
-            numberOfLayers = _sessionService.SelectedTaskInfo.IN_BOX_QTY / _sessionService.SelectedTaskInfo.LAYERS_QTY;
-            LoadTemplateFromSession(); //заполнение из шаблона в модальное окно для выбора элементов для сканирования
             InitializeSsccAsync();
+            numberOfLayers = _sessionService.SelectedTaskInfo.IN_BOX_QTY / _sessionService.SelectedTaskInfo.LAYERS_QTY;
+            //шаблон коробки
+            frxBoxBytes = Convert.FromBase64String(_sessionService.SelectedTaskInfo.BOX_TEMPLATE);
+            //шаблон паллеты
+            frxPalletBytes = Convert.FromBase64String(_sessionService.SelectedTaskInfo.PALLETE_TEMPLATE);
+
+
+            LoadTemplateFromSession(); //заполнение из шаблона в модальное окно для выбора элементов для сканирования
         }
         private void LoadTemplateFromSession()
         {
@@ -205,10 +215,11 @@ namespace l2l_aggregator.ViewModels
             IsTemplateLoaded = TemplateFields.Count > 0;
 
         }
-       
+
         private async void InitializeSsccAsync()
         {
             responseSscc = await _dataApiService.LoadSsccAsync(_sessionService.SelectedTaskInfo.DOCID);
+            _sessionService.SelectedTaskSscc = responseSscc.RECORDSET.FirstOrDefault();
         }
         ~AggregationViewModel()
         {
@@ -218,6 +229,8 @@ namespace l2l_aggregator.ViewModels
         [RelayCommand]
         public async Task Scan()
         {
+            //при сканировании это всегда перый шаг сканирования
+            CurrentStepIndex = 0;
             // Генерация шаблона
             var currentTemplate = _templateService.GenerateTemplate(TemplateFields.ToList());
 
@@ -248,7 +261,7 @@ namespace l2l_aggregator.ViewModels
             scaleY = imageSize.Height / ScannedImage.PixelSize.Height;
             scaleXObrat = ScannedImage.PixelSize.Width / imageSize.Width;
             scaleYObrat = ScannedImage.PixelSize.Height / imageSize.Height;
-             
+
             var responseSgtin = await _dataApiService.LoadSgtinAsync(_sessionService.SelectedTaskInfo.DOCID);
             //создание ячеек
             DMCells = _dmScanService.BuildCellViewModels(
@@ -259,110 +272,118 @@ namespace l2l_aggregator.ViewModels
                 TemplateFields,
                 responseSgtin,
                 this,
-                minX, 
+                minX,
                 minY
             );
-            
+
             int validCountDMCells = DMCells.Count(c => c.IsValid);
             // Обновление информационных текстов
             UpdateLayerInfo(validCountDMCells, numberOfLayers);
 
             if (validCountDMCells == numberOfLayers)
             {
-                CurrentLayer++;
                 if (CurrentLayer == _sessionService.SelectedTaskInfo.LAYERS_QTY)
                 {
-                    CurrentLayer = 1;
-                }
-                //var currentLayer = AggregatedItems.FirstOrDefault(x => x.Type == "Слой" && !x.IsCompleted);
-                //if (currentLayer != null)
-                //{
-                //    currentLayer.IsCompleted = true;
+                    canScan = false;
+                    canOpenTemplateSettings = false;
+                    сanPrintBoxLabel = true;
+                    CurrentStepIndex = 1;
+                    if (CurrentBox == _sessionService.SelectedTaskInfo.IN_PALLET_BOX_QTY)
+                    {
 
-                //    // Автоматический переход, если это последний слой
-                //    //if (AggregatedItems.Count(x => x.Type == "Слой" && x.IsCompleted) ==
-                //    //    _sessionService.SelectedTaskInfo.LAYERS_QTY)
-                //    //{
-                //    //    GoToNextStep();
-                //    //}
-                //}
+                        if (CurrentPallet == _sessionService.SelectedTaskInfo.PALLET_QTY)
+                        {
+                            //нужно сохранить 
+                            //!!!!!!!!!!!!!!!!!!!!!!!!!
+                        }
+                    }
+                }
+                else
+                {
+                    CurrentLayer++;
+                }
             }
         }
 
         private void UpdateLayerInfo(int validCount, int expectedPerLayer)
         {
             InfoLayerText = $"Слой {CurrentLayer} из {_sessionService.SelectedTaskInfo.LAYERS_QTY}. Распознано {validCount} из {expectedPerLayer}";
-            InfoDMText = $"Распознано {validCount} из {expectedPerLayer}";
+            //InfoDMText = $"Распознано {validCount} из {expectedPerLayer}";
 
-            IsHelperTextVisible = validCount == expectedPerLayer &&
-                                CurrentLayer == _sessionService.SelectedTaskInfo.LAYERS_QTY;
+            //IsHelperTextVisible = validCount == expectedPerLayer &&
+            //                    CurrentLayer == _sessionService.SelectedTaskInfo.LAYERS_QTY;
 
-            InfoHelperText = IsHelperTextVisible
-                ? "Короб агрегирован. Запечатайте, наклейте этикетку и считайте сканером."
-                : string.Empty;
+            //InfoHelperText = IsHelperTextVisible
+            //    ? "Короб агрегирован. Запечатайте, наклейте этикетку и считайте сканером."
+            //    : string.Empty;
         }
-        //[RelayCommand]
-        //public async Task ScanBoxBarcode()
-        //{
 
-        //}
-
-
-
-        ////[RelayCommand]
-        //public void CompleteStep()
-        //{
-        //    //if (CurrentStepIndex == 0)
-        //    //    BoxAggregationData = new ObservableCollection<object>(ScannedData);
-        //    //else if (CurrentStepIndex == 1)
-        //    //    PalletAggregationData = new ObservableCollection<object>(BoxAggregationData);
-        //}
-
-        ////[RelayCommand]
-        //public void GoToNextStep()
-        //{
-        //    //if (CurrentStepIndex < 2)
-        //    //    CurrentStepIndex++;
-        //    //if (SelectedTabIndex < 2)
-        //    //    SelectedTabIndex++;
-        //}
-
-
-        //Печать этикетки
+        //Печать этикетки коробки
         [RelayCommand]
-        public void PrintLabel()
+        public void PrintBoxLabel()
         {
-            //var reportXML = _templateService.LoadTemplate(_sessionService.SelectedTaskInfo.BOX_TEMPLATE);
+            var boxRecord = responseSscc.RECORDSET
+                           .Where(r => r.TYPEID == 0)
+                           .ElementAtOrDefault(CurrentBox - 1);
 
-            //
-            byte[] frxBytes = Convert.FromBase64String(_sessionService.SelectedTaskInfo.BOX_TEMPLATE);
-            _printingService.PrintReport(frxBytes);
+            if (boxRecord != null)
+            {
+                _sessionService.SelectedTaskSscc = boxRecord;
+                _printingService.PrintReport(frxBoxBytes, true);
+            }
+            else
+            {
+                InfoMessage = $"Не удалось найти запись коробки с индексом {CurrentBox - 1}.";
+                _notificationService.ShowMessage(InfoMessage);
+            }
         }
+        //Печать этикетки паллеты
+        [RelayCommand]
+        public void PrintPalletLabel()
+        {
+            var boxRecord = responseSscc.RECORDSET
+               .Where(r => r.TYPEID == 1)
+               .ElementAtOrDefault(CurrentPallet - 1);
+
+            if (boxRecord != null)
+            {
+                _sessionService.SelectedTaskSscc = boxRecord;
+                _printingService.PrintReport(frxPalletBytes, false);
+            }
+            else
+            {
+                InfoMessage = $"Не удалось найти запись паллет с индексом {CurrentPallet - 1}.";
+                _notificationService.ShowMessage(InfoMessage);
+            }
+        }
+
         //Очистить короб
         [RelayCommand]
         public void ClearBox()
         {
-            //ScannedData.Clear();
+            CurrentStepIndex = 3;
         }
+
         //Очистить паллету
         [RelayCommand]
         public void ClearPallet()
         {
-            //PalletAggregationData.Clear();
+            CurrentStepIndex = 4;
         }
+
         //Завершить агрегацию
         [RelayCommand]
         public void CompleteAggregation()
-        { 
+        {
 
         }
+
         //отменить агрегацию
         [RelayCommand]
         public void CancelAggregation()
         {
 
         }
-
 
         //сканирование кода этикетки
         public void HandleScannedBarcode(string barcode)
@@ -371,28 +392,36 @@ namespace l2l_aggregator.ViewModels
             if (CurrentStepIndex != 1 && CurrentStepIndex != 2)
                 return;
 
-            if (responseSscc == null || responseSscc.RECORDSET == null)
+            if (_sessionService.SelectedTaskSscc == null)
                 return;
             if (CurrentStepIndex == 1)
             {
                 foreach (ArmJobSsccRecord resp in responseSscc.RECORDSET)
                 {
+                    //resp.TYPEID == 0 это тип коробки
                     if (resp.TYPEID == 0 && resp.DISPLAY_BAR_CODE == barcode)
                     {
+                        //добавить сохранение
+                        //!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                        //изменение состояния после сканирования
+                        if (CurrentBox == _sessionService.SelectedTaskInfo.IN_PALLET_BOX_QTY)
+                        {
+                            сanPrintBoxLabel = false;
+                            сanPrintPalletLabel = true;
+                        }
+                        CurrentBox++;
+                        CurrentLayer = 1;
+
                         // Совпадение найдено
                         InfoMessage = $"Короб с ШК {barcode} успешно найден!";
                         _notificationService.ShowMessage(InfoMessage);
-
-                        //var currentLayer = AggregatedItems.FirstOrDefault(x => x.Type == "Коробка" && !x.IsCompleted);
-                        //if (currentLayer != null)
-                        //{
-                        //    currentLayer.IsCompleted = true;
-
-                        //    //// Автоматический переход, если это последний слой
-
-                        //    GoToNextStep();
-                        //}
                         return;
+                    }
+                    else
+                    {
+                        InfoMessage = $"ШК {barcode} не найден в списке!";
+                        _notificationService.ShowMessage(InfoMessage);
                     }
                 }
             }
@@ -400,22 +429,30 @@ namespace l2l_aggregator.ViewModels
             {
                 foreach (ArmJobSsccRecord resp in responseSscc.RECORDSET)
                 {
+                    //resp.TYPEID == 1 это тип паллеты
                     if (resp.TYPEID == 1 && resp.DISPLAY_BAR_CODE == barcode)
                     {
-                        //var currentLayer = AggregatedItems.FirstOrDefault(x => x.Type == "Паллета" && !x.IsCompleted);
-                        //if (currentLayer != null)
-                        //{
-                        //    currentLayer.IsCompleted = true;
+                        //добавить сохранение
+                        //!!!!!!!!!!!!!!!!!!!!!!!!!
 
-                        //    //// Автоматический переход, если это последний слой
-                        //    _router.GoTo<TaskListViewModel>();
-                        //}
-                        //return;
+                        //изменение состояния после сканирования
+                        CurrentPallet++;
+                        CurrentBox = 1;
+                        CurrentLayer = 1;
+
+                        CurrentStepIndex = 1;
+                        // Совпадение найдено
+                        InfoMessage = $"Короб с ШК {barcode} успешно найден!";
+                        _notificationService.ShowMessage(InfoMessage);
+                    }
+                    else
+                    {
+                        InfoMessage = $"ШК {barcode} не найден в списке!";
+                        _notificationService.ShowMessage(InfoMessage);
                     }
                 }
             }
-            InfoMessage = $"ШК {barcode} не найден в списке!";
-            _notificationService.ShowMessage(InfoMessage);
+
         }
         public async void OnCellClicked(DmCellViewModel cell)
         {

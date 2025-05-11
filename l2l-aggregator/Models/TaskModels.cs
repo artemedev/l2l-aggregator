@@ -54,9 +54,9 @@ namespace l2l_aggregator.Models
     {
         public long DOCID { get; set; }
         public long RESOURCEID { get; set; }
-        public long SERIALNUMBER { get; set; }
+        public long SERIALNUMBER { get; set; } //нет такого значения
         public long RES_BOXID { get; set; }
-        public int DOC_ORDER { get; set; }
+        public int DOC_ORDER { get; set; } //нет такого значения
         public string? DOCDATE { get; set; }
         public string? MOVEDATE { get; set; }
         public string? BUHDATE { get; set; }
@@ -65,21 +65,20 @@ namespace l2l_aggregator.Models
         public string? DEPART_NAME { get; set; }
         public string? RESOURCE_NAME { get; set; }
         public string? RESOURCE_ARTICLE { get; set; }
-        public string? SERIESNAME { get; set; }
+        public string? SERIES_NAME { get; set; }
         public string? RES_BOX_NAME { get; set; }
         public string? GTIN { get; set; }
-        public string? EXPIREDATE { get; set; }
+        public string? EXPIRE_DATE_VAL { get; set; }
         public string? MNF_DATE_VAL { get; set; }
         public string? DOC_TYPE { get; set; }
         public int AGREGATION_CODE { get; set; }
         public string? AGREGATION_TYPE { get; set; }
         public int CRYPTO_CODE_FLAG { get; set; }
-        public int ERROR_FLAG { get; set; }
+        public int ERROR_FLAG { get; set; } //нет такого значения
         public string? FIRM_NAME { get; set; }
         public int? QTY { get; set; }
         public int AGGR_FLAG { get; set; }
         public string? UN_TEMPLATE {  get; set; }
-        public string? UN_TEMPLATE_FR {  get; set; }
         public long UN_TEMPLATEID { get; set; }
         public long UN_RESERVE_DOCID { get; set; }
         public int IN_BOX_QTY { get; set; }
@@ -91,7 +90,7 @@ namespace l2l_aggregator.Models
         public string? LAST_PACKAGE_LOCATION_INFO { get; set; }
         public int PALLET_NOT_USE_FLAG { get; set; }
         public int PALLET_AGGR_FLAG { get; set; }
-        public int PALLET_QTY { get; set; }
+        public int PALLET_QTY { get; set; } //нет такого значения
         public long AGREGATION_TYPEID { get; set; }
         public int SERIES_SYS_NUM { get; set; }
         public int LAYERS_QTY { get; set; }
@@ -111,6 +110,8 @@ namespace l2l_aggregator.Models
         public long INT_BOX_TEMPLATEID { get; set; }
         public long? INT_BOX_RESERVE_DOCID { get; set; }
         public string? INT_BOX_TEMPLATE { get; set; }
+        public string? UN_TEMPLATE_FR { get; set; }
+
     }
     public class ArmJobInfoResponse
     {

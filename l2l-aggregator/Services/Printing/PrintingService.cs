@@ -31,11 +31,11 @@ namespace l2l_aggregator.Services.Printing
             _sessionService = sessionService;
         }
 
-        public void PrintReport(byte[] frxBytes)
+        public void PrintReport(byte[] frxBytes, bool typePrint)
         {
             if (_sessionService.PrinterModel == "Zebra")
             {
-                PrintToZebraPrinter(frxBytes);
+                PrintToZebraPrinter(frxBytes, typePrint);
             }
             else
             {
@@ -103,9 +103,17 @@ namespace l2l_aggregator.Services.Printing
             }
         }
 
-        private void PrintToZebraPrinter(byte[] frxBytes)
+        private void PrintToZebraPrinter(byte[] frxBytes, bool typePrint)
         {
-            byte[] zplBytes = GenerateZplFromReport(frxBytes);
+            byte[] zplBytes;
+            if (typePrint)
+            {
+                zplBytes = GenerateZplFromReportBOX(frxBytes);
+            }
+            else
+            {
+                zplBytes = GenerateZplFromReportPALLET(frxBytes);
+            }
             PrinterTCP device = null;
             try
             {
@@ -152,7 +160,7 @@ namespace l2l_aggregator.Services.Printing
         }
 
         //перенести
-        private byte[] GenerateZplFromReport(byte[] frxBytes)
+        private byte[] GenerateZplFromReportBOX(byte[] frxBytes)
         {
             using var report = new Report();
             using (var ms = new MemoryStream(frxBytes))
@@ -165,11 +173,43 @@ namespace l2l_aggregator.Services.Printing
                 DISPLAY_BAR_CODE = _sessionService.SelectedTaskSscc.DISPLAY_BAR_CODE,
                 IN_BOX_QTY = _sessionService.SelectedTaskInfo.IN_BOX_QTY,
                 MNF_DATE = _sessionService.SelectedTaskInfo.MNF_DATE_VAL,
-                EXPIRE_DATE = _sessionService.SelectedTaskInfo.EXPIREDATE,
-                SERIES_NAME = _sessionService.SelectedTaskInfo.SERIESNAME,
+                EXPIRE_DATE = _sessionService.SelectedTaskInfo.EXPIRE_DATE_VAL,
+                SERIES_NAME = _sessionService.SelectedTaskInfo.SERIES_NAME,
                 PRINT_NAME = _sessionService.SelectedTaskInfo.RESOURCE_NAME,
-                LEVEL_QTY = _sessionService.SelectedTaskInfo.QTY ?? 0,
-                CNT = _sessionService.SelectedTaskInfo.RES_BOXID
+                LEVEL_QTY = 0,
+                CNT = 0
+                //LEVEL_QTY = _sessionService.SelectedTaskInfo.QTY ?? 0,
+                //CNT = _sessionService.SelectedTaskInfo.RES_BOXID
+            };
+            // Регистрируем данные в отчете
+            report.RegisterData(new List<object> { labelData }, "LabelQry");
+
+            report.GetDataSource("LabelQry").Enabled = true;
+            // Подготавливаем отчет
+            report.Prepare();
+
+            var exporter = new ZplExport();
+            using var exportStream = new MemoryStream();
+            exporter.Export(report, exportStream);
+
+            return exportStream.ToArray();
+        }
+        private byte[] GenerateZplFromReportPALLET(byte[] frxBytes)
+        {
+            using var report = new Report();
+            using (var ms = new MemoryStream(frxBytes))
+            {
+                report.Load(ms);
+            }
+
+            var labelData = new
+            {
+                DISPLAY_BAR_CODE = _sessionService.SelectedTaskSscc.DISPLAY_BAR_CODE,
+                SERIES_NAME = _sessionService.SelectedTaskInfo.SERIES_NAME,
+                RESOURCE_NAME = _sessionService.SelectedTaskInfo.RESOURCE_NAME,
+                CNT = 0
+                //LEVEL_QTY = _sessionService.SelectedTaskInfo.QTY ?? 0,
+                //CNT = _sessionService.SelectedTaskInfo.RES_BOXID
             };
             // Регистрируем данные в отчете
             report.RegisterData(new List<object> { labelData }, "LabelQry");
