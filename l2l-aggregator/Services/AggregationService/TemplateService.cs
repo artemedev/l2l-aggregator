@@ -12,7 +12,7 @@ namespace l2l_aggregator.Services.AggregationService
     {
         public XDocument OriginalDocument { get; private set; }
 
-        public List<TemplateField> LoadTemplateFromBase64(string base64Template)
+        public List<TemplateField> LoadTemplate(string base64Template)
         {
             var fields = new List<TemplateField>();
 
@@ -79,7 +79,7 @@ namespace l2l_aggregator.Services.AggregationService
             }
         }
 
-        public string GenerateTemplateBase64(List<TemplateField> fields)
+        public string GenerateTemplate(List<TemplateField> fields)
         {
             if (OriginalDocument == null || fields.Count == 0)
                 return string.Empty;

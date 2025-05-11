@@ -92,44 +92,38 @@ namespace l2l_aggregator.Services.DmProcessing
             _dmrDataReady.TrySetResult(true);
         }
 
-        public Bitmap GetCroppedImage(result_data dmrData)
+        public async Task<Bitmap> GetCroppedImage(result_data dmrData, int minX, int minY, int maxX, int maxY)
         {
-            Console.WriteLine($"GetCroppedImage: {dmrData.BOXs.Count()}");
-            int minX = dmrData.BOXs.Min(d => d.poseX - (d.width / 2));
-            int minY = dmrData.BOXs.Min(d => d.poseY - (d.height / 2));
-            int maxX = dmrData.BOXs.Max(d => d.poseX + (d.width / 2));
-            int maxY = dmrData.BOXs.Max(d => d.poseY + (d.height / 2));
-            int imageWidth = dmrData.processedImage.Width;
-            int imageHeight = dmrData.processedImage.Height;
-
-            // 
-            minX = Math.Max(0, minX);
-            minY = Math.Max(0, minY);
-            maxX = Math.Min(imageWidth, maxX);
-            maxY = Math.Min(imageHeight, maxY);
-
-            int cropWidth = maxX - minX;
-            int cropHeight = maxY - minY;
-            Console.WriteLine($"GetCroppedImage: minX{minX} minY{minY} {maxX} {maxY}");
-            try
+            return await Task.Run(() =>
             {
-                using var ms = new MemoryStream();
-                using var cropped = dmrData.processedImage.Clone(ctx => ctx.Crop(new SixLabors.ImageSharp.Rectangle(minX, minY, cropWidth, cropHeight)));
-                cropped.SaveAsBmp(ms);
-                ms.Seek(0, SeekOrigin.Begin);
+                int imageWidth = dmrData.processedImage.Width;
+                int imageHeight = dmrData.processedImage.Height;
 
-                return new Bitmap(ms);
-            }
-            catch
-            {
-                using var ms = new MemoryStream();
-                dmrData.processedImage.SaveAsBmp(ms);
-                ms.Seek(0, SeekOrigin.Begin);
-                ms.Seek(0, SeekOrigin.Begin);
+                minX = Math.Max(0, minX);
+                minY = Math.Max(0, minY);
+                maxX = Math.Min(imageWidth, maxX);
+                maxY = Math.Min(imageHeight, maxY);
 
-                return new Bitmap(ms);
+                int cropWidth = maxX - minX;
+                int cropHeight = maxY - minY;
 
-            }
+                try
+                {
+                    using var ms = new MemoryStream();
+                    using var cropped = dmrData.processedImage.Clone(ctx => ctx.Crop(new SixLabors.ImageSharp.Rectangle(minX, minY, cropWidth, cropHeight)));
+                    cropped.SaveAsBmp(ms);
+                    ms.Seek(0, SeekOrigin.Begin);
+
+                    return new Bitmap(ms);
+                }
+                catch
+                {
+                    using var ms = new MemoryStream();
+                    dmrData.processedImage.SaveAsBmp(ms);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    return new Bitmap(ms);
+                }
+            });
         }
 
         public ObservableCollection<DmCellViewModel> BuildCellViewModels(
@@ -138,11 +132,11 @@ namespace l2l_aggregator.Services.DmProcessing
             SessionService sessionService,
             ObservableCollection<TemplateField> fields,
             ArmJobSgtinResponse response,
-            AggregationViewModel thisModel)
+            AggregationViewModel thisModel, int minX, int minY)
         {
             var cells = new ObservableCollection<DmCellViewModel>();
-            int minX = dmrData.BOXs.Min(d => d.poseX - (d.width / 2));
-            int minY = dmrData.BOXs.Min(d => d.poseY - (d.height / 2));
+            //int minX = dmrData.BOXs.Min(d => d.poseX - (d.width / 2));
+            //int minY = dmrData.BOXs.Min(d => d.poseY - (d.height / 2));
 
             foreach (var dmd in dmrData.BOXs)
             {

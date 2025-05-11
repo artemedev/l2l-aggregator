@@ -84,7 +84,7 @@ namespace l2l_aggregator.ViewModels
         [ObservableProperty] private Bitmap selectedSquareImage;
         [ObservableProperty] private ObservableCollection<string> layers = new();
         [ObservableProperty] private ObservableCollection<string> palletBoxes = new();
-        [ObservableProperty] private ObservableCollection<AggregatedItem> aggregatedItems = new();
+        //[ObservableProperty] private ObservableCollection<AggregatedItem> aggregatedItems = new();
         [ObservableProperty] private int selectedTabIndex;
 
         [ObservableProperty] private int aggregatedLayers;
@@ -106,16 +106,21 @@ namespace l2l_aggregator.ViewModels
         public IRelayCommand<SizeChangedEventArgs> ImageSizeCellChangedCommand { get; }
         public IRelayCommand<SizeChangedEventArgs> ImageSizeGridCellChangedCommand { get; }
 
+        private string? _lastUsedTemplateJson;
+        private int numberOfLayers;
+        private int numberOfBoxes;
+        private int numberOfPallets;
+
         ArmJobSsccResponse responseSscc;
 
         static result_data dmrData;
         public ObservableCollection<TabItemModel> Tabs { get; }
         //public int SelectedTabIndex { get; set; }
-        [ObservableProperty] private string infoLayerText = "Слой 0 из 0";
+        [ObservableProperty] private string infoLayerText = "Выберите элементы для агрегации и нажмите кнопку сканировать!";
         [ObservableProperty] private string infoDMText = "Распознано 0 из 0";
         [ObservableProperty] private string infoHelperText;
         [ObservableProperty] private bool isHelperTextVisible;
-        [ObservableProperty] private int currentLayer;
+        [ObservableProperty] private int currentLayer = 0;
         public TabItemModel SelectedTab => Tabs.ElementAtOrDefault(SelectedTabIndex);
 
         public AggregationViewModel(
@@ -147,12 +152,12 @@ namespace l2l_aggregator.ViewModels
             ImageSizeChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeChanged);
             ImageSizeCellChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeCellChanged);
             ImageSizeGridCellChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeGridCellChanged);
-            Tabs = new ObservableCollection<TabItemModel>
-            {
-                new TabItemModel { Header = "Tab 1", Content = "Content for Tab 1",  Content2 = "Content for Tab 3"  },
-                new TabItemModel { Header = "Tab 2", Content = "Content for Tab 2",  Content2 = "Content for Tab 3"  },
-                new TabItemModel { Header = "Tab 3", Content = "Content for Tab 3",  Content2 = "Content for Tab 3"},
-            };
+            //Tabs = new ObservableCollection<TabItemModel>
+            //{
+            //    new TabItemModel { Header = "Tab 1", Content = "Content for Tab 1",  Content2 = "Content for Tab 3"  },
+            //    new TabItemModel { Header = "Tab 2", Content = "Content for Tab 2",  Content2 = "Content for Tab 3"  },
+            //    new TabItemModel { Header = "Tab 3", Content = "Content for Tab 3",  Content2 = "Content for Tab 3"},
+            //};
             InitializeAsync();
         }
         private async void InitializeAsync()
@@ -177,58 +182,20 @@ namespace l2l_aggregator.ViewModels
             }
 
             LoadTemplateFromSession(); //заполнение из шаблона в модальное окно для выбора элементов для сканирования
-            InitializeAggregationStructure();
             InitializeSsccAsync();
         }
         private void LoadTemplateFromSession()
         {
            
             Fields.Clear();
-            var loadedFields = _templateService.LoadTemplateFromBase64(_sessionService.SelectedTaskInfo.UN_TEMPLATE_FR);
+            var loadedFields = _templateService.LoadTemplate(_sessionService.SelectedTaskInfo.UN_TEMPLATE_FR);
             foreach (var f in loadedFields)
                 Fields.Add(f);
 
             IsTemplateLoaded = Fields.Count > 0;
 
         }
-        private void InitializeAggregationStructure()
-        {
-            //AggregatedItems.Clear();
-
-            int layersQty = _sessionService.SelectedTaskInfo.LAYERS_QTY;
-            int boxesQty = _sessionService.SelectedTaskInfo.IN_PALLET_BOX_QTY;
-            int palletsQty = _sessionService.SelectedTaskInfo.PALLET_QTY;
-            //var Content = $"Слой {1} из {layersQty}";
-            //for (int i = 1; i <= layersQty; i++)
-            //    AggregatedItems.Add(new AggregatedItem
-            //    {
-            //        Name = $"Слой {i} из {layersQty}",
-            //        Type = "Слой",
-            //        Index = i,
-            //        Total = layersQty,
-            //        IsCompleted = false
-            //    });
-
-            //for (int i = 1; i <= boxesQty; i++)
-            //    AggregatedItems.Add(new AggregatedItem
-            //    {
-            //        Name = $"Коробка {i} из {boxesQty}",
-            //        Type = "Коробка",
-            //        Index = i,
-            //        Total = boxesQty,
-            //        IsCompleted = false
-            //    });
-
-            //for (int i = 1; i <= palletsQty; i++)
-            //    AggregatedItems.Add(new AggregatedItem
-            //    {
-            //        Name = $"Паллета {i} из {palletsQty}",
-            //        Type = "Паллета",
-            //        Index = i,
-            //        Total = palletsQty,
-            //        IsCompleted = false
-            //    });
-        }
+       
         private async void InitializeSsccAsync()
         {
             responseSscc = await _dataApiService.LoadSsccAsync(_sessionService.SelectedTaskInfo.DOCID);
@@ -241,24 +208,41 @@ namespace l2l_aggregator.ViewModels
         [RelayCommand]
         public async Task Scan()
         {
-            int expectedPerLayer = _sessionService.SelectedTaskInfo.IN_BOX_QTY / _sessionService.SelectedTaskInfo.LAYERS_QTY;
+            int numberOfLayers = _sessionService.SelectedTaskInfo.IN_BOX_QTY / _sessionService.SelectedTaskInfo.LAYERS_QTY;
 
-            _dmScanService.StartScan(GenerateTemplate());
+            // Генерация шаблона
+            var currentTemplate = _templateService.GenerateTemplate(Fields.ToList());
+
+            // Сравнение текущего шаблона с последним использованным
+            if (_lastUsedTemplateJson != currentTemplate)
+            {
+                //отправка шаблона в библиотеку распознавания
+                _dmScanService.StartScan(currentTemplate);
+                _lastUsedTemplateJson = currentTemplate;
+            }
+
+            //старт распознавания
             _dmScanService.getScan();
-
+            //ожидание результата распознавания
             dmrData = await _dmScanService.WaitForResultAsync();
 
-            ScannedImage = _dmScanService.GetCroppedImage(dmrData);
+            int minX = dmrData.BOXs.Min(d => d.poseX - (d.width / 2));
+            int minY = dmrData.BOXs.Min(d => d.poseY - (d.height / 2));
+            int maxX = dmrData.BOXs.Max(d => d.poseX + (d.width / 2));
+            int maxY = dmrData.BOXs.Max(d => d.poseY + (d.height / 2));
 
-            await Task.Delay(100);
+            //кроп изображения
+            ScannedImage = await _dmScanService.GetCroppedImage(dmrData, minX, minY, maxX, maxY);
+
+            await Task.Delay(100); //исправить
 
             scaleX = imageSize.Width / ScannedImage.PixelSize.Width;
             scaleY = imageSize.Height / ScannedImage.PixelSize.Height;
             scaleXObrat = ScannedImage.PixelSize.Width / imageSize.Width;
             scaleYObrat = ScannedImage.PixelSize.Height / imageSize.Height;
-
+             
             var responseSgtin = await _dataApiService.LoadSgtinAsync(_sessionService.SelectedTaskInfo.DOCID);
-
+            //создание ячеек
             DMCells = _dmScanService.BuildCellViewModels(
                 dmrData,
                 scaleX,
@@ -266,37 +250,39 @@ namespace l2l_aggregator.ViewModels
                 _sessionService,
                 Fields,
                 responseSgtin,
-                this
+                this,
+                minX, 
+                minY
             );
-            //GoToNextStep();
             // Обновление информационных текстов
-            int validCount = DMCells.Count(c => c.IsValid);
-            UpdateLayerInfo(validCount, expectedPerLayer);
+            int validCountDMCells = DMCells.Count(c => c.IsValid);
+            CurrentLayer++;
+            UpdateLayerInfo(validCountDMCells, numberOfLayers);
 
-            if (validCount == expectedPerLayer)
+            if (validCountDMCells == numberOfLayers)
             {
                 if(CurrentLayer == _sessionService.SelectedTaskInfo.LAYERS_QTY)
                 {
-
+                    CurrentLayer = 0;
                 }
-                var currentLayer = AggregatedItems.FirstOrDefault(x => x.Type == "Слой" && !x.IsCompleted);
-                if (currentLayer != null)
-                {
-                    currentLayer.IsCompleted = true;
+                //var currentLayer = AggregatedItems.FirstOrDefault(x => x.Type == "Слой" && !x.IsCompleted);
+                //if (currentLayer != null)
+                //{
+                //    currentLayer.IsCompleted = true;
 
-                    // Автоматический переход, если это последний слой
-                    //if (AggregatedItems.Count(x => x.Type == "Слой" && x.IsCompleted) ==
-                    //    _sessionService.SelectedTaskInfo.LAYERS_QTY)
-                    //{
-                    //    GoToNextStep();
-                    //}
-                }
+                //    // Автоматический переход, если это последний слой
+                //    //if (AggregatedItems.Count(x => x.Type == "Слой" && x.IsCompleted) ==
+                //    //    _sessionService.SelectedTaskInfo.LAYERS_QTY)
+                //    //{
+                //    //    GoToNextStep();
+                //    //}
+                //}
             }
         }
 
         private void UpdateLayerInfo(int validCount, int expectedPerLayer)
         {
-            InfoLayerText = $"Слой {CurrentLayer} из {_sessionService.SelectedTaskInfo.LAYERS_QTY}";
+            InfoLayerText = $"Слой {CurrentLayer} из {_sessionService.SelectedTaskInfo.LAYERS_QTY}. Распознано {validCount} из {expectedPerLayer}";
             InfoDMText = $"Распознано {validCount} из {expectedPerLayer}";
 
             IsHelperTextVisible = validCount == expectedPerLayer &&
@@ -339,7 +325,7 @@ namespace l2l_aggregator.ViewModels
         [RelayCommand]
         public void PrintLabel()
         {
-            var reportXML = _templateService.LoadTemplateFromBase64(_sessionService.SelectedTaskInfo.BOX_TEMPLATE);
+            //var reportXML = _templateService.LoadTemplate(_sessionService.SelectedTaskInfo.BOX_TEMPLATE);
 
             
             byte[] frxBytes = Convert.FromBase64String(_sessionService.SelectedTaskInfo.BOX_TEMPLATE);
@@ -350,28 +336,7 @@ namespace l2l_aggregator.ViewModels
         public void CompleteAggregation()
         { }
 
-        public string GenerateTemplate()
-        {
-            return _templateService.GenerateTemplateBase64(Fields.ToList());
-        }
-
-        private void OnImageSizeChanged(SizeChangedEventArgs e)
-        {
-            imageWidth = e.NewSize.Width;
-            imageHeight = e.NewSize.Height;
-        }
-
-        private void OnImageSizeCellChanged(SizeChangedEventArgs e)
-        {
-            imageCellWidth = e.NewSize.Width;
-            imageCellHeight = e.NewSize.Height;
-        }
-
-        private void OnImageSizeGridCellChanged(SizeChangedEventArgs e)
-        {
-            imageCellWidth = e.NewSize.Width;
-            imageCellHeight = e.NewSize.Height;
-        }
+        //сканирование кода этикетки
         public void HandleScannedBarcode(string barcode)
         {
             // Проверка, что мы находимся на шаге 2
@@ -390,15 +355,15 @@ namespace l2l_aggregator.ViewModels
                         InfoMessage = $"Короб с ШК {barcode} успешно найден!";
                         _notificationService.ShowMessage(InfoMessage);
 
-                        var currentLayer = AggregatedItems.FirstOrDefault(x => x.Type == "Коробка" && !x.IsCompleted);
-                        if (currentLayer != null)
-                        {
-                            currentLayer.IsCompleted = true;
+                        //var currentLayer = AggregatedItems.FirstOrDefault(x => x.Type == "Коробка" && !x.IsCompleted);
+                        //if (currentLayer != null)
+                        //{
+                        //    currentLayer.IsCompleted = true;
 
-                            //// Автоматический переход, если это последний слой
+                        //    //// Автоматический переход, если это последний слой
 
-                            GoToNextStep();
-                        }
+                        //    GoToNextStep();
+                        //}
                         return;
                     }
                 }
@@ -409,15 +374,15 @@ namespace l2l_aggregator.ViewModels
                 {
                     if (resp.TYPEID == 1 && resp.DISPLAY_BAR_CODE == barcode)
                     {
-                        var currentLayer = AggregatedItems.FirstOrDefault(x => x.Type == "Паллета" && !x.IsCompleted);
-                        if (currentLayer != null)
-                        {
-                            currentLayer.IsCompleted = true;
+                        //var currentLayer = AggregatedItems.FirstOrDefault(x => x.Type == "Паллета" && !x.IsCompleted);
+                        //if (currentLayer != null)
+                        //{
+                        //    currentLayer.IsCompleted = true;
 
-                            //// Автоматический переход, если это последний слой
-                            _router.GoTo<TaskListViewModel>();
-                        }
-                        return;
+                        //    //// Автоматический переход, если это последний слой
+                        //    _router.GoTo<TaskListViewModel>();
+                        //}
+                        //return;
                     }
                 }
             }
@@ -483,6 +448,23 @@ namespace l2l_aggregator.ViewModels
             {
                 window.ShowDialog(desktop.MainWindow);
             }
+        }
+        private void OnImageSizeChanged(SizeChangedEventArgs e)
+        {
+            imageWidth = e.NewSize.Width;
+            imageHeight = e.NewSize.Height;
+        }
+
+        private void OnImageSizeCellChanged(SizeChangedEventArgs e)
+        {
+            imageCellWidth = e.NewSize.Width;
+            imageCellHeight = e.NewSize.Height;
+        }
+
+        private void OnImageSizeGridCellChanged(SizeChangedEventArgs e)
+        {
+            imageCellWidth = e.NewSize.Width;
+            imageCellHeight = e.NewSize.Height;
         }
     }
 }

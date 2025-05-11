@@ -8,56 +8,10 @@
 			 xmlns:vmVE="using:l2l_aggregator.ViewModels.VisualElements"
 			 x:DataType="vm:AggregationViewModel"
              x:Class="l2l_aggregator.Views.AggregationView">
-	<!--<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="9*"/>
-		</Grid.RowDefinitions>
-		-->
-	<!--<TabStrip x:Name="TabStripControl"
-				  ItemsSource="{Binding Tabs}"
-				  SelectedIndex="{Binding SelectedTabIndex}">
-			<TabStrip.ItemTemplate>
-				<DataTemplate>
-					<StackPanel>
-						<TextBlock Text="{Binding Header}" />
-						<TextBlock Text="{Binding Content}" />
-						<TextBlock Text="{Binding Content2}" />
-					</StackPanel>
-				</DataTemplate>
-			</TabStrip.ItemTemplate>
-		</TabStrip>-->
-	<!--
-
-		<Grid Grid.Row="0">
-			<Border Margin="10"
-					BorderBrush="LightGray"
-					BorderThickness="1"
-					CornerRadius="4"
-					Padding="10" Grid.Row="13">
-				<Grid>
-					-->
-	<!--<Grid.RowDefinitions>
-						<RowDefinition Height="*"/>
-						<RowDefinition Height="*"/>
-						<RowDefinition Height="*"/>
-					</Grid.RowDefinitions>-->
-	<!--
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="*"/>
-						<ColumnDefinition Width="*"/>
-						<ColumnDefinition Width="*"/>
-					</Grid.ColumnDefinitions>
-					<TextBlock Grid.Column="0" Text="{Binding InfoLayerText}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="48" TextAlignment="Justify"/>
-					<TextBlock Grid.Column="1" Text="{Binding InfoDMText}" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="48" TextAlignment="Center"/>
-					<TextBlock  Grid.Column="2" Text="{Binding InfoHelperText}" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="48" TextAlignment="Start"/>
-				</Grid>
-			</Border>
-		</Grid>-->
 	<Grid Grid.Row="1" Margin="10" >
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="6*"/>
-			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="5*"/>
+			<ColumnDefinition Width="2*"/>
 		</Grid.ColumnDefinitions>
 		<Grid Grid.Column="0">
 			<Grid.RowDefinitions>
@@ -71,24 +25,19 @@
 						CornerRadius="4"
 						Padding="10" Grid.Row="13">
 					<Grid>
-						<!--<Grid.RowDefinitions>
-							<RowDefinition Height="*"/>
-							<RowDefinition Height="*"/>
-							<RowDefinition Height="*"/>
-						</Grid.RowDefinitions>-->
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="*"/>
-							<ColumnDefinition Width="*"/>
-							<ColumnDefinition Width="*"/>
+							<!--<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="*"/>-->
 						</Grid.ColumnDefinitions>
 						<TextBlock Grid.Column="0" Text="{Binding InfoLayerText}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="48" TextAlignment="Justify"/>
-						<TextBlock Grid.Column="1" Text="{Binding InfoDMText}" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="48" TextAlignment="Center"/>
-						<TextBlock  Grid.Column="2" Text="{Binding InfoHelperText}" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="48" TextAlignment="Start"/>
+						<!--<TextBlock Grid.Column="1" Text="{Binding InfoDMText}" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="48" TextAlignment="Center"/>
+						<TextBlock  Grid.Column="2" Text="{Binding InfoHelperText}" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="48" TextAlignment="Start"/>-->
 					</Grid>
 				</Border>
 			</Grid>
-			<Grid Grid.Row="1" ScrollViewer.AllowAutoHide="False" ScrollViewer.IsScrollChainingEnabled="False" Name="scanImage" VerticalAlignment="Stretch" Background="LightGray">
-				<Image Source="{Binding ScannedImage}" Stretch="Uniform" SizeChanged="OnImageSizeChanged" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+			<Grid Grid.Row="1" ScrollViewer.AllowAutoHide="False" ScrollViewer.IsScrollChainingEnabled="False" Name="scanImage" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="LightGray">
+				<Image Source="{Binding ScannedImage}" Stretch="Fill" SizeChanged="OnImageSizeChanged" HorizontalAlignment="Left" VerticalAlignment="Top"/>
 				<ItemsControl ItemsSource="{Binding DMCells}">
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>
@@ -140,26 +89,6 @@
 					</ItemsControl.Styles>
 				</ItemsControl>
 			</Grid>
-			<!--<Border Grid.Column="1" BorderBrush="Gray" BorderThickness="1" Margin="0,10" IsVisible="{Binding IsTemplateLoaded}" VerticalAlignment="Stretch">
-			<ScrollViewer>
-				<ItemsControl ItemsSource="{Binding Fields}">
-					<ItemsControl.ItemTemplate>
-						<DataTemplate>
-							<Grid Margin="5">
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="Auto"/>
-									<ColumnDefinition Width="*"/>
-									<ColumnDefinition Width="150"/>
-								</Grid.ColumnDefinitions>
-								<CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" VerticalAlignment="Center"/>
-								<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" Margin="5,0"/>
-								<TextBlock Grid.Column="2" Text="{Binding Type}" VerticalAlignment="Center" Foreground="Gray"/>
-							</Grid>
-						</DataTemplate>
-					</ItemsControl.ItemTemplate>
-				</ItemsControl>
-			</ScrollViewer>
-		</Border>-->
 		</Grid>
 		<Grid Grid.Column="1" Margin="15">
 			<Grid.RowDefinitions>
@@ -227,10 +156,6 @@
 		<!-- 
             Третий слой: всплывающее окно (Popup) с увеличенным изображением 
             выбранного квадрата. Оно привязано к IsPopupOpen и SelectedSquareImage. 
-            
-            Popup в Avalonia по умолчанию позиционируется рядом с контролом, 
-            где он объявлен, поэтому возможно придётся настроить Placement, 
-            Width/Height и т.п. 
         -->
 		<Popup IsOpen="{Binding IsPopupOpen}" PlacementTarget="{Binding #scanImage}" PlacementMode="Center" Name="scanImagePopup" PointerPressed="Popup_PointerPressed">
 			<Border Background="White" BorderBrush="Black" BorderThickness="2" >
@@ -273,5 +198,4 @@
 			</Border>
 		</Popup>
 	</Grid>
-	<!--</Grid>-->
 </UserControl>
