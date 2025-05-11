@@ -13,7 +13,7 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="9*"/>
 		</Grid.RowDefinitions>
-		<TabStrip x:Name="TabStripControl"
+		<!--<TabStrip x:Name="TabStripControl"
 				  ItemsSource="{Binding Tabs}"
 				  SelectedIndex="{Binding SelectedTabIndex}">
 			<TabStrip.ItemTemplate>
@@ -21,19 +21,37 @@
 					<StackPanel>
 						<TextBlock Text="{Binding Header}" />
 						<TextBlock Text="{Binding Content}" />
+						<TextBlock Text="{Binding Content2}" />
 					</StackPanel>
 				</DataTemplate>
 			</TabStrip.ItemTemplate>
-		</TabStrip>
+		</TabStrip>-->
 
-
+		<Grid Grid.Row="0">
+			<Border Margin="10"
+					BorderBrush="LightGray"
+					BorderThickness="1"
+					CornerRadius="4"
+					Padding="10" Grid.Row="13">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="*"/>
+					</Grid.RowDefinitions>
+					<TextBlock Grid.Row="0" Text="{Binding InfoLayerText}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+					<TextBlock Grid.Row="1" Text="{Binding InfoDMText}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+					<TextBlock Grid.Row="2" Text="{Binding InfoHelperText}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+				</Grid>
+			</Border>
+		</Grid>
 		<Grid Grid.Row="1" Margin="10" >
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="6*"/>
 				<ColumnDefinition Width="*"/>
 			</Grid.ColumnDefinitions>
-			<Grid Grid.Column="0" ScrollViewer.AllowAutoHide="False" ScrollViewer.IsScrollChainingEnabled="False" Name="scanImage" VerticalAlignment="Stretch">
-				<Image Source="{Binding ScannedImage}" Stretch="Uniform" SizeChanged="OnImageSizeChanged" HorizontalAlignment="Left"/>
+			<Grid Grid.Column="0" ScrollViewer.AllowAutoHide="False" ScrollViewer.IsScrollChainingEnabled="False" Name="scanImage" VerticalAlignment="Stretch" Background="LightGray">
+				<Image Source="{Binding ScannedImage}" Stretch="Uniform" SizeChanged="OnImageSizeChanged" HorizontalAlignment="Left" VerticalAlignment="Top"/>
 				<ItemsControl ItemsSource="{Binding DMCells}">
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>
@@ -141,19 +159,32 @@
 						BorderThickness="1"
 						CornerRadius="4"
 						Padding="10" Grid.Row="13">
-					<StackPanel  Margin="10">
-						<TextBlock Text="Результат " FontWeight="Bold"/>
-						<TextBlock Text="Агрегируемая серия: 50325: " FontWeight="Bold"/>
-						<TextBlock Text="Количество собранных коробов: 79"/>
-						<TextBlock Text="Номер собираемого короба: 80"/>
-						<TextBlock Text="Номер слоя: 1"/>
-						<TextBlock Text="Количество слоев в коробе: 1"/>
-						<TextBlock Text="Количество СИ, распознанное в слое: 50"/>
-						<TextBlock Text="Количество СИ, считанное в слое: 50"/>
-						<TextBlock Text="Количество СИ, ожидаемое в слое: 50"/>
-						<TextBlock Text="Количество СИ, отбраковано: 0"/>
-						<TextBlock Text="Количество СИ, отобрано: 0"/>
-					</StackPanel>
+					<Grid  Margin="10">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+						</Grid.RowDefinitions>
+						<TextBlock Grid.Row="0" Text="Результат " FontWeight="Bold"/>
+						<TextBlock Grid.Row="1" Text="Агрегируемая серия: 50325: " FontWeight="Bold"/>
+						<TextBlock Grid.Row="2" Text="Количество собранных коробов: 79"/>
+						<TextBlock Grid.Row="3" Text="Номер собираемого короба: 80"/>
+						<TextBlock Grid.Row="4" Text="Номер слоя: 1"/>
+						<TextBlock Grid.Row="5" Text="Количество слоев в коробе: 1"/>
+						<TextBlock Grid.Row="6" Text="Количество СИ, распознанное в слое: 50"/>
+						<TextBlock Grid.Row="7" Text="Количество СИ, считанное в слое: 50"/>
+						<TextBlock Grid.Row="8" Text="Количество СИ, ожидаемое в слое: 50"/>
+						<TextBlock Grid.Row="9" Text="Количество СИ, отбраковано: 0"/>
+						<TextBlock Grid.Row="10" Text="Количество СИ, отобрано: 0"/>
+					</Grid>
 				</Border>
 			</Grid>
 			<!-- 
@@ -205,6 +236,5 @@
 				</Border>
 			</Popup>
 		</Grid>
-
 	</Grid>
 </UserControl>

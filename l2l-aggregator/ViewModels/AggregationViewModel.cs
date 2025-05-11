@@ -39,6 +39,7 @@ namespace l2l_aggregator.ViewModels
     {
         public string Header { get; set; }
         public string Content { get; set; }
+        public string Content2 { get; set; }
     }
     public partial class AggregationViewModel : ViewModelBase
     {
@@ -84,7 +85,7 @@ namespace l2l_aggregator.ViewModels
         [ObservableProperty] private ObservableCollection<string> layers = new();
         [ObservableProperty] private ObservableCollection<string> palletBoxes = new();
         [ObservableProperty] private ObservableCollection<AggregatedItem> aggregatedItems = new();
-
+        [ObservableProperty] private int selectedTabIndex;
 
         [ObservableProperty] private int aggregatedLayers;
         [ObservableProperty] private int aggregatedBoxes;
@@ -109,8 +110,12 @@ namespace l2l_aggregator.ViewModels
 
         static result_data dmrData;
         public ObservableCollection<TabItemModel> Tabs { get; }
-        public int SelectedTabIndex { get; set; }
-
+        //public int SelectedTabIndex { get; set; }
+        [ObservableProperty] private string infoLayerText = "Слой 0 из 0";
+        [ObservableProperty] private string infoDMText = "Распознано 0 из 0";
+        [ObservableProperty] private string infoHelperText;
+        [ObservableProperty] private bool isHelperTextVisible;
+        [ObservableProperty] private int currentLayer;
         public TabItemModel SelectedTab => Tabs.ElementAtOrDefault(SelectedTabIndex);
 
         public AggregationViewModel(
@@ -144,15 +149,15 @@ namespace l2l_aggregator.ViewModels
             ImageSizeGridCellChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeGridCellChanged);
             Tabs = new ObservableCollection<TabItemModel>
             {
-                new TabItemModel { Header = "Tab 1", Content = "Content for Tab 1"  },
-                new TabItemModel { Header = "Tab 2", Content = "Content for Tab 2"  },
-                new TabItemModel { Header = "Tab 3", Content = "Content for Tab 3"  },
+                new TabItemModel { Header = "Tab 1", Content = "Content for Tab 1",  Content2 = "Content for Tab 3"  },
+                new TabItemModel { Header = "Tab 2", Content = "Content for Tab 2",  Content2 = "Content for Tab 3"  },
+                new TabItemModel { Header = "Tab 3", Content = "Content for Tab 3",  Content2 = "Content for Tab 3"},
             };
             InitializeAsync();
         }
         private async void InitializeAsync()
         {
-            //переделать
+            //переделать на сервис
             var savedScanner = await _databaseService.Config.GetConfigValueAsync("ScannerCOMPort");
             if (savedScanner is not null)
             {
@@ -171,12 +176,13 @@ namespace l2l_aggregator.ViewModels
                 }
             }
 
-            LoadTemplateFromSession();
+            LoadTemplateFromSession(); //заполнение из шаблона в модальное окно для выбора элементов для сканирования
             InitializeAggregationStructure();
             InitializeSsccAsync();
         }
         private void LoadTemplateFromSession()
         {
+           
             Fields.Clear();
             var loadedFields = _templateService.LoadTemplateFromBase64(_sessionService.SelectedTaskInfo.UN_TEMPLATE_FR);
             foreach (var f in loadedFields)
@@ -187,41 +193,41 @@ namespace l2l_aggregator.ViewModels
         }
         private void InitializeAggregationStructure()
         {
-            AggregatedItems.Clear();
+            //AggregatedItems.Clear();
 
             int layersQty = _sessionService.SelectedTaskInfo.LAYERS_QTY;
             int boxesQty = _sessionService.SelectedTaskInfo.IN_PALLET_BOX_QTY;
             int palletsQty = _sessionService.SelectedTaskInfo.PALLET_QTY;
+            //var Content = $"Слой {1} из {layersQty}";
+            //for (int i = 1; i <= layersQty; i++)
+            //    AggregatedItems.Add(new AggregatedItem
+            //    {
+            //        Name = $"Слой {i} из {layersQty}",
+            //        Type = "Слой",
+            //        Index = i,
+            //        Total = layersQty,
+            //        IsCompleted = false
+            //    });
 
-            for (int i = 1; i <= layersQty; i++)
-                AggregatedItems.Add(new AggregatedItem
-                {
-                    Name = $"Слой {i} из {layersQty}",
-                    Type = "Слой",
-                    Index = i,
-                    Total = layersQty,
-                    IsCompleted = false
-                });
+            //for (int i = 1; i <= boxesQty; i++)
+            //    AggregatedItems.Add(new AggregatedItem
+            //    {
+            //        Name = $"Коробка {i} из {boxesQty}",
+            //        Type = "Коробка",
+            //        Index = i,
+            //        Total = boxesQty,
+            //        IsCompleted = false
+            //    });
 
-            for (int i = 1; i <= boxesQty; i++)
-                AggregatedItems.Add(new AggregatedItem
-                {
-                    Name = $"Коробка {i} из {boxesQty}",
-                    Type = "Коробка",
-                    Index = i,
-                    Total = boxesQty,
-                    IsCompleted = false
-                });
-
-            for (int i = 1; i <= palletsQty; i++)
-                AggregatedItems.Add(new AggregatedItem
-                {
-                    Name = $"Паллета {i} из {palletsQty}",
-                    Type = "Паллета",
-                    Index = i,
-                    Total = palletsQty,
-                    IsCompleted = false
-                });
+            //for (int i = 1; i <= palletsQty; i++)
+            //    AggregatedItems.Add(new AggregatedItem
+            //    {
+            //        Name = $"Паллета {i} из {palletsQty}",
+            //        Type = "Паллета",
+            //        Index = i,
+            //        Total = palletsQty,
+            //        IsCompleted = false
+            //    });
         }
         private async void InitializeSsccAsync()
         {
@@ -262,24 +268,44 @@ namespace l2l_aggregator.ViewModels
                 responseSgtin,
                 this
             );
+            //GoToNextStep();
+            // Обновление информационных текстов
             int validCount = DMCells.Count(c => c.IsValid);
+            UpdateLayerInfo(validCount, expectedPerLayer);
+
             if (validCount == expectedPerLayer)
             {
+                if(CurrentLayer == _sessionService.SelectedTaskInfo.LAYERS_QTY)
+                {
+
+                }
                 var currentLayer = AggregatedItems.FirstOrDefault(x => x.Type == "Слой" && !x.IsCompleted);
                 if (currentLayer != null)
                 {
                     currentLayer.IsCompleted = true;
 
                     // Автоматический переход, если это последний слой
-                    if (AggregatedItems.Count(x => x.Type == "Слой" && x.IsCompleted) ==
-                        _sessionService.SelectedTaskInfo.LAYERS_QTY)
-                    {
-                        GoToNextStep();
-                    }
+                    //if (AggregatedItems.Count(x => x.Type == "Слой" && x.IsCompleted) ==
+                    //    _sessionService.SelectedTaskInfo.LAYERS_QTY)
+                    //{
+                    //    GoToNextStep();
+                    //}
                 }
             }
         }
 
+        private void UpdateLayerInfo(int validCount, int expectedPerLayer)
+        {
+            InfoLayerText = $"Слой {CurrentLayer} из {_sessionService.SelectedTaskInfo.LAYERS_QTY}";
+            InfoDMText = $"Распознано {validCount} из {expectedPerLayer}";
+
+            IsHelperTextVisible = validCount == expectedPerLayer &&
+                                CurrentLayer == _sessionService.SelectedTaskInfo.LAYERS_QTY;
+
+            InfoHelperText = IsHelperTextVisible
+                ? "Короб агрегирован. Запечатайте, наклейте этикетку и считайте сканером."
+                : string.Empty;
+        }
         [RelayCommand]
         public async Task ScanBoxBarcode()
         {
@@ -303,6 +329,8 @@ namespace l2l_aggregator.ViewModels
         {
             if (CurrentStepIndex < 2)
                 CurrentStepIndex++;
+            if (SelectedTabIndex < 2)
+                SelectedTabIndex++;
         }
 
         [RelayCommand]
