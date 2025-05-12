@@ -164,17 +164,17 @@ namespace DM_wraper_NS
 
     public struct recogn_params
     {
-        public int countOfDM = 0;
-        public int pixInMM = 10;
+        public int countOfDM = 0;//заполнить сколько на слое упаковок
+        public int pixInMM = 10;//
         public string CamInterfaces = "GigEVision2";
         public string cameraName = "/img";
         public string CamPathToAddConf = "";
         public camera_preset _Preset = new camera_preset("Basler");
         public bool softwareTrigger = true;
         public bool hardwareTrigger = false;
-        public bool OCRRecogn = false;
-        public bool packRecogn = false;
-        public bool DMRecogn = false;
+        public bool OCRRecogn = false; //ocr распознавание текста
+        public bool packRecogn = false; //если нужна коробка(если нужа ocr)
+        public bool DMRecogn = false; //true если нужен датаматрикс
 
         public recogn_params()
         {
@@ -240,7 +240,7 @@ namespace DM_wraper_NS
             alpha = 0;
         }
     }
-
+    //распознавание текста
     public struct OCR_data
     {
         public string Text;

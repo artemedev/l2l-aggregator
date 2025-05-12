@@ -26,7 +26,7 @@ namespace l2l_aggregator.Services.AggregationService
                 {
                     OriginalDocument = XDocument.Load(memoryStream);
                 }
-
+                //TfrxReportPage новый, TfrxTemplatePage старый
                 var templatePage = OriginalDocument.Descendants()
                                    .FirstOrDefault(e => (
                         e.Name.LocalName == "TfrxReportPage" ||
@@ -38,36 +38,88 @@ namespace l2l_aggregator.Services.AggregationService
 
                 foreach (var element in templatePage.Elements())
                 {
-                    string elementType = element.Name.LocalName;
-                    if (elementType.StartsWith("Tfrx") || elementType.StartsWith("Template"))
-                    {
-                        var nameAttr = element.Attribute("Name");
-                        var textAttr = element.Attribute("Text");
-                        var dataFieldAttr = element.Attribute("DataField");
+                    //string elementType = element.Name.LocalName;
+                    //if (elementType.StartsWith("Tfrx") || elementType.StartsWith("Template"))
+                    //{
+                    var nameAttr = element.Attribute("Name");
+                    var textAttr = element.Attribute("Text");
+                    var dataFieldAttr = element.Attribute("DataField");
+                    var expressionAttr = element.Attribute("Expression");
 
-                        if (nameAttr != null)
+                    if (nameAttr != null)
+                    {
+                        if (!string.IsNullOrWhiteSpace(dataFieldAttr?.Value))
                         {
-                            if (dataFieldAttr != null)
+                            fields.Add(new TemplateField
                             {
-                                fields.Add(new TemplateField
-                                {
-                                    Name = dataFieldAttr.Value,
-                                    Type = "переменная",
-                                    Element = element,
-                                    IsSelected = true
-                                });
-                            }
-                            else if (textAttr != null)
-                            {
-                                fields.Add(new TemplateField
-                                {
-                                    Name = textAttr.Value,
-                                    Type = "текст",
-                                    Element = element,
-                                    IsSelected = true
-                                });
-                            }
+                                Name = dataFieldAttr.Value,
+                                Type = "переменная",
+                                Element = element,
+                                IsSelected = true
+                            });
                         }
+                        else if (!string.IsNullOrWhiteSpace(expressionAttr?.Value))
+                        {
+                            fields.Add(new TemplateField
+                            {
+                                Name = ExtractFieldName(expressionAttr.Value),
+                                Type = "переменная",
+                                Element = element,
+                                IsSelected = true
+                            });
+                        }
+                        else if (!string.IsNullOrWhiteSpace(textAttr?.Value) && textAttr.Value.StartsWith("["))
+                        {
+                            // Значение в [] — вероятно, выражение
+                            fields.Add(new TemplateField
+                            {
+                                Name = ExtractFieldName(textAttr.Value),
+                                Type = "переменная",
+                                Element = element,
+                                IsSelected = true
+                            });
+                        }
+                        else if (!string.IsNullOrWhiteSpace(textAttr?.Value))
+                        {
+                            fields.Add(new TemplateField
+                            {
+                                Name = textAttr.Value,
+                                Type = "текст",
+                                Element = element,
+                                IsSelected = true
+                            });
+                        }
+                        //if (dataFieldAttr != null)
+                        //{
+                        //    fields.Add(new TemplateField
+                        //    {
+                        //        Name = dataFieldAttr.Value,
+                        //        Type = "переменная",
+                        //        Element = element,
+                        //        IsSelected = true
+                        //    });
+                        //}
+                        //else if(expressionAttr != null)
+                        //{
+                        //    fields.Add(new TemplateField
+                        //    {
+                        //        Name = expressionAttr.Value,
+                        //        Type = "переменная",
+                        //        Element = element,
+                        //        IsSelected = true
+                        //    });
+                        //}
+                        //else if (textAttr != null)
+                        //{
+                        //    fields.Add(new TemplateField
+                        //    {
+                        //        Name = textAttr.Value,
+                        //        Type = "текст",
+                        //        Element = element,
+                        //        IsSelected = true
+                        //    });
+                        //}
+                        //}
                     }
                 }
 
@@ -78,7 +130,20 @@ namespace l2l_aggregator.Services.AggregationService
                 return new List<TemplateField>();
             }
         }
+        private string ExtractFieldName(string expression)
+        {
+            if (string.IsNullOrWhiteSpace(expression))
+                return string.Empty;
 
+            // Пример выражения: [LabelQry."UN_CODE"] или <LabelQry."UN_CODE">
+            var regex = new System.Text.RegularExpressions.Regex(@"[\[\<]\s*(\w+)\.\s*""?(\w+)""?\s*[\]\>]");
+            var match = regex.Match(expression);
+
+            if (match.Success)
+                return match.Groups[2].Value;
+
+            return expression; // fallback
+        }
         public string GenerateTemplate(List<TemplateField> fields)
         {
             if (OriginalDocument == null || fields.Count == 0)
@@ -99,7 +164,7 @@ namespace l2l_aggregator.Services.AggregationService
                     attr.Remove();
                 }
             }
-
+            //TfrxReportPage новый, TfrxTemplatePage старый
             var templatePage = newDocument.Descendants().FirstOrDefault(e => (
                         e.Name.LocalName == "TfrxReportPage" ||
                         e.Name.LocalName == "TfrxTemplatePage"
@@ -108,7 +173,8 @@ namespace l2l_aggregator.Services.AggregationService
                 return string.Empty;
 
             // Очистка атрибутов страницы
-            foreach (var attr in templatePage.Attributes().Where(a => string.IsNullOrWhiteSpace(a.Value) || a.Value == "0").ToList())
+            foreach (var attr in templatePage.Attributes().Where(
+                a => string.IsNullOrWhiteSpace(a.Value) || a.Value == "0").ToList())
             {
                 attr.Remove();
             }

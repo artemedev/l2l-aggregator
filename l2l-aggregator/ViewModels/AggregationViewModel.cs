@@ -6,8 +6,6 @@ using Avalonia.SimpleRouter;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DM_wraper_NS;
-using FastReport;
-using l2l_aggregator.Helpers;
 using l2l_aggregator.Helpers.AggregationHelpers;
 using l2l_aggregator.Models;
 using l2l_aggregator.Services;
@@ -19,28 +17,14 @@ using l2l_aggregator.Services.Notification.Interface;
 using l2l_aggregator.Services.Printing;
 using l2l_aggregator.ViewModels.VisualElements;
 using l2l_aggregator.Views.Popup;
-using MD.Devices;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
-using static FastReport.Export.Dbf.Record;
 
 namespace l2l_aggregator.ViewModels
 {
-    public class TabItemModel
-    {
-        public string Header { get; set; }
-        public string Content { get; set; }
-        public string Content2 { get; set; }
-    }
     public partial class AggregationViewModel : ViewModelBase
     {
         private readonly SessionService _sessionService;
@@ -132,7 +116,6 @@ namespace l2l_aggregator.ViewModels
         ArmJobSsccResponse responseSscc;
 
         static result_data dmrData;
-        public ObservableCollection<TabItemModel> Tabs { get; }
 
 
         [ObservableProperty] private string infoLayerText = "Выберите элементы шаблона для агрегации и нажмите кнопку сканировать!";
