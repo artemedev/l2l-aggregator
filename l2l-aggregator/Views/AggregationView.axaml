@@ -130,7 +130,7 @@
 					BorderThickness="1"
 					CornerRadius="4"
 					Padding="10" Grid.Row="8">
-				<Grid  Margin="10">
+				<Grid  Margin="10" Opacity="0">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="*"/>
 						<RowDefinition Height="*"/>

@@ -220,6 +220,35 @@ namespace l2l_aggregator.ViewModels
             // Сравнение текущего шаблона с последним использованным
             if (_lastUsedTemplateJson != currentTemplate)
             {
+                // Определение, есть ли выбранные OCR или DM элементы
+                bool hasOcr = TemplateFields.Any(f =>
+                    f.IsSelected && (
+                        f.Element.Name.LocalName == "TfrxMemoView" ||
+                        f.Element.Name.LocalName == "TfrxTemplateMemoView"
+                    )
+                );
+
+                bool hasDm = TemplateFields.Any(f =>
+                    f.IsSelected && (
+                        f.Element.Name.LocalName == "TfrxBarcode2DView" ||
+                        f.Element.Name.LocalName == "TfrxTemplateBarcode2DView"
+                    )
+                );
+                // Настройки параметров камеры для библиотеки
+                var recognParams = new recogn_params
+                {
+                    countOfDM = numberOfLayers,
+                    CamInterfaces = "GigEVision2", 
+                    cameraName = _sessionService.CameraIP,
+                    _Preset = new camera_preset(_sessionService.CameraModel),
+                    softwareTrigger = true,
+                    hardwareTrigger = false,
+                    OCRRecogn = hasOcr,
+                    packRecogn = true, 
+                    DMRecogn = hasDm
+                };
+
+                _dmScanService.ConfigureParams(recognParams);
                 //отправка шаблона в библиотеку распознавания
                 _dmScanService.StartScan(currentTemplate);
                 _lastUsedTemplateJson = currentTemplate;

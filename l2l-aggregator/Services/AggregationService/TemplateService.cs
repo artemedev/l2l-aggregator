@@ -144,9 +144,9 @@ namespace l2l_aggregator.Services.AggregationService
 
             return expression; // fallback
         }
-        public string GenerateTemplate(List<TemplateField> fields)
+        public string GenerateTemplate(List<TemplateField> templateFields)
         {
-            if (OriginalDocument == null || fields.Count == 0)
+            if (OriginalDocument == null || templateFields.Count == 0)
                 return string.Empty;
 
             var newDocument = new XDocument(OriginalDocument);
@@ -183,7 +183,7 @@ namespace l2l_aggregator.Services.AggregationService
             var fieldsToRemove = new List<XElement>();
             foreach (var element in templatePage.Elements())
             {
-                var field = fields.FirstOrDefault(f => f.Element.Attribute("Name")?.Value == element.Attribute("Name")?.Value);
+                var field = templateFields.FirstOrDefault(f => f.Element.Attribute("Name")?.Value == element.Attribute("Name")?.Value);
                 if (field != null && !field.IsSelected)
                 {
                     fieldsToRemove.Add(element);
