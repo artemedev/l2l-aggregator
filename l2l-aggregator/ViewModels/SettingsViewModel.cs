@@ -6,8 +6,8 @@ using l2l_aggregator.Helpers;
 using l2l_aggregator.Helpers.AggregationHelpers;
 using l2l_aggregator.Models;
 using l2l_aggregator.Services;
+using l2l_aggregator.Services.Api;
 using l2l_aggregator.Services.Database;
-using l2l_aggregator.Services.Database.Interfaces;
 using l2l_aggregator.Services.DmProcessing;
 using l2l_aggregator.Services.Notification.Interface;
 using l2l_aggregator.Services.Printing;
@@ -21,6 +21,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using l2l_aggregator.Services.Api.Interfaces;
 
 namespace l2l_aggregator.ViewModels
 {
@@ -98,6 +99,8 @@ namespace l2l_aggregator.ViewModels
         private readonly DmScanService _dmScanService;
         private readonly ConfigurationLoaderService _configLoader;
         private readonly PrintingService _printingService;
+        private readonly DataApiService _dataApiService;
+
         public SettingsViewModel(DatabaseService databaseService,
             HistoryRouter<ViewModelBase> router,
             INotificationService notificationService,
@@ -105,7 +108,8 @@ namespace l2l_aggregator.ViewModels
             IScannerPortResolver scannerResolver,
             DmScanService dmScanService,
             ConfigurationLoaderService configLoader,
-            PrintingService printingService)
+            PrintingService printingService, 
+            DataApiService dataApiService)
         {
             _configLoader = configLoader;
             _notificationService = notificationService;
@@ -115,6 +119,7 @@ namespace l2l_aggregator.ViewModels
             _scannerResolver = scannerResolver;
             _dmScanService = dmScanService;
             _printingService = printingService;
+            _dataApiService = dataApiService;
 
             AddCamera();
             //LoadCameras();
@@ -237,12 +242,34 @@ namespace l2l_aggregator.ViewModels
                 // InfoMessage = "Введите адрес сервера!";
                 try
                 {
-                    var client = RestService.For<IAuthApi>(new HttpClient
+                    var request = new ArmDeviceRegistrationRequest
+                    {
+                        NAME = "test",
+                        MAC_ADDRESS = "test",
+                        SERIAL_NUMBER = "test",
+                        NET_ADDRESS = "test",
+                        KERNEL_VERSION = "test",
+                        HADWARE_VERSION = "test",
+                        SOFTWARE_VERSION = "test",
+                        FIRMWARE_VERSION = "test",
+                        DEVICE_TYPE = "test"
+                    };
+                    var handler = new HttpClientHandler
+                    {
+                        ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                    };
+                    var httpClient = new HttpClient(handler)
                     {
                         BaseAddress = new Uri(ServerUri)
-                    });
+                    };
+                    httpClient.DefaultRequestHeaders.Add("MTDApikey", "e2fbe0f4fbe2e0fbf4ecf7f1ece5e8f020fbe2e0eff0eae5f020edeeede320fceee8ec343533343536333435212121de2cc1de"); // если нужно
 
-                    _databaseService.Config.SetConfigValueAsync("ServerUri", ServerUri);
+                    var authClient = RestService.For<IAuthApi>(httpClient);
+                    var response = await authClient.RegisterDevice(request);
+
+                    await _databaseService.RegistrationDevice.SaveRegistrationAsync(response);
+
+                    await _databaseService.Config.SetConfigValueAsync("ServerUri", ServerUri);
 
                     InfoMessage = "URI успешно сохранён!";
                     _notificationService.ShowMessage(InfoMessage);

@@ -8,7 +8,7 @@
 			 xmlns:vmVE="using:l2l_aggregator.ViewModels.VisualElements"
 			 x:DataType="vm:SettingsViewModel"
              x:Class="l2l_aggregator.Views.SettingsView">
-	<ScrollViewer  VerticalScrollBarVisibility="Auto">
+	<ScrollViewer AllowAutoHide="False" IsScrollChainingEnabled="False">
 		<Grid Margin="20" x:Name="Root">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
@@ -17,7 +17,7 @@
 
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="2*"/>
 				<ColumnDefinition Width="*"/>
 			</Grid.ColumnDefinitions>
 
@@ -26,7 +26,7 @@
 					   Grid.Column="1"
 					   Text="Настройки"
 					   FontWeight="SemiBold"
-					   FontSize="20" />
+				   FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}" />
 			<Grid Grid.Row="1" Grid.Column="1">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="*"/>
@@ -42,20 +42,26 @@
 						BorderThickness="1"
 						CornerRadius="4"
 						Padding="10" Grid.Row="0">
-					<StackPanel Spacing="5" >
+					<Grid RowDefinitions="*,*,*">
 						<!-- Подпись "Адрес сервера:" в первой колонке, строка 1 -->
-						<TextBlock Text="Адрес сервера"
-								   FontWeight="SemiBold"/>
+						<TextBlock Grid.Row="0" Text="Адрес сервера"
+								   FontWeight="SemiBold"
+								   FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<!-- TextBox во второй колонке, строка 1, растягивается по горизонтали -->
-						<TextBox Text="{Binding ServerUri, Mode=TwoWay}"
+						<TextBox Grid.Row="1" Text="{Binding ServerUri, Mode=TwoWay}"
 								 HorizontalAlignment="Stretch"
 								 VerticalAlignment="Center"
-								 Watermark="IP адрес сервера"/>
+								 Watermark="IP адрес сервера"
+								 Margin="0,10,0,10"
+								 FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<!-- Кнопка на третьей строке, занимает две колонки -->
-						<Button Content="Проверить и Сохранить"
+						<Button Grid.Row="2" Content="Проверить и Сохранить"
 								Command="{Binding CheckAndSaveUriCommand}"
-								HorizontalAlignment="Left" />
-					</StackPanel>
+								HorizontalAlignment="Stretch" 
+								HorizontalContentAlignment="Center"
+								VerticalAlignment="Center" 
+								FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
+					</Grid>
 				</Border>
 
 				<Border Margin="0,5,0,10"
@@ -66,14 +72,21 @@
 					<StackPanel Spacing="5" Grid.Row="2">
 						<Label Classes="h2"
 							   Content="Контроллер"
-							   FontWeight="SemiBold"/>
+							   FontWeight="SemiBold"
+							   FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<TextBox Text="{Binding ControllerIP}"
-								 Watermark="IP адрес контроллера" />
+								 Watermark="IP адрес контроллера" 
+								 FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<Button Command="{Binding TestControllerConnectionCommand}"
-								Content="Проверить и Сохранить" />
+								Content="Проверить и Сохранить"
+								HorizontalAlignment="Stretch" 
+								HorizontalContentAlignment="Center"
+								VerticalAlignment="Center" 
+								FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<CheckBox Content="Проверять перед агрегацией"
 								  IsChecked="{Binding CheckControllerBeforeAggregation, Mode=TwoWay}"
-								  Margin="0,5,0,0"/>
+								  Margin="0,5,0,0"
+								  FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 					</StackPanel>
 				</Border>
 
@@ -83,12 +96,14 @@
 						CornerRadius="4"
 						Padding="10" Grid.Row="2">
 					<StackPanel Spacing="5">
-						<TextBlock Text="Камера" FontWeight="SemiBold"/>
+						<TextBlock Text="Камера" FontWeight="SemiBold" FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<TextBox Text="{Binding Camera.CameraIP, Mode=TwoWay}"
-								 Watermark="IP адрес камеры" />
+								 Watermark="IP адрес камеры" 
+								 FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<ComboBox ItemsSource="{Binding CameraModels}"
 								  SelectedItem="{Binding Camera.SelectedCameraModel, Mode=TwoWay}"
-								  HorizontalAlignment="Stretch"/>
+								  HorizontalAlignment="Stretch"
+								  FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<Grid>
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="Auto"/>
@@ -98,7 +113,8 @@
 							<Button Grid.Column="0"
 									Command="{Binding TestCameraConnectionAsync}"
 									CommandParameter="{Binding Camera}"
-									Content="Проверить соединение" />
+									Content="Проверить соединение" 
+									FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 							<Ellipse Grid.Column="1"
 									 Width="12"
 									 Height="12"
@@ -107,12 +123,14 @@
 									Content="Настроить"
 									Command="{Binding OpenCameraSettingsCommand}"
 									IsEnabled="{Binding Camera.IsConnected}"
-									Margin="0,5,0,0"
-									HorizontalAlignment="Right"/>
+									Margin="5,0,0,0"
+									HorizontalAlignment="Right"
+									FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						</Grid>
 						<CheckBox Content="Проверять перед агрегацией"
 								  IsChecked="{Binding CheckCameraBeforeAggregation, Mode=TwoWay}"
-								  Margin="0,5,0,0"/>
+								  Margin="0,5,0,0"
+								  FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 					</StackPanel>
 				</Border>
 
@@ -124,17 +142,22 @@
 					<StackPanel Spacing="5">
 						<Label Classes="h2"
 							   Content="Принтер"
-							   FontWeight="SemiBold"/>
+							   FontWeight="SemiBold"
+							   FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<TextBox Text="{Binding PrinterIP}"
-								 Watermark="IP адрес принтера" />
+								 Watermark="IP адрес принтера" 
+								 FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<ComboBox ItemsSource="{Binding PrinterModels}"
 								  SelectedItem="{Binding SelectedPrinterModel}"
-								  HorizontalAlignment="Stretch"/>
+								  HorizontalAlignment="Stretch"
+								  FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<Button Command="{Binding TestPrinterConnectionCommand}"
-								Content="Проверить и Сохранить" />
+								Content="Проверить и Сохранить" 
+								FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<CheckBox Content="Проверять перед агрегацией"
 								  IsChecked="{Binding CheckPrinterBeforeAggregation, Mode=TwoWay}"
-								  Margin="0,5,0,0"/>
+								  Margin="0,5,0,0"
+								  FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 					</StackPanel>
 				</Border>
 
@@ -146,10 +169,12 @@
 					<StackPanel Spacing="5">
 						<Label Classes="h2"
 							   Content="Сканер"
-							   FontWeight="SemiBold"/>
+							   FontWeight="SemiBold"
+							   FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<ComboBox ItemsSource="{Binding AvailableScanners}"
 								  SelectedItem="{Binding SelectedScanner}"
-								  HorizontalAlignment="Stretch">
+								  HorizontalAlignment="Stretch"
+								  FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}">
 							<ComboBox.ItemTemplate>
 								<DataTemplate>
 									<TextBlock Text="{Binding Id}" />
@@ -159,12 +184,15 @@
 						<ComboBox ItemsSource="{Binding ScannerModels}"
 								  SelectedItem="{Binding SelectedScannerModel}"
 								  HorizontalAlignment="Stretch"
-								  Margin="0,5,0,0" />
+								  Margin="0,5,0,0" 
+								  FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<Button Command="{Binding TestScannerConnectionCommand}"
-								Content="Проверить и Сохранить" />
+								Content="Проверить и Сохранить" 
+								FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<CheckBox Content="Проверять перед агрегацией"
 								  IsChecked="{Binding CheckScannerBeforeAggregation, Mode=TwoWay}"
-								  Margin="0,5,0,0"/>
+								  Margin="0,5,0,0"
+								  FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 					</StackPanel>
 				</Border>
 
@@ -178,7 +206,8 @@
 								  IsChecked="{Binding DisableVirtualKeyboard, Mode=TwoWay}"
 								  Command="{Binding ToggleDisableVirtualKeyboardCommand}"
 								  HorizontalAlignment="Left"
-								  Margin="0,10,0,0"/>
+								  Margin="0,10,0,0"
+								  FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 					</StackPanel>
 				</Border>
 				<!-- Информационное сообщение на четвёртой строке, также на две колонки -->

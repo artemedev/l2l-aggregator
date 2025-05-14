@@ -42,7 +42,7 @@ namespace DM_process_lib
             byte[] imageBytes = File.ReadAllBytes(imagePath);
             using (MemoryStream ms = new MemoryStream(imageBytes))
             {
-                dmrd.processedImage = Image.Load<Rgba32>(ms);
+                dmrd.rawImage = Image.Load<Rgba32>(ms);
             }
             Console.WriteLine("Add new DM codes");
             _DMP._dM_recogn_wraper.Update_result_data(dmrd);

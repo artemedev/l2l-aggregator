@@ -34,16 +34,13 @@
 				</Border>
 				<Button Grid.Column="2"
 						Command="{Binding ButtonExit}"
-						
+						Content="Выход"
 						HorizontalAlignment="Stretch"
 						HorizontalContentAlignment="Center"
 						VerticalAlignment="Stretch"
 						VerticalContentAlignment="Center"
-						Margin="0">
-					<Viewbox>
-						<TextBlock Text="Выход"/>
-					</Viewbox>
-				</Button>
+						FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource ResponsiveFontSizeConverter}}"
+						Margin="0"/>
 
 			</Grid>
 			<ContentControl  Grid.Row="1" Content="{Binding Content}"></ContentControl>

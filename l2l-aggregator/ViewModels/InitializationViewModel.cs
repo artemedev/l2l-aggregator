@@ -3,8 +3,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using l2l_aggregator.Models;
 using l2l_aggregator.Services.Api;
+using l2l_aggregator.Services.Api.Interfaces;
 using l2l_aggregator.Services.Database;
-using l2l_aggregator.Services.Database.Interfaces;
 using l2l_aggregator.Services.Notification.Interface;
 using Refit;
 using System;
@@ -49,12 +49,6 @@ namespace l2l_aggregator.ViewModels
 
             try
             {
-                //// Создаём динамический Refit-клиент с нужным BaseAddress
-                //var client = RestService.For<IAuthApi>(new HttpClient()
-                //{
-                //    BaseAddress = new Uri(ServerUri)
-                //});
-
                 // Выполняем запрос (по условию, headers + body)
                 var request = new ArmDeviceRegistrationRequest
                 {

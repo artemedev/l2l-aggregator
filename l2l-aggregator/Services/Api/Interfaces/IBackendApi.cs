@@ -1,9 +1,10 @@
 ﻿using l2l_aggregator.Models;
+
 //using MedtechtdApp.Models;
 using Refit;
 using System.Threading.Tasks;
 
-namespace l2l_aggregator.Services.Database.Interfaces
+namespace l2l_aggregator.Services.Api.Interfaces
 {
     //public interface IBaseApi { }
 

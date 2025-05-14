@@ -23,6 +23,7 @@
 		<converters:CenterToLeftConverter x:Key="CenterToLeftConverter" />
 		<converters:CenterToTopConverter x:Key="CenterToTopConverter" />
 		<converters:BooleanToAggregationStatusConverter x:Key="BooleanToAggregationStatusConverter"/>
-
+		<converters:ResponsiveMarginConverter x:Key="ResponsiveMarginConverter" />
+		<converters:ResponsiveFontSizeConverter x:Key="ResponsiveFontSizeConverter" />
 	</Application.Resources>
 </Application>

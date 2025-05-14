@@ -313,7 +313,7 @@ namespace l2l_aggregator.ViewModels
                     canOpenTemplateSettings = true;
                     if (CurrentLayer == _sessionService.SelectedTaskInfo.LAYERS_QTY)
                     {
-                        сanPrintBoxLabel = true;
+                        СanPrintBoxLabel = true;
                         if (validCountDMCells == numberOfLayers)
                         {
 
@@ -336,6 +336,18 @@ namespace l2l_aggregator.ViewModels
                             CurrentLayer++;
                         }
                     }
+                    else
+                    {
+                        if (validCountDMCells == numberOfLayers)
+                        {
+
+                        }
+                    }
+                }
+                else
+                {
+                    InfoMessage = $"Изображение из распознавания не получено";
+                    _notificationService.ShowMessage(InfoMessage);
                 }
 
 
