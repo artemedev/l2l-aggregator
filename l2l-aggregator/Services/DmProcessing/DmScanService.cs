@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -38,13 +39,12 @@ namespace l2l_aggregator.Services.DmProcessing
 
         public void StartScan(string base64Template)
         {
-            string filePath = "./tmp/template.xml"; // Или .fr3 — в зависимости от вашего формата
+            string filePath = "./tmp/template.xml"; // Или .fr3 — в зависимости от формата
 
-            SaveXmlToFile(base64Template, filePath);
+            //SaveXmlToFile(base64Template, filePath);
             _dmrDataReady = new TaskCompletionSource<bool>();
             _recognWrapper.SendPrintPatternXML(base64Template);
             _DMP.update_PP();
-            //_recognWrapper.SendShotFrameComand();
         }
         public void SaveXmlToFile(string xmlContent, string filePath)
         {
@@ -96,8 +96,8 @@ namespace l2l_aggregator.Services.DmProcessing
         {
             return await Task.Run(() =>
             {
-                int imageWidth = dmrData.processedImage.Width;
-                int imageHeight = dmrData.processedImage.Height;
+                int imageWidth = dmrData.rawImage.Width;
+                int imageHeight = dmrData.rawImage.Height;
 
                 minX = Math.Max(0, minX);
                 minY = Math.Max(0, minY);
@@ -110,7 +110,7 @@ namespace l2l_aggregator.Services.DmProcessing
                 try
                 {
                     using var ms = new MemoryStream();
-                    using var cropped = dmrData.processedImage.Clone(ctx => ctx.Crop(new SixLabors.ImageSharp.Rectangle(minX, minY, cropWidth, cropHeight)));
+                    using var cropped = dmrData.rawImage.Clone(ctx => ctx.Crop(new SixLabors.ImageSharp.Rectangle(minX, minY, cropWidth, cropHeight)));
                     cropped.SaveAsBmp(ms);
                     ms.Seek(0, SeekOrigin.Begin);
 
@@ -119,7 +119,7 @@ namespace l2l_aggregator.Services.DmProcessing
                 catch
                 {
                     using var ms = new MemoryStream();
-                    dmrData.processedImage.SaveAsBmp(ms);
+                    dmrData.rawImage.SaveAsBmp(ms);
                     ms.Seek(0, SeekOrigin.Begin);
                     return new Bitmap(ms);
                 }
@@ -135,9 +135,6 @@ namespace l2l_aggregator.Services.DmProcessing
             AggregationViewModel thisModel, int minX, int minY)
         {
             var cells = new ObservableCollection<DmCellViewModel>();
-            //int minX = dmrData.BOXs.Min(d => d.poseX - (d.width / 2));
-            //int minY = dmrData.BOXs.Min(d => d.poseY - (d.height / 2));
-
             foreach (var dmd in dmrData.BOXs)
             {
                 var dmVm = new DmCellViewModel(thisModel)
@@ -192,12 +189,25 @@ namespace l2l_aggregator.Services.DmProcessing
                     if (!isValid)
                         allValid = false;
                 }
+
                 if (dmd.OCR.Count != fields.Count)
                 {
                     allValid = false;
                 }
-
-
+                if (dmd.DM.data != null)
+                {
+                    dmVm.OcrCells.Add(new SquareCellViewModel
+                    {
+                        X = dmd.DM.poseX,
+                        Y = dmd.DM.poseY,
+                        SizeWidth = dmd.DM.width,
+                        SizeHeight = dmd.DM.height,
+                        Angle = -dmd.DM.alpha,
+                        IsValid = !dmd.DM.isError
+                    });
+                    if (dmd.DM.isError)
+                        allValid = false;
+                }
                 dmVm.IsValid = allValid;
                 cells.Add(dmVm);
             }

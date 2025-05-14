@@ -39,8 +39,9 @@
 								Grid.Row="1" />
 
 					<TextBlock Text="Логин:"
+							    FontSize="{Binding DynamicFontSize}"
+								Margin="{Binding DynamicPadding}"
 								HorizontalAlignment="Center"
-								Margin="0,10,0,0"
 								Grid.Row="2"/>
 
 					<TextBox Text="{Binding Login, Mode=TwoWay}"

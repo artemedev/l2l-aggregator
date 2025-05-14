@@ -7,7 +7,5 @@ namespace l2l_aggregator.Services.Database.Repositories.Interfaces
     {
         Task<string?> GetConfigValueAsync(string key);
         Task SetConfigValueAsync(string key, string value);
-        Task SaveScannerDeviceAsync(ScannerDevice scanner);
-        Task<ScannerDevice?> LoadScannerDeviceAsync();
     }
 }

@@ -166,7 +166,7 @@ namespace l2l_aggregator.ViewModels
 
             Camera = camera;
             DisableVirtualKeyboard = disableVK;
-
+            ServerUri = await _databaseService.Config.GetConfigValueAsync("ServerUri");
             PrinterIP = SessionService.Instance.PrinterIP;
             SelectedPrinterModel = SessionService.Instance.PrinterModel;
             ControllerIP = SessionService.Instance.ControllerIP;
@@ -446,7 +446,9 @@ namespace l2l_aggregator.ViewModels
             {
                 if (SelectedScannerModel == "Honeywell")
                 {
-                    await _databaseService.Config.SaveScannerDeviceAsync(SelectedScanner);
+                    //await _databaseService.Config.SetConfigValueAsync("ScannerId", SelectedScanner.Id);
+
+                    //await _databaseService.Config.SaveScannerDeviceAsync(SelectedScanner);
                     await _databaseService.Config.SetConfigValueAsync("ScannerCOMPort", SelectedScanner.Id);
                     await _databaseService.Config.SetConfigValueAsync("ScannerModel", SelectedScannerModel);
                     await _databaseService.Config.SetConfigValueAsync("CheckScanner", CheckScannerBeforeAggregation.ToString());

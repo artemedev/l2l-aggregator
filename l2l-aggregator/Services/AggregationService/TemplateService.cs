@@ -12,16 +12,16 @@ namespace l2l_aggregator.Services.AggregationService
     {
         public XDocument OriginalDocument { get; private set; }
 
-        public List<TemplateField> LoadTemplate(string base64Template)
+        public List<TemplateField> LoadTemplate(string template)
         {
             var fields = new List<TemplateField>();
 
-            if (string.IsNullOrEmpty(base64Template))
+            if (string.IsNullOrEmpty(template))
                 return fields;
 
             try
             {
-                byte[] templateBytes = Convert.FromBase64String(base64Template);
+                byte[] templateBytes = Convert.FromBase64String(template);
                 using (var memoryStream = new MemoryStream(templateBytes))
                 {
                     OriginalDocument = XDocument.Load(memoryStream);
@@ -38,9 +38,6 @@ namespace l2l_aggregator.Services.AggregationService
 
                 foreach (var element in templatePage.Elements())
                 {
-                    //string elementType = element.Name.LocalName;
-                    //if (elementType.StartsWith("Tfrx") || elementType.StartsWith("Template"))
-                    //{
                     var nameAttr = element.Attribute("Name");
                     var textAttr = element.Attribute("Text");
                     var dataFieldAttr = element.Attribute("DataField");
@@ -89,37 +86,6 @@ namespace l2l_aggregator.Services.AggregationService
                                 IsSelected = true
                             });
                         }
-                        //if (dataFieldAttr != null)
-                        //{
-                        //    fields.Add(new TemplateField
-                        //    {
-                        //        Name = dataFieldAttr.Value,
-                        //        Type = "переменная",
-                        //        Element = element,
-                        //        IsSelected = true
-                        //    });
-                        //}
-                        //else if(expressionAttr != null)
-                        //{
-                        //    fields.Add(new TemplateField
-                        //    {
-                        //        Name = expressionAttr.Value,
-                        //        Type = "переменная",
-                        //        Element = element,
-                        //        IsSelected = true
-                        //    });
-                        //}
-                        //else if (textAttr != null)
-                        //{
-                        //    fields.Add(new TemplateField
-                        //    {
-                        //        Name = textAttr.Value,
-                        //        Type = "текст",
-                        //        Element = element,
-                        //        IsSelected = true
-                        //    });
-                        //}
-                        //}
                     }
                 }
 

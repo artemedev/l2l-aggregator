@@ -38,7 +38,7 @@ namespace l2l_aggregator.ViewModels
             dmrData = await _dmScanService.WaitForResultAsync();
             using (var ms = new MemoryStream())
             {
-                dmrData.processedImage.SaveAsBmp(ms);
+                dmrData.rawImage.SaveAsBmp(ms);
                 ms.Seek(0, SeekOrigin.Begin);
                 ScannedImage = new Bitmap(ms);
             }

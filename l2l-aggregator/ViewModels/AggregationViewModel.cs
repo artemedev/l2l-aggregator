@@ -234,86 +234,116 @@ namespace l2l_aggregator.ViewModels
                         f.Element.Name.LocalName == "TfrxTemplateBarcode2DView"
                     )
                 );
-                // Настройки параметров камеры для библиотеки
+                // Настройки параметров камеры для библиотеки распознавания
                 var recognParams = new recogn_params
                 {
                     countOfDM = numberOfLayers,
-                    CamInterfaces = "GigEVision2", 
+                    CamInterfaces = "GigEVision2",
                     cameraName = _sessionService.CameraIP,
                     _Preset = new camera_preset(_sessionService.CameraModel),
                     softwareTrigger = true,
                     hardwareTrigger = false,
                     OCRRecogn = hasOcr,
-                    packRecogn = true, 
+                    packRecogn = true,
                     DMRecogn = hasDm
                 };
 
                 _dmScanService.ConfigureParams(recognParams);
-                //отправка шаблона в библиотеку распознавания
-                _dmScanService.StartScan(currentTemplate);
-                _lastUsedTemplateJson = currentTemplate;
-            }
-
-            //старт распознавания
-            _dmScanService.getScan();
-            //ожидание результата распознавания
-            dmrData = await _dmScanService.WaitForResultAsync();
-
-            int minX = dmrData.BOXs.Min(d => d.poseX - (d.width / 2));
-            int minY = dmrData.BOXs.Min(d => d.poseY - (d.height / 2));
-            int maxX = dmrData.BOXs.Max(d => d.poseX + (d.width / 2));
-            int maxY = dmrData.BOXs.Max(d => d.poseY + (d.height / 2));
-
-            //кроп изображения
-            ScannedImage = await _dmScanService.GetCroppedImage(dmrData, minX, minY, maxX, maxY);
-
-            await Task.Delay(100); //исправить
-
-            scaleX = imageSize.Width / ScannedImage.PixelSize.Width;
-            scaleY = imageSize.Height / ScannedImage.PixelSize.Height;
-            scaleXObrat = ScannedImage.PixelSize.Width / imageSize.Width;
-            scaleYObrat = ScannedImage.PixelSize.Height / imageSize.Height;
-
-            var responseSgtin = await _dataApiService.LoadSgtinAsync(_sessionService.SelectedTaskInfo.DOCID);
-            //создание ячеек
-            DMCells = _dmScanService.BuildCellViewModels(
-                dmrData,
-                scaleX,
-                scaleY,
-                _sessionService,
-                TemplateFields,
-                responseSgtin,
-                this,
-                minX,
-                minY
-            );
-
-            int validCountDMCells = DMCells.Count(c => c.IsValid);
-            // Обновление информационных текстов
-            UpdateLayerInfo(validCountDMCells, numberOfLayers);
-
-            if (validCountDMCells == numberOfLayers)
-            {
-                if (CurrentLayer == _sessionService.SelectedTaskInfo.LAYERS_QTY)
+                try
                 {
-                    canScan = false;
-                    canOpenTemplateSettings = false;
-                    сanPrintBoxLabel = true;
-                    CurrentStepIndex = 1;
-                    if (CurrentBox == _sessionService.SelectedTaskInfo.IN_PALLET_BOX_QTY)
-                    {
+                    //отправка шаблона в библиотеку распознавания
+                    _dmScanService.StartScan(currentTemplate);
+                    _lastUsedTemplateJson = currentTemplate;
+                }
+                catch (Exception ex)
+                {
+                    InfoMessage = $"Ошбика отправки шаблона {ex.Message}.";
+                    _notificationService.ShowMessage(InfoMessage);
+                }
+            }
+            if (_lastUsedTemplateJson != null)
+            {
+                try
+                {
+                    //старт распознавания
+                    _dmScanService.getScan();
+                    //ожидание результата распознавания
+                    dmrData = await _dmScanService.WaitForResultAsync();
+                }
+                catch (Exception ex)
+                {
+                    InfoMessage = $"Ошбика распознавания {ex.Message}.";
+                    _notificationService.ShowMessage(InfoMessage);
+                }
+                if (dmrData.rawImage != null)
+                {
+                    int minX = dmrData.BOXs.Min(d => d.poseX - (d.width / 2));
+                    int minY = dmrData.BOXs.Min(d => d.poseY - (d.height / 2));
+                    int maxX = dmrData.BOXs.Max(d => d.poseX + (d.width / 2));
+                    int maxY = dmrData.BOXs.Max(d => d.poseY + (d.height / 2));
 
-                        if (CurrentPallet == _sessionService.SelectedTaskInfo.PALLET_QTY)
+                    //кроп изображения
+                    ScannedImage = await _dmScanService.GetCroppedImage(dmrData, minX, minY, maxX, maxY);
+
+                    await Task.Delay(100); //исправить
+
+                    scaleX = imageSize.Width / ScannedImage.PixelSize.Width;
+                    scaleY = imageSize.Height / ScannedImage.PixelSize.Height;
+                    scaleXObrat = ScannedImage.PixelSize.Width / imageSize.Width;
+                    scaleYObrat = ScannedImage.PixelSize.Height / imageSize.Height;
+
+                    var responseSgtin = await _dataApiService.LoadSgtinAsync(_sessionService.SelectedTaskInfo.DOCID);
+                    //создание ячеек
+                    DMCells = _dmScanService.BuildCellViewModels(
+                        dmrData,
+                        scaleX,
+                        scaleY,
+                        _sessionService,
+                        TemplateFields,
+                        responseSgtin,
+                        this,
+                        minX,
+                        minY
+                    );
+
+                    int validCountDMCells = DMCells.Count(c => c.IsValid);
+                    // Обновление информационных текстов
+                    UpdateLayerInfo(validCountDMCells, numberOfLayers);
+                    canScan = true;
+                    canOpenTemplateSettings = true;
+                    if (CurrentLayer == _sessionService.SelectedTaskInfo.LAYERS_QTY)
+                    {
+                        сanPrintBoxLabel = true;
+                        if (validCountDMCells == numberOfLayers)
                         {
-                            //нужно сохранить 
-                            //!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                            canScan = false;
+                            canOpenTemplateSettings = false;
+                            сanPrintBoxLabel = true;//сделать 
+                            CurrentStepIndex = 1;
+                            if (CurrentBox == _sessionService.SelectedTaskInfo.IN_PALLET_BOX_QTY)
+                            {
+
+                                if (CurrentPallet == _sessionService.SelectedTaskInfo.PALLET_QTY)
+                                {
+                                    //нужно сохранить 
+                                    //!!!!!!!!!!!!!!!!!!!!!!!!!
+                                }
+                            }
+                        }
+                        else
+                        {
+                            CurrentLayer++;
                         }
                     }
                 }
-                else
-                {
-                    CurrentLayer++;
-                }
+
+
+            }
+            else
+            {
+                InfoMessage = $"Ошибка сканирования";
+                _notificationService.ShowMessage(InfoMessage);
             }
         }
 

@@ -23,14 +23,5 @@ namespace l2l_aggregator.Services.Database.Repositories
                   (CONFIG_KEY, CONFIG_VALUE) 
                   VALUES (@key, @value) MATCHING (CONFIG_KEY);",
                     new { key, value }));
-        // ========================== Сканнер ==========================
-        public Task SaveScannerDeviceAsync(ScannerDevice scanner) =>
-            SetConfigValueAsync("ScannerId", scanner.Id);
-
-        public async Task<ScannerDevice?> LoadScannerDeviceAsync()
-        {
-            var id = await GetConfigValueAsync("ScannerId");
-            return string.IsNullOrWhiteSpace(id) ? null : new ScannerDevice { Id = id };
-        }
     }
 }
