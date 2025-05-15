@@ -55,34 +55,11 @@ namespace l2l_aggregator.Services.Api
         }
 
         // ---------------- JOB DETAILS ----------------
-
-        //public async Task<(ArmJobInfoRecord?, ArmJobSsccRecord?)> GetJobDetailsAsync(long docId)
-        //{
-        //    var client = await _apiClientFactory.CreateClientAsync<ITaskApi>();
-
-        //    var jobInfoTask = client.GetJob(new ArmJobInfoRequest { docid = docId });
-        //    var ssccTask = client.GetJobSscc(new ArmJobSsccRequest { docid = docId });
-
-        //    await Task.WhenAll(jobInfoTask, ssccTask);
-
-        //    var info = jobInfoTask.Result.RECORDSET.FirstOrDefault();
-        //    var sscc = ssccTask.Result.RECORDSET.FirstOrDefault();
-
-        //    return (info, sscc);
-        //}
         public async Task<ArmJobInfoRecord?> GetJobDetailsAsync(long docId)
         {
             var client = await _apiClientFactory.CreateClientAsync<ITaskApi>();
-
             var jobInfoTask = client.GetJob(new ArmJobInfoRequest { docid = docId });
-            //var ssccTask = client.GetJobSscc(new ArmJobSsccRequest { docid = docId });
-
-            //await Task.WhenAll(jobInfoTask, ssccTask);
-
             return jobInfoTask.Result.RECORDSET.FirstOrDefault();
-            //var sscc = ssccTask.Result.RECORDSET.FirstOrDefault();
-
-            //(info, sscc);
         }
 
         public async Task<ArmJobSgtinResponse> GetSgtinAsync(long docId)

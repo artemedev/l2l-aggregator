@@ -21,12 +21,14 @@
 				<ColumnDefinition Width="*"/>
 			</Grid.ColumnDefinitions>
 
-			<!-- Заголовок на всю ширину -->
+
 			<TextBlock Grid.Row="0"
 					   Grid.Column="1"
 					   Text="Настройки"
+					   VerticalAlignment="Center"
+					   HorizontalAlignment="Center"
 					   FontWeight="SemiBold"
-				   FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}" />
+				       FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;12;40'}" />
 			<Grid Grid.Row="1" Grid.Column="1">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="*"/>
@@ -57,9 +59,9 @@
 						<!-- Кнопка на третьей строке, занимает две колонки -->
 						<Button Grid.Row="2" Content="Проверить и Сохранить"
 								Command="{Binding CheckAndSaveUriCommand}"
-								HorizontalAlignment="Stretch" 
+								HorizontalAlignment="Stretch"
 								HorizontalContentAlignment="Center"
-								VerticalAlignment="Center" 
+								VerticalAlignment="Center"
 								FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 					</Grid>
 				</Border>
@@ -75,18 +77,45 @@
 							   FontWeight="SemiBold"
 							   FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<TextBox Text="{Binding ControllerIP}"
-								 Watermark="IP адрес контроллера" 
+								 Watermark="IP адрес контроллера"
 								 FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<Button Command="{Binding TestControllerConnectionCommand}"
 								Content="Проверить и Сохранить"
-								HorizontalAlignment="Stretch" 
+								HorizontalAlignment="Stretch"
 								HorizontalContentAlignment="Center"
-								VerticalAlignment="Center" 
+								VerticalAlignment="Center"
 								FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<CheckBox Content="Проверять перед агрегацией"
 								  IsChecked="{Binding CheckControllerBeforeAggregation, Mode=TwoWay}"
 								  Margin="0,5,0,0"
-								  FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
+								  FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}">
+							<CheckBox.Styles>
+								<Style>
+									<Setter Property="Template">
+										<ControlTemplate TargetType="CheckBox">
+											<StackPanel Orientation="Horizontal" Spacing="8">
+												<Border Width="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"
+														Height="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"
+														BorderBrush="Black"
+														BorderThickness="2"
+														Background="White"
+														HorizontalAlignment="Center"
+														VerticalAlignment="Center">
+													<Canvas Width="24" Height="24">
+														<Path Stroke="Black"
+															  StrokeThickness="2"
+															  Data="M 4 12 L 10 18 L 20 6"
+															  IsVisible="{TemplateBinding IsChecked}" />
+													</Canvas>
+												</Border>
+												<ContentPresenter Content="{TemplateBinding Content}"
+																  VerticalAlignment="Center"/>
+											</StackPanel>
+										</ControlTemplate>
+									</Setter>
+								</Style>
+							</CheckBox.Styles>
+						</CheckBox>
 					</StackPanel>
 				</Border>
 
@@ -98,7 +127,7 @@
 					<StackPanel Spacing="5">
 						<TextBlock Text="Камера" FontWeight="SemiBold" FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<TextBox Text="{Binding Camera.CameraIP, Mode=TwoWay}"
-								 Watermark="IP адрес камеры" 
+								 Watermark="IP адрес камеры"
 								 FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<ComboBox ItemsSource="{Binding CameraModels}"
 								  SelectedItem="{Binding Camera.SelectedCameraModel, Mode=TwoWay}"
@@ -113,7 +142,7 @@
 							<Button Grid.Column="0"
 									Command="{Binding TestCameraConnectionAsync}"
 									CommandParameter="{Binding Camera}"
-									Content="Проверить соединение" 
+									Content="Проверить и Сохранить"
 									FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 							<Ellipse Grid.Column="1"
 									 Width="12"
@@ -130,7 +159,35 @@
 						<CheckBox Content="Проверять перед агрегацией"
 								  IsChecked="{Binding CheckCameraBeforeAggregation, Mode=TwoWay}"
 								  Margin="0,5,0,0"
-								  FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
+								  FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}">
+							<CheckBox.Styles>
+								<Style>
+									<!--<Setter Property="FontSize" Value="20"/>-->
+									<Setter Property="Template">
+										<ControlTemplate TargetType="CheckBox">
+											<StackPanel Orientation="Horizontal" Spacing="8">
+												<Border Width="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"
+														Height="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"
+														BorderBrush="Black"
+														BorderThickness="2"
+														Background="White"
+														HorizontalAlignment="Center"
+														VerticalAlignment="Center">
+													<Canvas Width="24" Height="24">
+														<Path Stroke="Black"
+															  StrokeThickness="2"
+															  Data="M 4 12 L 10 18 L 20 6"
+															  IsVisible="{TemplateBinding IsChecked}" />
+													</Canvas>
+												</Border>
+												<ContentPresenter Content="{TemplateBinding Content}"
+																  VerticalAlignment="Center"/>
+											</StackPanel>
+										</ControlTemplate>
+									</Setter>
+								</Style>
+							</CheckBox.Styles>
+						</CheckBox>
 					</StackPanel>
 				</Border>
 
@@ -145,19 +202,49 @@
 							   FontWeight="SemiBold"
 							   FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<TextBox Text="{Binding PrinterIP}"
-								 Watermark="IP адрес принтера" 
+								 Watermark="IP адрес принтера"
 								 FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<ComboBox ItemsSource="{Binding PrinterModels}"
 								  SelectedItem="{Binding SelectedPrinterModel}"
 								  HorizontalAlignment="Stretch"
 								  FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<Button Command="{Binding TestPrinterConnectionCommand}"
-								Content="Проверить и Сохранить" 
+								HorizontalAlignment="Stretch"
+								HorizontalContentAlignment="Center"
+								VerticalAlignment="Center"
+								Content="Проверить и Сохранить"
 								FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<CheckBox Content="Проверять перед агрегацией"
 								  IsChecked="{Binding CheckPrinterBeforeAggregation, Mode=TwoWay}"
 								  Margin="0,5,0,0"
-								  FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
+								  FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}">
+							<CheckBox.Styles>
+								<Style>
+									<Setter Property="Template">
+										<ControlTemplate TargetType="CheckBox">
+											<StackPanel Orientation="Horizontal" Spacing="8">
+												<Border Width="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"
+														Height="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"
+														BorderBrush="Black"
+														BorderThickness="2"
+														Background="White"
+														HorizontalAlignment="Center"
+														VerticalAlignment="Center">
+													<Canvas Width="24" Height="24">
+														<Path Stroke="Black"
+															  StrokeThickness="2"
+															  Data="M 4 12 L 10 18 L 20 6"
+															  IsVisible="{TemplateBinding IsChecked}" />
+													</Canvas>
+												</Border>
+												<ContentPresenter Content="{TemplateBinding Content}"
+																  VerticalAlignment="Center"/>
+											</StackPanel>
+										</ControlTemplate>
+									</Setter>
+								</Style>
+							</CheckBox.Styles>
+						</CheckBox>
 					</StackPanel>
 				</Border>
 
@@ -184,15 +271,46 @@
 						<ComboBox ItemsSource="{Binding ScannerModels}"
 								  SelectedItem="{Binding SelectedScannerModel}"
 								  HorizontalAlignment="Stretch"
-								  Margin="0,5,0,0" 
+								  Margin="0,5,0,0"
 								  FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<Button Command="{Binding TestScannerConnectionCommand}"
-								Content="Проверить и Сохранить" 
+								HorizontalAlignment="Stretch"
+								HorizontalContentAlignment="Center"
+								VerticalAlignment="Center"
+								Content="Проверить и Сохранить"
 								FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<CheckBox Content="Проверять перед агрегацией"
 								  IsChecked="{Binding CheckScannerBeforeAggregation, Mode=TwoWay}"
 								  Margin="0,5,0,0"
-								  FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
+								  FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}">
+							<CheckBox.Styles>
+								<Style>
+									<Setter Property="Template">
+										<ControlTemplate TargetType="CheckBox">
+											<StackPanel Orientation="Horizontal" Spacing="8">
+												<Border Width="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"
+														Height="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"
+														BorderBrush="Black"
+														BorderThickness="2"
+														Background="White"
+														HorizontalAlignment="Center"
+														VerticalAlignment="Center">
+													<Canvas Width="24" Height="24">
+														<Path Stroke="Black"
+															  StrokeThickness="2"
+															  Data="M 4 12 L 10 18 L 20 6"
+															  IsVisible="{TemplateBinding IsChecked}" />
+													</Canvas>
+												</Border>
+												<ContentPresenter Content="{TemplateBinding Content}"
+																  VerticalAlignment="Center"/>
+											</StackPanel>
+										</ControlTemplate>
+									</Setter>
+								</Style>
+							</CheckBox.Styles>
+
+						</CheckBox>
 					</StackPanel>
 				</Border>
 
@@ -207,16 +325,36 @@
 								  Command="{Binding ToggleDisableVirtualKeyboardCommand}"
 								  HorizontalAlignment="Left"
 								  Margin="0,10,0,0"
-								  FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
+								  FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}">
+							<CheckBox.Styles>
+								<Style>
+									<Setter Property="Template">
+										<ControlTemplate TargetType="CheckBox">
+											<StackPanel Orientation="Horizontal" Spacing="8">
+												<Border Width="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"
+														Height="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"
+														BorderBrush="Black"
+														BorderThickness="2"
+														Background="White"
+														HorizontalAlignment="Center"
+														VerticalAlignment="Center">
+													<Canvas Width="24" Height="24">
+														<Path Stroke="Black"
+															  StrokeThickness="2"
+															  Data="M 4 12 L 10 18 L 20 6"
+															  IsVisible="{TemplateBinding IsChecked}" />
+													</Canvas>
+												</Border>
+												<ContentPresenter Content="{TemplateBinding Content}"
+																  VerticalAlignment="Center"/>
+											</StackPanel>
+										</ControlTemplate>
+									</Setter>
+								</Style>
+							</CheckBox.Styles>
+						</CheckBox>
 					</StackPanel>
 				</Border>
-				<!-- Информационное сообщение на четвёртой строке, также на две колонки -->
-				<!--
-			<TextBlock Grid.Row="7" Grid.ColumnSpan="2"
-					   Text="{Binding InfoMessage}"
-					   Foreground="Red"
-					   Margin="0,10,0,0"/>-->
-
 			</Grid>
 		</Grid>
 	</ScrollViewer>

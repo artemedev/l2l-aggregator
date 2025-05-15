@@ -10,67 +10,6 @@ using System.Threading.Tasks;
 
 namespace l2l_aggregator.Services.Api
 {
-    //public interface IApiClientFactory
-    //{
-    //    Task<T> CreateClientAsync<T>(bool bypassSsl = false);
-    //}
-
-    //public class ApiClientFactory : IApiClientFactory
-    //{
-    //    private readonly DatabaseService _databaseService;
-
-    //    public ApiClientFactory(DatabaseService databaseService)
-    //    {
-    //        _databaseService = databaseService;
-    //    }
-
-    //    public async Task<T> CreateClientAsync<T>(bool bypassSsl = false)
-    //    {
-    //        var serverUri = await _databaseService.Config.GetConfigValueAsync("ServerUri");
-    //        if (string.IsNullOrWhiteSpace(serverUri))
-    //            throw new InvalidOperationException("Server URI is not configured");
-
-    //        var handler = new HttpClientHandler();
-    //        if (bypassSsl)
-    //            handler.ServerCertificateCustomValidationCallback = (_, _, _, _) => true;
-
-    //        var client = new HttpClient(handler) { BaseAddress = new Uri(serverUri) };
-    //        return RestService.For<T>(client);
-    //    }
-    //}
-    //public class ApiClientFactory
-    //{
-    //    private readonly DatabaseService _databaseService;
-
-    //    public ApiClientFactory(DatabaseService databaseService)
-    //    {
-    //        _databaseService = databaseService;
-    //    }
-
-    //    public async Task<T> CreateClientAsync<T>()
-    //    {
-    //        var serverUri = await _databaseService.Config.GetConfigValueAsync("ServerUri");
-    //        if (string.IsNullOrWhiteSpace(serverUri))
-    //        {
-    //            throw new Exception("Сервер не настроен!");
-    //        }
-
-    //        var handler = new ApiKeyHandler
-    //        {
-    //            InnerHandler = new HttpClientHandler
-    //            {
-    //                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
-    //            }
-    //        };
-
-    //        var httpClient = new HttpClient(handler)
-    //        {
-    //            BaseAddress = new Uri(serverUri)
-    //        };
-
-    //        return RestService.For<T>(httpClient);
-    //    }
-    //}
     public class ApiClientFactory
     {
         private readonly DatabaseService _databaseService;
