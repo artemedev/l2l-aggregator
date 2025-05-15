@@ -178,7 +178,16 @@ namespace l2l_aggregator.ViewModels
                 }
             }
             InitializeSsccAsync();
-            numberOfLayers = _sessionService.SelectedTaskInfo.IN_BOX_QTY / _sessionService.SelectedTaskInfo.LAYERS_QTY;
+            if (_sessionService.SelectedTaskInfo != null)
+            {
+                numberOfLayers = _sessionService.SelectedTaskInfo.IN_BOX_QTY / _sessionService.SelectedTaskInfo.LAYERS_QTY;
+            }
+            else
+            {
+                InfoMessage = "Ошибка: отсутствует информация о задании.";
+                _notificationService.ShowMessage(InfoMessage);
+                return;
+            }
             //шаблон коробки
             frxBoxBytes = Convert.FromBase64String(_sessionService.SelectedTaskInfo.BOX_TEMPLATE);
             //шаблон паллеты
@@ -201,7 +210,19 @@ namespace l2l_aggregator.ViewModels
 
         private async void InitializeSsccAsync()
         {
+            if (_sessionService.SelectedTaskInfo == null)
+            {
+                InfoMessage = "Не выбрано задание. Невозможно загрузить SSCC.";
+                _notificationService.ShowMessage(InfoMessage);
+                return;
+            }
             responseSscc = await _dataApiService.LoadSsccAsync(_sessionService.SelectedTaskInfo.DOCID);
+            if (responseSscc == null)
+            {
+                InfoMessage = "Ошибка загрузки SSCC данных.";
+                _notificationService.ShowMessage(InfoMessage);
+                return;
+            }
             _sessionService.SelectedTaskSscc = responseSscc.RECORDSET.FirstOrDefault();
         }
         ~AggregationViewModel()
@@ -212,6 +233,12 @@ namespace l2l_aggregator.ViewModels
         [RelayCommand]
         public async Task Scan()
         {
+            if (_sessionService.SelectedTaskInfo == null)
+            {
+                InfoMessage = "Ошибка: отсутствует информация о задании.";
+                _notificationService.ShowMessage(InfoMessage);
+                return;
+            }
             //при сканировании это всегда перый шаг сканирования
             CurrentStepIndex = 0;
             // Генерация шаблона
@@ -269,6 +296,79 @@ namespace l2l_aggregator.ViewModels
                     _dmScanService.getScan();
                     //ожидание результата распознавания
                     dmrData = await _dmScanService.WaitForResultAsync();
+                    Console.WriteLine($"[INFO] Получено {dmrData.BOXs.Count} BOX элементов");
+
+                    int i = 0;
+                    foreach (var box in dmrData.BOXs)
+                    {
+                        Console.WriteLine($"--- BOX #{i} ---");
+                        Console.WriteLine($"Position: ({box.poseX}, {box.poseY}), Size: {box.width}x{box.height}, Angle: {box.alpha}");
+                        Console.WriteLine($"PackType: {box.packType}, Error: {box.isError}");
+
+                        if (box.DM.data != null)
+                        {
+                            Console.WriteLine($"  DM Data: {box.DM.data}, Error: {box.DM.isError}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"  DM Data: null");
+                        }
+                        if(box.DM.poseX > 0 )
+                        {
+                            Console.WriteLine($"  DM poseX: {box.DM.poseX}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"  DM poseX: 0");
+                        }
+                        if (box.DM.poseY > 0)
+                        {
+                            Console.WriteLine($"  DM poseY: {box.DM.poseY}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"  DM poseY: 0");
+                        }
+                        if (box.DM.width > 0)
+                        {
+                            Console.WriteLine($"  DM width: {box.DM.width}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"  DM width: 0");
+                        }
+                        if (box.DM.height > 0)
+                        {
+                            Console.WriteLine($"  DM height: {box.DM.height}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"  DM height: 0");
+                        }
+                        if (box.OCR != null && box.OCR.Count > 0)
+                        {
+                            foreach (var ocr in box.OCR)
+                            {
+                                if (ocr.Name != null)
+                                {
+                                    Console.WriteLine($"  OCR Name: {ocr.Name}, Text: {ocr.Text}, Pos: ({ocr.poseX}, {ocr.poseY}), Size: {ocr.width}x{ocr.height}, Angle: {ocr.alpha}, Error: {ocr.isError}");
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"  OCR Name: null");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine($"  box.OCR: null");
+                        }
+                       
+
+                        i++;
+                    }
+                    Console.WriteLine($"----------------------------------");
+
                 }
                 catch (Exception ex)
                 {
@@ -293,6 +393,12 @@ namespace l2l_aggregator.ViewModels
                     scaleYObrat = ScannedImage.PixelSize.Height / imageSize.Height;
 
                     var responseSgtin = await _dataApiService.LoadSgtinAsync(_sessionService.SelectedTaskInfo.DOCID);
+                    if (responseSgtin == null)
+                    {
+                        InfoMessage = "Ошибка загрузки данных SGTIN.";
+                        _notificationService.ShowMessage(InfoMessage);
+                        return;
+                    }
                     //создание ячеек
                     DMCells = _dmScanService.BuildCellViewModels(
                         dmrData,
@@ -376,6 +482,12 @@ namespace l2l_aggregator.ViewModels
         [RelayCommand]
         public void PrintBoxLabel()
         {
+            if (frxBoxBytes == null || frxBoxBytes.Length == 0)
+            {
+                InfoMessage = "Шаблон коробки не загружен.";
+                _notificationService.ShowMessage(InfoMessage);
+                return;
+            }
             var boxRecord = responseSscc.RECORDSET
                            .Where(r => r.TYPEID == 0)
                            .ElementAtOrDefault(CurrentBox - 1);
@@ -442,12 +554,24 @@ namespace l2l_aggregator.ViewModels
         //сканирование кода этикетки
         public void HandleScannedBarcode(string barcode)
         {
+
             // Проверка, что мы находимся на шаге 2
             if (CurrentStepIndex != 1 && CurrentStepIndex != 2)
                 return;
 
-            if (_sessionService.SelectedTaskSscc == null)
+            if (responseSscc?.RECORDSET == null || responseSscc.RECORDSET.Count == 0)
+            {
+                InfoMessage = "Данные SSCC отсутствуют.";
+                _notificationService.ShowMessage(InfoMessage);
                 return;
+            }
+
+            if (_sessionService.SelectedTaskSscc == null)
+            {
+                InfoMessage = "Данные SSCC отсутствуют.";
+                _notificationService.ShowMessage(InfoMessage);
+                return;
+            }
             if (CurrentStepIndex == 1)
             {
                 foreach (ArmJobSsccRecord resp in responseSscc.RECORDSET)

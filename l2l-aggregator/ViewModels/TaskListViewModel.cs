@@ -93,17 +93,20 @@ namespace l2l_aggregator.ViewModels
 
                 var request = new ArmJobRequest { userid = userId };
                 var response = await _dataApiService.GetJobsAsync(userId);
+                if (response != null)
+                {
                     //client.GetJobs(request);
 
-                Tasks.Clear();
-                foreach (var rec in response.RECORDSET)
-                {
-                    Tasks.Add(rec);
-                }
-                // Устанавливаем IsLast для последнего элемента
-                for (int i = 0; i < Tasks.Count; i++)
-                {
-                    Tasks[i].IsLast = (i == Tasks.Count - 1);
+                    Tasks.Clear();
+                    foreach (var rec in response.RECORDSET)
+                    {
+                        Tasks.Add(rec);
+                    }
+                    // Устанавливаем IsLast для последнего элемента
+                    for (int i = 0; i < Tasks.Count; i++)
+                    {
+                        Tasks[i].IsLast = (i == Tasks.Count - 1);
+                    }
                 }
             }
             catch (Exception ex)

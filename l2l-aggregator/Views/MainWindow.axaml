@@ -39,13 +39,19 @@
 						HorizontalContentAlignment="Center"
 						VerticalAlignment="Stretch"
 						VerticalContentAlignment="Center"
+						Background="Transparent"
+						BorderBrush="Gray"
 						FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource ResponsiveFontSizeConverter}}"
-						Margin="0"/>
-
+						Margin="0"
+						BorderThickness="1,0,0,0"
+						CornerRadius="0"/>
 			</Grid>
 			<ContentControl  Grid.Row="1" Content="{Binding Content}"></ContentControl>
 			<Grid Grid.Row="2" Background="LightBlue" IsVisible="{Binding IsNotLoginPage}" >
-				<TextBlock Text="{Binding User.USER_NAME}" FontSize="16" FontWeight="Bold" Padding="5"/>
+				<StackPanel Orientation="Horizontal">
+					<TextBlock Text="Пользователь:" FontSize="16" FontWeight="Bold" Padding="5"/>
+					<TextBlock Text="{Binding User.USER_NAME}" FontSize="16" FontWeight="Bold" Padding="5"/>
+				</StackPanel>
 			</Grid>
 		</Grid>
 		<controls:NotificationMessageContainer Manager="{Binding Manager}"  VerticalAlignment="Bottom"

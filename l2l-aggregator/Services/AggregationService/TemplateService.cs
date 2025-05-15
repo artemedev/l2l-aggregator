@@ -176,6 +176,7 @@ namespace l2l_aggregator.Services.AggregationService
             using (var stringWriter = new Utf8StringWriter())
             {
                 newDocument.Save(stringWriter, SaveOptions.None);
+                Console.WriteLine($"Template - {stringWriter.ToString()}");
                 return stringWriter.ToString();
             }
         }
