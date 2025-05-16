@@ -165,6 +165,23 @@ namespace l2l_aggregator.Services.AggregationService
                     {
                         attr.Remove();
                     }
+                    // Установка Type и Name
+                    element.SetAttributeValue("Type", field.Type == "переменная" ? "variable" : "text");
+
+                    if (field.Type == "переменная")
+                    {
+                        // Установка Name как имя переменной
+                        element.SetAttributeValue("Name", field.Name);
+                    }
+                    else if (field.Type == "текст")
+                    {
+                        // Установка Name как текстовое содержимое
+                        var textAttr = element.Attribute("Text");
+                        if (textAttr != null)
+                        {
+                            element.SetAttributeValue("Name", textAttr.Value);
+                        }
+                    }
                 }
             }
 
@@ -176,7 +193,6 @@ namespace l2l_aggregator.Services.AggregationService
             using (var stringWriter = new Utf8StringWriter())
             {
                 newDocument.Save(stringWriter, SaveOptions.None);
-                Console.WriteLine($"Template - {stringWriter.ToString()}");
                 return stringWriter.ToString();
             }
         }

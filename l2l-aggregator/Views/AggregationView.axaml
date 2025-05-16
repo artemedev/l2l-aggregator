@@ -39,7 +39,7 @@
 				  VerticalAlignment="Stretch" 
 				  HorizontalAlignment="Stretch" 
 				  Background="LightGray">
-				<Image Source="{Binding ScannedImage}" Stretch="Fill" SizeChanged="OnImageSizeChanged" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+				<Image Source="{Binding ScannedImage}" Stretch="Uniform" SizeChanged="OnImageSizeChanged" HorizontalAlignment="Left" VerticalAlignment="Top"/>
 				<ItemsControl ItemsSource="{Binding DMCells}">
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>
@@ -66,24 +66,8 @@
 					</ItemsControl.ItemTemplate>
 					<ItemsControl.Styles>
 						<Style Selector="ContentPresenter" x:DataType="vmVE:DmCellViewModel">
-							<Setter Property="Canvas.Left">
-								<Setter.Value>
-									<MultiBinding Converter="{StaticResource CenterToLeftConverter}">
-										<Binding Path="X"/>
-										<Binding Path="SizeWidth"/>
-									</MultiBinding>
-								</Setter.Value>
-							</Setter>
-
-							<Setter Property="Canvas.Top">
-								<Setter.Value>
-									<MultiBinding Converter="{StaticResource CenterToTopConverter}">
-										<Binding Path="Y"/>
-										<Binding Path="SizeHeight"/>
-									</MultiBinding>
-								</Setter.Value>
-							</Setter>
-
+							<Setter Property="Canvas.Left" Value="{Binding X}" />
+							<Setter Property="Canvas.Top" Value="{Binding Y}" />
 							<Setter Property="Width" Value="{Binding SizeWidth}" />
 							<Setter Property="Height" Value="{Binding SizeHeight}" />
 						</Style>

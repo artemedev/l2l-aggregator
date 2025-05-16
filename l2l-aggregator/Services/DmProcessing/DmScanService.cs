@@ -6,6 +6,7 @@ using l2l_aggregator.Models;
 using l2l_aggregator.ViewModels;
 using l2l_aggregator.ViewModels.VisualElements;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace l2l_aggregator.Services.DmProcessing
@@ -96,13 +98,14 @@ namespace l2l_aggregator.Services.DmProcessing
         {
             return await Task.Run(() =>
             {
-                int imageWidth = dmrData.rawImage.Width;
-                int imageHeight = dmrData.rawImage.Height;
+                //int imageWidth = dmrData.rawImage.Width;
+                //int imageHeight = dmrData.rawImage.Height;
 
-                minX = Math.Max(0, minX);
-                minY = Math.Max(0, minY);
-                maxX = Math.Min(imageWidth, maxX);
-                maxY = Math.Min(imageHeight, maxY);
+                //// Увеличиваем зону обрезки на 20 пикселей с каждой стороны
+                //minX = Math.Max(0, minX - 20);
+                //minY = Math.Max(0, minY - 20);
+                //maxX = Math.Min(imageWidth, maxX + 20);
+                //maxY = Math.Min(imageHeight, maxY + 20);
 
                 int cropWidth = maxX - minX;
                 int cropHeight = maxY - minY;
@@ -110,10 +113,9 @@ namespace l2l_aggregator.Services.DmProcessing
                 try
                 {
                     using var ms = new MemoryStream();
-                    using var cropped = dmrData.rawImage.Clone(ctx => ctx.Crop(new SixLabors.ImageSharp.Rectangle(minX, minY, cropWidth, cropHeight)));
+                    using var cropped = dmrData.rawImage.Clone(ctx => ctx.Crop(new SixLabors.ImageSharp.Rectangle(minX, minY, maxX, maxY)));
                     cropped.SaveAsBmp(ms);
                     ms.Seek(0, SeekOrigin.Begin);
-
                     return new Bitmap(ms);
                 }
                 catch
@@ -132,15 +134,19 @@ namespace l2l_aggregator.Services.DmProcessing
             SessionService sessionService,
             ObservableCollection<TemplateField> fields,
             ArmJobSgtinResponse response,
-            AggregationViewModel thisModel, int minX, int minY)
+            AggregationViewModel thisModel, int minX, int minY, double scaleImagaeX, double scaleImagaeY)
         {
             var cells = new ObservableCollection<DmCellViewModel>();
+            string json = BuildResultJson(dmrData);
+            //foreach (var dmd in dmrData.BOXs)
+            //{
+            //var boo = dmrData.BOXs.First();
             foreach (var dmd in dmrData.BOXs)
             {
                 var dmVm = new DmCellViewModel(thisModel)
                 {
-                    X = (dmd.poseX - minX) * scaleX,
-                    Y = (dmd.poseY - minY) * scaleY,
+                    X = (dmd.poseX - (dmd.width / 2)) * scaleX ,
+                    Y = (dmd.poseY - (dmd.height / 2)) * scaleY,
                     SizeWidth = dmd.width * scaleX,
                     SizeHeight = dmd.height * scaleY,
                     Angle = -(dmd.alpha)
@@ -213,6 +219,102 @@ namespace l2l_aggregator.Services.DmProcessing
             }
 
             return cells;
+        }
+        public void SaveRawImageAsJpeg(result_data dmrData, string outputPath, int quality = 90)
+        {
+            //if (_dmrData.rawImage == null)
+            //    throw new InvalidOperationException("Изображение не загружено или результат сканирования отсутствует.");
+
+            //using var image = dmrData.rawImage.Clone(); // Создаем копию
+            //var encoder = new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder
+            //{
+            //    Quality = quality
+            //};
+
+            //// Убедимся, что путь существует
+            //var dir = Path.GetDirectoryName(outputPath);
+            //if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+            //    Directory.CreateDirectory(dir);
+
+            //image.Save(outputPath, encoder);
+            if (dmrData.rawImage == null)
+                throw new InvalidOperationException("Изображение не загружено или результат сканирования отсутствует.");
+
+            if (dmrData.rawImage is SixLabors.ImageSharp.Image<Rgba32> image)
+            {
+                var encoder = new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder
+                {
+                    Quality = quality
+                };
+
+                var dir = Path.GetDirectoryName(outputPath);
+                if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+
+                image.Save(outputPath, encoder);
+            }
+            else
+            {
+                throw new InvalidCastException("rawImage не является Image<Rgba32> и не может быть сохранено в JPG.");
+            }
+        }
+        public string BuildResultJson(result_data dmrData)
+        {
+            var result = new List<CellData>();
+            int idCounter = 1;
+
+            foreach (var cell in dmrData.BOXs)
+            {
+                var cellData = new CellData
+                {
+                    cell_id = idCounter++,
+                    poseX = cell.poseX,
+                    poseY = cell.poseY,
+                    width = cell.width,
+                    height = cell.height,
+                    angle = cell.alpha,
+                    cell_ocr = cell.OCR.Select(o => new OcrField
+                    {
+                        data = o.Text,
+                        name = o.Name,
+                        poseX = o.poseX,
+                        poseY = o.poseY,
+                        width = o.width,
+                        height = o.height,
+                        angle = o.alpha
+                    }).ToList()
+                };
+
+                result.Add(cellData);
+            }
+
+            var json = JsonSerializer.Serialize(new { cells = result }, new JsonSerializerOptions
+            {
+                WriteIndented = true
+            });
+
+            return json;
+        }
+        public class OcrField
+        {
+            public string data { get; set; }
+            public string name { get; set; }
+            public int poseX { get; set; }
+            public int poseY { get; set; }
+            public int width { get; set; }
+            public int height { get; set; }
+            public int angle { get; set; }
+        }
+
+        public class CellData
+        {
+            public int cell_id { get; set; }
+            public int poseX { get; set; }
+            public int poseY { get; set; }
+            public int width { get; set; }
+            public int height { get; set; }
+            public int angle { get; set; }
+            public List<OcrField> cell_ocr { get; set; }
         }
     }
 }

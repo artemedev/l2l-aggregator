@@ -97,7 +97,7 @@ namespace l2l_aggregator.ViewModels
         public ObservableCollection<object> BoxAggregationData { get; set; } = new();
         public ObservableCollection<object> PalletAggregationData { get; set; } = new();
 
-        private double scaleX, scaleY, scaleXObrat, scaleYObrat;
+        private double scaleX, scaleY, scaleXObrat, scaleYObrat, scaleImagaeX, scaleImagaeY;
 
         FastReport.Export.Zpl.ZplExport? exporter;
 
@@ -313,7 +313,7 @@ namespace l2l_aggregator.ViewModels
                         {
                             Console.WriteLine($"  DM Data: null");
                         }
-                        if(box.DM.poseX > 0 )
+                        if (box.DM.poseX > 0)
                         {
                             Console.WriteLine($"  DM poseX: {box.DM.poseX}");
                         }
@@ -363,7 +363,7 @@ namespace l2l_aggregator.ViewModels
                         {
                             Console.WriteLine($"  box.OCR: null");
                         }
-                       
+
 
                         i++;
                     }
@@ -382,15 +382,27 @@ namespace l2l_aggregator.ViewModels
                     int maxX = dmrData.BOXs.Max(d => d.poseX + (d.width / 2));
                     int maxY = dmrData.BOXs.Max(d => d.poseY + (d.height / 2));
 
+                    // Увеличиваем зону обрезки на 20 пикселей с каждой стороны
+                    minX = Math.Max(0, minX);
+                    minY = Math.Max(0, minY);
+                    maxX = Math.Min(dmrData.rawImage.Width, maxX);
+                    maxY = Math.Min(dmrData.rawImage.Height, maxY);
                     //кроп изображения
                     ScannedImage = await _dmScanService.GetCroppedImage(dmrData, minX, minY, maxX, maxY);
 
                     await Task.Delay(100); //исправить
 
+                    //scaleX = imageSize.Width / ScannedImage.PixelSize.Width;
+
                     scaleX = imageSize.Width / ScannedImage.PixelSize.Width;
                     scaleY = imageSize.Height / ScannedImage.PixelSize.Height;
-                    scaleXObrat = ScannedImage.PixelSize.Width / imageSize.Width;
-                    scaleYObrat = ScannedImage.PixelSize.Height / imageSize.Height;
+                    scaleImagaeX = 1.2611200;
+                    scaleImagaeY = 1.216;
+                    //scaleImagaeX = dmrData.rawImage.Width / ScannedImage.PixelSize.Width;
+                    //scaleImagaeY = dmrData.rawImage.Height / ScannedImage.PixelSize.Height;
+
+                    scaleXObrat = dmrData.rawImage.Width / imageSize.Width;
+                    scaleYObrat = dmrData.rawImage.Height / imageSize.Height;
 
                     var responseSgtin = await _dataApiService.LoadSgtinAsync(_sessionService.SelectedTaskInfo.DOCID);
                     if (responseSgtin == null)
@@ -409,7 +421,9 @@ namespace l2l_aggregator.ViewModels
                         responseSgtin,
                         this,
                         minX,
-                        minY
+                        minY,
+                        scaleImagaeX,
+                        scaleImagaeY
                     );
 
                     int validCountDMCells = DMCells.Count(c => c.IsValid);
