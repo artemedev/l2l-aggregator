@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
 using l2l_aggregator.ViewModels;
+using l2l_aggregator.ViewModels.VisualElements;
 
 namespace l2l_aggregator.Views;
 
@@ -19,6 +20,15 @@ public partial class AggregationView : UserControl
     //        vm.ImageHeight = e.NewSize.Height;
     //    }
     //}
+    private void HandleCellPointerPressed(object sender, PointerPressedEventArgs e)
+    {
+        if (sender is Border border &&
+            border.DataContext is DmCellViewModel vm &&
+            DataContext is AggregationViewModel avm)
+        {
+            avm.OnCellClicked(vm);
+        }
+    }
     private void OnImageSizeChanged(object? sender, SizeChangedEventArgs e)
     {
         if (DataContext is AggregationViewModel vm)

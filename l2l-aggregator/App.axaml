@@ -25,5 +25,6 @@
 		<converters:BooleanToAggregationStatusConverter x:Key="BooleanToAggregationStatusConverter"/>
 		<converters:ResponsiveMarginConverter x:Key="ResponsiveMarginConverter" />
 		<converters:ResponsiveFontSizeConverter x:Key="ResponsiveFontSizeConverter" />
+		<converters:HalfConverter x:Key="HalfConverter" />
 	</Application.Resources>
 </Application>

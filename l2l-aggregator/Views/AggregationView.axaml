@@ -8,6 +8,7 @@
 			 xmlns:vmVE="using:l2l_aggregator.ViewModels.VisualElements"
 			 x:DataType="vm:AggregationViewModel"
              x:Class="l2l_aggregator.Views.AggregationView">
+	
 	<Grid Grid.Row="1" Margin="10" >
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="5*"/>
@@ -39,7 +40,7 @@
 				  VerticalAlignment="Stretch" 
 				  HorizontalAlignment="Stretch" 
 				  Background="LightGray">
-				<Image Source="{Binding ScannedImage}" Stretch="Uniform" SizeChanged="OnImageSizeChanged" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+				<Image Source="{Binding ScannedImage}" Stretch="Fill" SizeChanged="OnImageSizeChanged" HorizontalAlignment="Left" VerticalAlignment="Top"/>
 				<ItemsControl ItemsSource="{Binding DMCells}">
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>
@@ -49,27 +50,30 @@
 
 					<ItemsControl.ItemTemplate>
 						<DataTemplate>
-							<Button Width="{Binding SizeWidth}"
-									Height="{Binding SizeHeight}"
-									BorderBrush="{Binding BorderColor}"
-									BorderThickness="3"
-									Background="Transparent"
-									Command="{Binding DmSquareClickedCommand}"
-									CommandParameter="{Binding}">
-								<Button.RenderTransform>
-									<RotateTransform Angle="{Binding Angle}" />
-								</Button.RenderTransform>
-								<TextBlock Text="DM"
-										   Foreground="Black" Opacity="0"/>
-							</Button>
+							<Border
+								Width="{Binding SizeWidth}"
+								Height="{Binding SizeHeight}"
+								BorderBrush="{Binding BorderColor}"
+								BorderThickness="3"
+								Background="Transparent"
+								PointerPressed="HandleCellPointerPressed">
+
+								<Border.RenderTransform>
+									<!-- Поворот относительно центра элемента -->
+									<RotateTransform
+										Angle="{Binding Angle}"
+										CenterX="{Binding SizeWidth, Converter={StaticResource HalfConverter}}"
+										CenterY="{Binding SizeHeight, Converter={StaticResource HalfConverter}}"/>
+								</Border.RenderTransform>
+
+							</Border>
 						</DataTemplate>
 					</ItemsControl.ItemTemplate>
+
 					<ItemsControl.Styles>
 						<Style Selector="ContentPresenter" x:DataType="vmVE:DmCellViewModel">
 							<Setter Property="Canvas.Left" Value="{Binding X}" />
 							<Setter Property="Canvas.Top" Value="{Binding Y}" />
-							<Setter Property="Width" Value="{Binding SizeWidth}" />
-							<Setter Property="Height" Value="{Binding SizeHeight}" />
 						</Style>
 					</ItemsControl.Styles>
 				</ItemsControl>
