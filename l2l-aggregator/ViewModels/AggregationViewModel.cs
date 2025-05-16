@@ -97,7 +97,7 @@ namespace l2l_aggregator.ViewModels
         public ObservableCollection<object> BoxAggregationData { get; set; } = new();
         public ObservableCollection<object> PalletAggregationData { get; set; } = new();
 
-        private double scaleX, scaleY, scaleXObrat, scaleYObrat, scaleImagaeX, scaleImagaeY;
+        private double scaleX, scaleY, scaleXObrat, scaleYObrat;
 
         FastReport.Export.Zpl.ZplExport? exporter;
 
@@ -313,7 +313,7 @@ namespace l2l_aggregator.ViewModels
                         {
                             Console.WriteLine($"  DM Data: null");
                         }
-                        if (box.DM.poseX > 0)
+                        if(box.DM.poseX > 0 )
                         {
                             Console.WriteLine($"  DM poseX: {box.DM.poseX}");
                         }
@@ -363,7 +363,7 @@ namespace l2l_aggregator.ViewModels
                         {
                             Console.WriteLine($"  box.OCR: null");
                         }
-
+                       
 
                         i++;
                     }
@@ -394,13 +394,8 @@ namespace l2l_aggregator.ViewModels
 
                     //scaleX = imageSize.Width / ScannedImage.PixelSize.Width;
 
-                    scaleX = imageSize.Width / ScannedImage.PixelSize.Width;
-                    scaleY = imageSize.Height / ScannedImage.PixelSize.Height;
-                    scaleImagaeX = 1.2611200;
-                    scaleImagaeY = 1.216;
-                    //scaleImagaeX = dmrData.rawImage.Width / ScannedImage.PixelSize.Width;
-                    //scaleImagaeY = dmrData.rawImage.Height / ScannedImage.PixelSize.Height;
-
+                    scaleX = imageSize.Width / dmrData.rawImage.Width;
+                    scaleY = imageSize.Height / dmrData.rawImage.Height;
                     scaleXObrat = dmrData.rawImage.Width / imageSize.Width;
                     scaleYObrat = dmrData.rawImage.Height / imageSize.Height;
 
@@ -421,9 +416,7 @@ namespace l2l_aggregator.ViewModels
                         responseSgtin,
                         this,
                         minX,
-                        minY,
-                        scaleImagaeX,
-                        scaleImagaeY
+                        minY
                     );
 
                     int validCountDMCells = DMCells.Count(c => c.IsValid);

@@ -113,8 +113,7 @@ namespace l2l_aggregator.Services.DmProcessing
                 try
                 {
                     using var ms = new MemoryStream();
-                    using var cropped = dmrData.rawImage.Clone(ctx => ctx.Crop(new SixLabors.ImageSharp.Rectangle(minX, minY, maxX, maxY)));
-                    cropped.SaveAsBmp(ms);
+                    dmrData.rawImage.SaveAsBmp(ms);
                     ms.Seek(0, SeekOrigin.Begin);
                     return new Bitmap(ms);
                 }
@@ -134,89 +133,87 @@ namespace l2l_aggregator.Services.DmProcessing
             SessionService sessionService,
             ObservableCollection<TemplateField> fields,
             ArmJobSgtinResponse response,
-            AggregationViewModel thisModel, int minX, int minY, double scaleImagaeX, double scaleImagaeY)
+            AggregationViewModel thisModel, int minX, int minY)
         {
             var cells = new ObservableCollection<DmCellViewModel>();
             string json = BuildResultJson(dmrData);
             //foreach (var dmd in dmrData.BOXs)
             //{
-            //var boo = dmrData.BOXs.First();
-            foreach (var dmd in dmrData.BOXs)
+            var boo = dmrData.BOXs.First();
+            var dmVm = new DmCellViewModel(thisModel)
             {
-                var dmVm = new DmCellViewModel(thisModel)
+                X = (boo.poseX - (boo.width / 2)) * scaleX,
+                Y = (boo.poseY - (boo.height / 2)) * scaleY,
+                SizeWidth = boo.width * scaleX,
+                SizeHeight = boo.height * scaleY,
+                Angle = -(boo.alpha)
+            };
+
+            bool allValid = false;
+
+            foreach (var ocr in boo.OCR)
+            {
+                var validBarcodes = new HashSet<string>();
+
+                var propSgtin = typeof(ArmJobSgtinRecord).GetProperty(ocr.Name);
+                if (propSgtin != null)
                 {
-                    X = (dmd.poseX - (dmd.width / 2)) * scaleX ,
-                    Y = (dmd.poseY - (dmd.height / 2)) * scaleY,
-                    SizeWidth = dmd.width * scaleX,
-                    SizeHeight = dmd.height * scaleY,
-                    Angle = -(dmd.alpha)
-                };
-
-                bool allValid = false;
-
-                foreach (var ocr in dmd.OCR)
-                {
-                    var validBarcodes = new HashSet<string>();
-
-                    var propSgtin = typeof(ArmJobSgtinRecord).GetProperty(ocr.Name);
-                    if (propSgtin != null)
+                    foreach (var r in response.RECORDSET)
                     {
-                        foreach (var r in response.RECORDSET)
-                        {
-                            var value = propSgtin.GetValue(r);
-                            if (value is string str)
-                                validBarcodes.Add(str);
-                        }
+                        var value = propSgtin.GetValue(r);
+                        if (value is string str)
+                            validBarcodes.Add(str);
                     }
-
-                    if (propSgtin == null)
-                    {
-                        var propInfo = typeof(ArmJobInfoRecord).GetProperty(ocr.Name);
-                        if (propInfo != null)
-                        {
-                            var val = propInfo.GetValue(sessionService.SelectedTaskInfo);
-                            if (val != null)
-                                validBarcodes.Add(val.ToString());
-                        }
-                    }
-
-                    bool isValid = validBarcodes.Contains(ocr.Text);
-
-                    dmVm.OcrCells.Add(new SquareCellViewModel
-                    {
-                        X = ocr.poseX,
-                        Y = ocr.poseY,
-                        SizeWidth = ocr.width,
-                        SizeHeight = ocr.height,
-                        Angle = ocr.alpha,
-                        IsValid = isValid
-                    });
-
-                    if (!isValid)
-                        allValid = false;
                 }
 
-                if (dmd.OCR.Count != fields.Count)
+                if (propSgtin == null)
                 {
+                    var propInfo = typeof(ArmJobInfoRecord).GetProperty(ocr.Name);
+                    if (propInfo != null)
+                    {
+                        var val = propInfo.GetValue(sessionService.SelectedTaskInfo);
+                        if (val != null)
+                            validBarcodes.Add(val.ToString());
+                    }
+                }
+
+                bool isValid = validBarcodes.Contains(ocr.Text);
+
+                dmVm.OcrCells.Add(new SquareCellViewModel
+                {
+                    X = ocr.poseX,
+                    Y = ocr.poseY,
+                    SizeWidth = ocr.width,
+                    SizeHeight = ocr.height,
+                    Angle = ocr.alpha,
+                    IsValid = isValid
+                });
+
+                if (!isValid)
                     allValid = false;
-                }
-                if (dmd.DM.data != null)
-                {
-                    dmVm.OcrCells.Add(new SquareCellViewModel
-                    {
-                        X = dmd.DM.poseX,
-                        Y = dmd.DM.poseY,
-                        SizeWidth = dmd.DM.width,
-                        SizeHeight = dmd.DM.height,
-                        Angle = -dmd.DM.alpha,
-                        IsValid = !dmd.DM.isError
-                    });
-                    if (dmd.DM.isError)
-                        allValid = false;
-                }
-                dmVm.IsValid = allValid;
-                cells.Add(dmVm);
             }
+
+            if (boo.OCR.Count != fields.Count)
+            {
+                allValid = false;
+            }
+            if (boo.DM.data != null)
+            {
+                dmVm.OcrCells.Add(new SquareCellViewModel
+                {
+                    X = boo.DM.poseX,
+                    Y = boo.DM.poseY,
+                    SizeWidth = boo.DM.width,
+                    SizeHeight = boo.DM.height,
+                    Angle = -boo.DM.alpha,
+                    IsValid = !boo.DM.isError
+                });
+                if (boo.DM.isError)
+                    allValid = false;
+            }
+            dmVm.IsValid = allValid;
+            cells.Add(dmVm);
+            //}
 
             return cells;
         }
