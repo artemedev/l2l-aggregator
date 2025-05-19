@@ -2,7 +2,7 @@
   "cells": [
     {
       "cell_id": 1,
-      "poseX": 4120,
+      "poseX": 4120, //максимальная
       "poseY": 371,
       "width": 438,
       "height": 332,
@@ -140,7 +140,7 @@
     },
     {
       "cell_id": 4,
-      "poseX": 601,
+      "poseX": 601, //минимальная
       "poseY": 918,
       "width": 438,
       "height": 332,
@@ -233,7 +233,7 @@
     {
       "cell_id": 6,
       "poseX": 1742,
-      "poseY": 362,
+      "poseY": 362, //минимальная
       "width": 438,
       "height": 332,
       "angle": 90,
@@ -509,7 +509,7 @@
     {
       "cell_id": 12,
       "poseX": 2616,
-      "poseY": 2834,
+      "poseY": 2834, //максимальная
       "width": 438,
       "height": 332,
       "angle": 92,

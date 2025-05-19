@@ -3,6 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.SimpleRouter;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DM_wraper_NS;
@@ -22,6 +23,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace l2l_aggregator.ViewModels
 {
@@ -155,6 +157,8 @@ namespace l2l_aggregator.ViewModels
             ImageSizeChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeChanged);
             ImageSizeCellChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeCellChanged);
             ImageSizeGridCellChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeGridCellChanged);
+
+
             InitializeAsync();
         }
         private async void InitializeAsync()
@@ -377,10 +381,10 @@ namespace l2l_aggregator.ViewModels
                 }
                 if (dmrData.rawImage != null)
                 {
-                    int minX = dmrData.BOXs.Min(d => d.poseX - (d.width / 2));
-                    int minY = dmrData.BOXs.Min(d => d.poseY - (d.height / 2));
-                    int maxX = dmrData.BOXs.Max(d => d.poseX + (d.width / 2));
-                    int maxY = dmrData.BOXs.Max(d => d.poseY + (d.height / 2));
+                    int minX = dmrData.BOXs.Min(d => d.poseX - (d.height / 2) - 10);
+                    int minY = dmrData.BOXs.Min(d => d.poseY - (d.width / 2) - 10);
+                    int maxX = dmrData.BOXs.Max(d => d.poseX + (d.height / 2) + 10);
+                    int maxY = dmrData.BOXs.Max(d => d.poseY + (d.width / 2) + 10);
 
                     // Увеличиваем зону обрезки на 20 пикселей с каждой стороны
                     minX = Math.Max(0, minX);
@@ -411,20 +415,39 @@ namespace l2l_aggregator.ViewModels
                         _notificationService.ShowMessage(InfoMessage);
                         return;
                     }
-                    //создание ячеек
-                    DMCells = _dmScanService.BuildCellViewModels(
-                        dmrData,
-                        scaleX,
-                        scaleY,
-                        _sessionService,
-                        TemplateFields,
-                        responseSgtin,
-                        this,
-                        minX,
-                        minY,
-                        scaleImagaeX,
-                        scaleImagaeY
-                    );
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        DMCells.Clear();
+                        //var cells = _dmScanService.BuildCellViewModels(
+                        //                                            dmrData,
+                        //                                            scaleX,
+                        //                                            scaleY,
+                        //                                            _sessionService,
+                        //                                            TemplateFields,
+                        //                                            responseSgtin,
+                        //                                            this,
+                        //                                            minX,
+                        //                                            minY,
+                        //                                            scaleImagaeX,
+                        //                                            scaleImagaeY);
+                        ////создание ячеек
+                        //DMCells = new ObservableCollection<DmCellViewModel>(cells);
+                        foreach (var cell in _dmScanService.BuildCellViewModels(
+                                                                    dmrData,
+                                                                    scaleX,
+                                                                    scaleY,
+                                                                    _sessionService,
+                                                                    TemplateFields,
+                                                                    responseSgtin,
+                                                                    this,
+                                                                    minX,
+                                                                    minY,
+                                                                    scaleImagaeX,
+                                                                    scaleImagaeY))
+                        {
+                            DMCells.Add(cell); // вызовет CollectionChanged
+                        }
+                    });
 
                     int validCountDMCells = DMCells.Count(c => c.IsValid);
                     // Обновление информационных текстов

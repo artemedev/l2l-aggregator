@@ -113,7 +113,7 @@ namespace l2l_aggregator.Services.DmProcessing
                 try
                 {
                     using var ms = new MemoryStream();
-                    using var cropped = dmrData.rawImage.Clone(ctx => ctx.Crop(new SixLabors.ImageSharp.Rectangle(minX, minY, maxX, maxY)));
+                    using var cropped = dmrData.rawImage.Clone(ctx => ctx.Crop(new SixLabors.ImageSharp.Rectangle(minX, minY, cropWidth, cropHeight)));
                     cropped.SaveAsBmp(ms);
                     ms.Seek(0, SeekOrigin.Begin);
                     return new Bitmap(ms);
@@ -145,8 +145,8 @@ namespace l2l_aggregator.Services.DmProcessing
             {
                 var dmVm = new DmCellViewModel(thisModel)
                 {
-                    X = (dmd.poseX - (dmd.width / 2)) * scaleX ,
-                    Y = (dmd.poseY - (dmd.height / 2)) * scaleY,
+                    X = (dmd.poseX - (dmd.width / 2) - minX) * scaleX ,
+                    Y = ((dmd.poseY - (dmd.height / 2) - minY) * scaleY) ,
                     SizeWidth = dmd.width * scaleX,
                     SizeHeight = dmd.height * scaleY,
                     Angle = -(dmd.alpha)

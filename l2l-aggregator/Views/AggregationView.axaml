@@ -8,7 +8,7 @@
 			 xmlns:vmVE="using:l2l_aggregator.ViewModels.VisualElements"
 			 x:DataType="vm:AggregationViewModel"
              x:Class="l2l_aggregator.Views.AggregationView">
-	
+
 	<Grid Grid.Row="1" Margin="10" >
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="5*"/>
@@ -26,57 +26,26 @@
 						CornerRadius="4"
 						Padding="10" Grid.Row="13">
 
-						<Viewbox>
-							<TextBlock Text="{Binding InfoLayerText}" VerticalAlignment="Center" HorizontalAlignment="Center" />
-						</Viewbox>
-							<!--<TextBlock Grid.Column="1" Text="{Binding InfoDMText}" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="48" TextAlignment="Center"/>
+					<Viewbox>
+						<TextBlock Text="{Binding InfoLayerText}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+					</Viewbox>
+					<!--<TextBlock Grid.Column="1" Text="{Binding InfoDMText}" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="48" TextAlignment="Center"/>
 						<TextBlock  Grid.Column="2" Text="{Binding InfoHelperText}" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="48" TextAlignment="Start"/>-->
 				</Border>
 			</Grid>
-			<Grid Grid.Row="1" 
-				  ScrollViewer.AllowAutoHide="False" 
-				  ScrollViewer.IsScrollChainingEnabled="False" 
-				  Name="scanImage" 
-				  VerticalAlignment="Stretch" 
-				  HorizontalAlignment="Stretch" 
+			<Grid Grid.Row="1"
+				  ScrollViewer.AllowAutoHide="False"
+				  ScrollViewer.IsScrollChainingEnabled="False"
+				  Name="scanImage"
+				  VerticalAlignment="Stretch"
+				  HorizontalAlignment="Stretch"
 				  Background="LightGray">
-				<Image Source="{Binding ScannedImage}" Stretch="Fill" SizeChanged="OnImageSizeChanged" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-				<ItemsControl ItemsSource="{Binding DMCells}">
-					<ItemsControl.ItemsPanel>
-						<ItemsPanelTemplate>
-							<Canvas />
-						</ItemsPanelTemplate>
-					</ItemsControl.ItemsPanel>
-
-					<ItemsControl.ItemTemplate>
-						<DataTemplate>
-							<Border
-								Width="{Binding SizeWidth}"
-								Height="{Binding SizeHeight}"
-								BorderBrush="{Binding BorderColor}"
-								BorderThickness="3"
-								Background="Transparent"
-								PointerPressed="HandleCellPointerPressed">
-
-								<Border.RenderTransform>
-									<!-- Поворот относительно центра элемента -->
-									<RotateTransform
-										Angle="{Binding Angle}"
-										CenterX="{Binding SizeWidth, Converter={StaticResource HalfConverter}}"
-										CenterY="{Binding SizeHeight, Converter={StaticResource HalfConverter}}"/>
-								</Border.RenderTransform>
-
-							</Border>
-						</DataTemplate>
-					</ItemsControl.ItemTemplate>
-
-					<ItemsControl.Styles>
-						<Style Selector="ContentPresenter" x:DataType="vmVE:DmCellViewModel">
-							<Setter Property="Canvas.Left" Value="{Binding X}" />
-							<Setter Property="Canvas.Top" Value="{Binding Y}" />
-						</Style>
-					</ItemsControl.Styles>
-				</ItemsControl>
+				<Image Source="{Binding ScannedImage}" Stretch="Uniform" SizeChanged="OnImageSizeChanged" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+				<Canvas Name="MainCanvas"
+						Background="Transparent"
+						HorizontalAlignment="Stretch"
+						VerticalAlignment="Stretch">
+				</Canvas>
 			</Grid>
 		</Grid>
 		<Grid Grid.Column="1" Margin="15">
@@ -98,90 +67,90 @@
 				<RowDefinition Height="*"/>-->
 				<RowDefinition Height="4*"/>
 			</Grid.RowDefinitions>
-			<Button Grid.Row="0" 
-					Command="{Binding ScanCommand}"  
-					IsEnabled="{Binding CanScan}" 
-					Content="Сканировать" 
-					HorizontalAlignment="Stretch" 
-					VerticalAlignment="Stretch" 
-					Margin="5" 
-					HorizontalContentAlignment="Center" 
-					VerticalContentAlignment="Center" 
+			<Button Grid.Row="0"
+					Command="{Binding ScanCommand}"
+					IsEnabled="{Binding CanScan}"
+					Content="Сканировать"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					Margin="5"
+					HorizontalContentAlignment="Center"
+					VerticalContentAlignment="Center"
 					FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 			<!--<Button Grid.Row="2" Command="{Binding CompleteStepCommand}" Content="Завершить агрегацию" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>-->
 			<!--<Button Grid.Row="3" Command="{Binding GoToNextStepCommand}"  Content="Следующий шаг: Агрегация коробки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>-->
-			<Button Grid.Row="1" 
-					Command="{Binding OpenTemplateSettingsCommand}" 
-					IsEnabled="{Binding CanOpenTemplateSettings}" 
-					Content="Настройки шаблона" 
-					HorizontalAlignment="Stretch" 
-					VerticalAlignment="Stretch" 
-					Margin="5" 
-					HorizontalContentAlignment="Center" 
+			<Button Grid.Row="1"
+					Command="{Binding OpenTemplateSettingsCommand}"
+					IsEnabled="{Binding CanOpenTemplateSettings}"
+					Content="Настройки шаблона"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					Margin="5"
+					HorizontalContentAlignment="Center"
 					VerticalContentAlignment="Center"
 					FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 			<!--<Button Grid.Row="5" Command="{Binding ClearBoxCommand}" Content="Очистить короб" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>-->
 			<!--<Button Grid.Row="6" Command="{Binding CompleteStepCommand}" Content="Завершить агрегацию" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>-->
-			<Button Grid.Row="2" 
-					Command="{Binding PrintBoxLabelCommand}" 
-					IsEnabled="{Binding СanPrintBoxLabel}" 
-					Content="Печать этикетки коробки" 
-					HorizontalAlignment="Stretch" 
-					VerticalAlignment="Stretch" 
-					Margin="5" 
-					HorizontalContentAlignment="Center" 
+			<Button Grid.Row="2"
+					Command="{Binding PrintBoxLabelCommand}"
+					IsEnabled="{Binding СanPrintBoxLabel}"
+					Content="Печать этикетки коробки"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					Margin="5"
+					HorizontalContentAlignment="Center"
 					VerticalContentAlignment="Center"
 					FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
-			<Button Grid.Row="3" 
-					Command="{Binding PrintPalletLabelCommand}" 
-					IsEnabled="{Binding СanPrintPalletLabel}" 
-					Content="Печать этикетки паллеты" 
-					HorizontalAlignment="Stretch" 
-					VerticalAlignment="Stretch" 
-					Margin="5" 
-					HorizontalContentAlignment="Center" 
+			<Button Grid.Row="3"
+					Command="{Binding PrintPalletLabelCommand}"
+					IsEnabled="{Binding СanPrintPalletLabel}"
+					Content="Печать этикетки паллеты"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					Margin="5"
+					HorizontalContentAlignment="Center"
 					VerticalContentAlignment="Center"
 					FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 			<!--<Button Grid.Row="6" Command="{Binding ScanBoxBarcodeCommand}" Content="Сканировать штрихкод коробки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>-->
 			<!--<Button Grid.Row="9" Command="{Binding GoToNextStepCommand}" Content="Следующий шаг: Агрегация паллеты" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>-->
-			<Button Grid.Row="4" 
-					Command="{Binding ClearBoxCommand}" 
-					IsEnabled="{Binding CanClearBox}" 
-					Content="Очистить короб" 
-					HorizontalAlignment="Stretch" 
-					VerticalAlignment="Stretch" 
-					Margin="5" 
-					HorizontalContentAlignment="Center" 
+			<Button Grid.Row="4"
+					Command="{Binding ClearBoxCommand}"
+					IsEnabled="{Binding CanClearBox}"
+					Content="Очистить короб"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					Margin="5"
+					HorizontalContentAlignment="Center"
 					VerticalContentAlignment="Center"
 					FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 
-			<Button Grid.Row="5" 
-					Command="{Binding ClearPalletCommand}" 
-					IsEnabled="{Binding CanClearPallet}" 
-					Content="Очистить паллету" 
-					HorizontalAlignment="Stretch" 
-					VerticalAlignment="Stretch" 
-					Margin="5" 
-					HorizontalContentAlignment="Center" 
+			<Button Grid.Row="5"
+					Command="{Binding ClearPalletCommand}"
+					IsEnabled="{Binding CanClearPallet}"
+					Content="Очистить паллету"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					Margin="5"
+					HorizontalContentAlignment="Center"
 					VerticalContentAlignment="Center"
 					FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
-			<Button Grid.Row="6" 
-					Command="{Binding CompleteAggregationCommand}" 
-					IsEnabled="{Binding CanCompleteAggregation}" 
-					Content="Завершить агрегацию" 
-					HorizontalAlignment="Stretch" 
-					VerticalAlignment="Stretch" 
-					Margin="5" 
-					HorizontalContentAlignment="Center" 
+			<Button Grid.Row="6"
+					Command="{Binding CompleteAggregationCommand}"
+					IsEnabled="{Binding CanCompleteAggregation}"
+					Content="Завершить агрегацию"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					Margin="5"
+					HorizontalContentAlignment="Center"
 					VerticalContentAlignment="Center"
 					FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
-			<Button Grid.Row="7" 
-					Command="{Binding CancelAggregationCommand}" 
-					Content="Отменить агрегацию" 
-					HorizontalAlignment="Stretch" 
-					VerticalAlignment="Stretch" 
-					Margin="5" 
-					HorizontalContentAlignment="Center" 
+			<Button Grid.Row="7"
+					Command="{Binding CancelAggregationCommand}"
+					Content="Отменить агрегацию"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					Margin="5"
+					HorizontalContentAlignment="Center"
 					VerticalContentAlignment="Center"
 					FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 			<!--<Button Grid.Row="12" Command="{Binding PrintLabelCommand}" Content="Печать этикетки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>-->
