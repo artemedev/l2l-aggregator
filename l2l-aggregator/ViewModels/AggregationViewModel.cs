@@ -715,6 +715,12 @@ namespace l2l_aggregator.ViewModels
                 cell.OcrCellsInPopUp.Add(newOcr);
 
             IsPopupOpen = true;
+            Console.WriteLine($"SelectedDmCell == : {SelectedDmCell}");
+            Console.WriteLine($"OcrCellsInPopUp.Count: {cell.OcrCellsInPopUp.Count}");
+            foreach (var ocr in cell.OcrCellsInPopUp)
+            {
+                Console.WriteLine($"OCR: X={ocr.X}, Y={ocr.Y}, W={ocr.SizeWidth}, H={ocr.SizeHeight}");
+            }
         }
         [RelayCommand]
         public void OpenTemplateSettings()
@@ -746,5 +752,6 @@ namespace l2l_aggregator.ViewModels
             imageCellWidth = e.NewSize.Width;
             imageCellHeight = e.NewSize.Height;
         }
+
     }
 }

@@ -27,7 +27,7 @@ namespace DM_process_lib
 
         public static void update_PP()
         {
-            _pathToPrintPattern = _dM_recogn_wraper.GetPathToPrintPattern();
+            _pathToPrintPattern = _dM_recogn_wraper.GetXMLPrintPattern();
         }
 
         public static void init_readConfig()

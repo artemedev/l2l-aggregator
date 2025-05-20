@@ -118,6 +118,8 @@ public partial class AggregationView : UserControl
             border.PointerPressed += (s, e) =>
                 {
                     ((AggregationViewModel)DataContext).OnCellClicked(cellVM);
+                    if (cellVM.DmSquareClickedCommand.CanExecute(null))
+                        cellVM.DmSquareClickedCommand.Execute(null);
                 };
 
             MainCanvas.Children.Add(border);

@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
@@ -110,13 +111,21 @@ namespace DM_process_lib
 
             try
             {
-                byte[] frxBytes = Convert.FromBase64String(base64Frx);
+                string xmlString;
 
-
-                // Загружаем FastReport из памяти
-                using (var memoryStream = new MemoryStream(frxBytes))
+                if (IsBase64String(base64Frx))
                 {
-                    OriginalDocument = XDocument.Load(memoryStream);
+                    byte[] frxBytes = Convert.FromBase64String(base64Frx);
+                    xmlString = Encoding.UTF8.GetString(frxBytes);
+                }
+                else
+                {
+                    xmlString = base64Frx;
+                }
+
+                using (var reader = new StringReader(xmlString))
+                {
+                    OriginalDocument = XDocument.Load(reader);
                 }
 
                 dataModel = ExtractFieldsFromReport(OriginalDocument, "LabelQry");
@@ -132,46 +141,30 @@ namespace DM_process_lib
             return dataModel;
         }
 
-
+        private bool IsBase64String(string s)
+        {
+            s = s.Trim();
+            return (s.Length % 4 == 0) &&
+                   System.Text.RegularExpressions.Regex.IsMatch(s, @"^[a-zA-Z0-9\+/]*={0,2}$");
+        }
         private static Dictionary<string, bool> ExtractFieldsFromReport(XDocument reportDocument, string prefix)
         {
             var resultFields = new Dictionary<string, bool>();
 
-            // 1. Все элементы с атрибутом DataField
-            var elementsWithDataField = reportDocument
+            // Найдём все элементы, у которых Type = "variable" и задан Name
+            var variableElements = reportDocument
                 .Descendants()
-                .Where(el => el.Attribute("DataField") != null);
+                .Where(el =>
+                    el.Attribute("Type")?.Value == "variable" &&
+                    !string.IsNullOrWhiteSpace(el.Attribute("Name")?.Value)
+                );
 
-            foreach (var element in elementsWithDataField)
+            foreach (var element in variableElements)
             {
-                var dataField = element.Attribute("DataField")?.Value;
-                if (!string.IsNullOrEmpty(dataField) && !resultFields.ContainsKey(dataField))
+                var name = element.Attribute("Name")?.Value?.Trim();
+                if (!string.IsNullOrEmpty(name) && !resultFields.ContainsKey(name))
                 {
-                    resultFields[dataField] = true;
-                }
-            }
-
-            // 2. Элементы без DataField, но с Text — пробуем найти в тексте шаблоны
-            var elementsWithText = reportDocument
-                .Descendants()
-                .Where(el => el.Attribute("DataField") == null && el.Attribute("Text") != null);
-
-            var regex = new Regex(@"\[(.*?)\]|""(.*?)""");
-
-            foreach (var element in elementsWithText)
-            {
-                var text = element.Attribute("Text")?.Value;
-                if (!string.IsNullOrEmpty(text))
-                {
-                    var matches = regex.Matches(text);
-                    foreach (Match match in matches)
-                    {
-                        var value = match.Groups[1].Success ? match.Groups[1].Value : match.Groups[2].Value;
-                        if (!string.IsNullOrEmpty(value) && !resultFields.ContainsKey(value))
-                        {
-                            resultFields[value] = false;
-                        }
-                    }
+                    resultFields[name] = true;
                 }
             }
 

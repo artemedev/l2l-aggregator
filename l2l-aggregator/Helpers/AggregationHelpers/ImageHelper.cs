@@ -1,6 +1,8 @@
 ﻿using Avalonia.Media.Imaging;
 using SkiaSharp;
+using System;
 using System.IO;
+using System.Linq;
 
 namespace l2l_aggregator.Helpers.AggregationHelpers
 {
@@ -8,39 +10,76 @@ namespace l2l_aggregator.Helpers.AggregationHelpers
     {
         public Bitmap CropImage(Bitmap source, double xCell, double yCell, double sizeWidth, double sizeHeight, double scaleXObrat, double scaleYObrat, float angleDegrees)
         {
-            int cellWidth = (int)(sizeWidth * scaleXObrat);
-            int cellHeight = (int)(sizeHeight * scaleYObrat);
+            // Шаг 1: масштабирование
+            float x = (float)(xCell * scaleXObrat);
+            float y = (float)(yCell * scaleYObrat);
+            float width = (float)(sizeWidth * scaleXObrat);
+            float height = (float)(sizeHeight * scaleYObrat);
 
-            int x = (int)(xCell * scaleXObrat);
-            int y = (int)(yCell * scaleYObrat);
+            // Центр
+            float centerX = x + width / 2f;
+            float centerY = y + height / 2f;
 
+            // Угол в радианах
+            float radians = angleDegrees * (float)Math.PI / 180f; // минус – так же, как в BuildCellViewModels
 
-            var rect = new SKRectI(x, y, x + cellWidth, y + cellHeight);
+            // Косинус и синус
+            float cos = (float)Math.Cos(radians);
+            float sin = (float)Math.Sin(radians);
+
+            // Вершины повернутого прямоугольника (от центра)
+            SKPoint[] corners = new SKPoint[4];
+            float halfW = width / 2f;
+            float halfH = height / 2f;
+
+            corners[0] = RotatePoint(centerX, centerY, -halfW, -halfH, cos, sin); // top-left
+            corners[1] = RotatePoint(centerX, centerY, halfW, -halfH, cos, sin);  // top-right
+            corners[2] = RotatePoint(centerX, centerY, halfW, halfH, cos, sin);   // bottom-right
+            corners[3] = RotatePoint(centerX, centerY, -halfW, halfH, cos, sin);  // bottom-left
+
+            // Вычисляем bounding box
+            float minX = corners.Min(p => p.X);
+            float maxX = corners.Max(p => p.X);
+            float minY = corners.Min(p => p.Y);
+            float maxY = corners.Max(p => p.Y);
+
+            int bmpWidth = (int)Math.Ceiling(maxX - minX);
+            int bmpHeight = (int)Math.Ceiling(maxY - minY);
+
             using var sourceSK = ConvertAvaloniaBitmapToSKBitmap(source);
-            var croppedSK = new SKBitmap(cellWidth, cellHeight);
+            var result = new SKBitmap(bmpWidth, bmpHeight);
 
-            // Кадрирование
-            using (var canvas = new SKCanvas(croppedSK))
-            {
-                var destRect = new SKRectI(0, 0, cellWidth, cellHeight);
-                canvas.DrawBitmap(sourceSK, rect, destRect);
-            }
-
-            // Поворот
-            var rotated = new SKBitmap(cellWidth, cellHeight);
-            using (var canvas = new SKCanvas(rotated))
+            using (var canvas = new SKCanvas(result))
             {
                 canvas.Clear(SKColors.Transparent);
 
-                var center = new SKPoint(cellWidth / 2f, cellHeight / 2f);
-                canvas.Translate(center.X, center.Y);
-                canvas.RotateDegrees(-angleDegrees);
-                canvas.Translate(-center.X, -center.Y);
+                // Переместим канвас, чтобы обрезка попала в (0,0)
+                canvas.Translate(-minX, -minY);
 
-                canvas.DrawBitmap(croppedSK, 0, 0);
+                // Область обрезки как путь
+                var clipPath = new SKPath();
+                clipPath.MoveTo(corners[0]);
+                clipPath.LineTo(corners[1]);
+                clipPath.LineTo(corners[2]);
+                clipPath.LineTo(corners[3]);
+                clipPath.Close();
+
+                canvas.ClipPath(clipPath);
+                canvas.DrawBitmap(sourceSK, 0, 0);
             }
-            return ConvertSKBitmapToAvaloniaBitmap(rotated);
+
+            return ConvertSKBitmapToAvaloniaBitmap(result);
         }
+
+        private SKPoint RotatePoint(float cx, float cy, float dx, float dy, float cos, float sin)
+        {
+            // Поворачиваем точку (dx, dy) относительно центра (cx, cy)
+            return new SKPoint(
+                cx + dx * cos - dy * sin,
+                cy + dx * sin + dy * cos
+            );
+        }
+
 
         public Bitmap ConvertSKBitmapToAvaloniaBitmap(SKBitmap skBitmap)
         {

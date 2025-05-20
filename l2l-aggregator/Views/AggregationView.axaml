@@ -191,7 +191,11 @@
             Третий слой: всплывающее окно (Popup) с увеличенным изображением 
             выбранного квадрата. Оно привязано к IsPopupOpen и SelectedSquareImage. 
         -->
-		<Popup IsOpen="{Binding IsPopupOpen}" PlacementTarget="{Binding #scanImage}" PlacementMode="Center" Name="scanImagePopup" PointerPressed="Popup_PointerPressed">
+		<Popup IsOpen="{Binding IsPopupOpen}" 
+			   PlacementTarget="{Binding #scanImage}" 
+			   PlacementMode="Center" 
+			   Name="scanImagePopup" 
+			   PointerPressed="Popup_PointerPressed">
 			<Border Background="White" BorderBrush="Black" BorderThickness="2" >
 				<Grid SizeChanged="OnImageGridSizeCellChanged">
 					<Image Source="{Binding SelectedSquareImage}"
@@ -202,6 +206,13 @@
 						   MaxHeight="{Binding ImageSize.Height}"
 						   SizeChanged="OnImageSizeCellChanged"
 						   />
+					<!--<ListBox ItemsSource="{Binding SelectedDmCell.OcrCellsInPopUp}">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding X}" />
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>-->
 					<ItemsControl ItemsSource="{Binding SelectedDmCell.OcrCellsInPopUp}">
 						<ItemsControl.ItemsPanel>
 							<ItemsPanelTemplate>
@@ -219,16 +230,17 @@
 											   Foreground="Black"
 											   Opacity="0"/>
 								</Button>
+
 							</DataTemplate>
 						</ItemsControl.ItemTemplate>
-						<!--<ItemsControl.Styles>
+						<ItemsControl.Styles>
 							<Style Selector="ContentPresenter" x:DataType="vmVE:SquareCellViewModel">
 								<Setter Property="Canvas.Left" Value="{Binding X}"/>
 								<Setter Property="Canvas.Top" Value="{Binding Y}"/>
 								<Setter Property="Height" Value="{Binding SizeHeight}"/>
 								<Setter Property="Width" Value="{Binding SizeWidth}"/>
 							</Style>
-						</ItemsControl.Styles>-->
+						</ItemsControl.Styles>
 					</ItemsControl>
 				</Grid>
 			</Border>

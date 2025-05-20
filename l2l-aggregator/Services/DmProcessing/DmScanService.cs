@@ -129,7 +129,7 @@ namespace l2l_aggregator.Services.DmProcessing
         }
 
         public ObservableCollection<DmCellViewModel> BuildCellViewModels(
-            result_data dmrData,
+            in result_data dmrData,
             double scaleX, double scaleY,
             SessionService sessionService,
             ObservableCollection<TemplateField> fields,

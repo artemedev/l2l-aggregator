@@ -27,7 +27,7 @@ namespace l2l_aggregator.ViewModels.VisualElements
         [ObservableProperty] private bool isValid;
 
         public IBrush BorderColor => IsValid ? Brushes.Green : Brushes.Red;
-        //partial void OnIsValidChanged(bool value) => OnPropertyChanged(nameof(BorderColor));
+        partial void OnIsValidChanged(bool value) => OnPropertyChanged(nameof(BorderColor));
 
         // **Список OCR-квадратов**, связанных с этим DM-квадратом:
         public ObservableCollection<SquareCellViewModel> OcrCells { get; set; }
@@ -35,14 +35,14 @@ namespace l2l_aggregator.ViewModels.VisualElements
         public ObservableCollection<SquareCellViewModel> OcrCellsInPopUp { get; set; }
             = new ObservableCollection<SquareCellViewModel>();
         // Команда, вызываемая при нажатии на DM-квадрат
-        //[RelayCommand]
-        //public void DmSquareClicked()
-        //{
-        //    // Устанавливаем в родительской VM «текущую выбранную DMCell»
-        //    _parent.SelectedDmCell = this;
-        //    _parent.OnCellClicked(this);
-        //    // И открываем Popup
-        //    _parent.IsPopupOpen = true;
-        //}
+        [RelayCommand]
+        public void DmSquareClicked()
+        {
+            // Устанавливаем в родительской VM «текущую выбранную DMCell»
+            _parent.SelectedDmCell = this;
+            _parent.OnCellClicked(this);
+            // И открываем Popup
+            _parent.IsPopupOpen = true;
+        }
     }
 }
