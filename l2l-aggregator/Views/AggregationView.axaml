@@ -196,8 +196,10 @@
 				<Grid SizeChanged="OnImageGridSizeCellChanged">
 					<Image Source="{Binding SelectedSquareImage}"
 						   Stretch="Uniform"
-						   Width="1300"
-						   Height="1000"
+						   HorizontalAlignment="Center"
+						   VerticalAlignment="Center"
+						   MaxWidth="{Binding ImageSize.Width}"
+						   MaxHeight="{Binding ImageSize.Height}"
 						   SizeChanged="OnImageSizeCellChanged"
 						   />
 					<ItemsControl ItemsSource="{Binding SelectedDmCell.OcrCellsInPopUp}">
@@ -219,14 +221,14 @@
 								</Button>
 							</DataTemplate>
 						</ItemsControl.ItemTemplate>
-						<ItemsControl.Styles>
+						<!--<ItemsControl.Styles>
 							<Style Selector="ContentPresenter" x:DataType="vmVE:SquareCellViewModel">
 								<Setter Property="Canvas.Left" Value="{Binding X}"/>
 								<Setter Property="Canvas.Top" Value="{Binding Y}"/>
 								<Setter Property="Height" Value="{Binding SizeHeight}"/>
 								<Setter Property="Width" Value="{Binding SizeWidth}"/>
 							</Style>
-						</ItemsControl.Styles>
+						</ItemsControl.Styles>-->
 					</ItemsControl>
 				</Grid>
 			</Border>

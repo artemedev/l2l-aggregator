@@ -381,18 +381,24 @@ namespace l2l_aggregator.ViewModels
                 }
                 if (dmrData.rawImage != null)
                 {
-                    int minX = dmrData.BOXs.Min(d => d.poseX - (d.height / 2) - 10);
-                    int minY = dmrData.BOXs.Min(d => d.poseY - (d.width / 2) - 10);
-                    int maxX = dmrData.BOXs.Max(d => d.poseX + (d.height / 2) + 10);
-                    int maxY = dmrData.BOXs.Max(d => d.poseY + (d.width / 2) + 10);
+                    double boxRadius = Math.Sqrt(dmrData.BOXs[0].height * dmrData.BOXs[0].height +
+                              dmrData.BOXs[0].width * dmrData.BOXs[0].width) / 2;
+                    int minX = (int)dmrData.BOXs.Min(d => d.poseX - boxRadius);
+                    int minY = (int)dmrData.BOXs.Min(d => d.poseY - boxRadius);
+                    int maxX = (int)dmrData.BOXs.Max(d => d.poseX + boxRadius);
+                    int maxY = (int)dmrData.BOXs.Max(d => d.poseY + boxRadius);
 
-                    // Увеличиваем зону обрезки на 20 пикселей с каждой стороны
+
                     minX = Math.Max(0, minX);
                     minY = Math.Max(0, minY);
                     maxX = Math.Min(dmrData.rawImage.Width, maxX);
                     maxY = Math.Min(dmrData.rawImage.Height, maxY);
+
+                    // Освобождаем старое изображение перед новым
+                    ScannedImage?.Dispose();
                     //кроп изображения
                     ScannedImage = await _dmScanService.GetCroppedImage(dmrData, minX, minY, maxX, maxY);
+
 
                     await Task.Delay(100); //исправить
 
@@ -400,13 +406,17 @@ namespace l2l_aggregator.ViewModels
 
                     scaleX = imageSize.Width / ScannedImage.PixelSize.Width;
                     scaleY = imageSize.Height / ScannedImage.PixelSize.Height;
-                    scaleImagaeX = 1.2611200;
-                    scaleImagaeY = 1.216;
+                    //scaleImagaeX = 1.2611200;
+                    //scaleImagaeY = 1.216;
                     //scaleImagaeX = dmrData.rawImage.Width / ScannedImage.PixelSize.Width;
                     //scaleImagaeY = dmrData.rawImage.Height / ScannedImage.PixelSize.Height;
 
-                    scaleXObrat = dmrData.rawImage.Width / imageSize.Width;
-                    scaleYObrat = dmrData.rawImage.Height / imageSize.Height;
+                    //scaleXObrat = dmrData.rawImage.Width / imageSize.Width;
+                    //scaleYObrat = dmrData.rawImage.Height / imageSize.Height;
+                    scaleXObrat = ScannedImage.PixelSize.Width / imageSize.Width;
+                    scaleYObrat = ScannedImage.PixelSize.Height / imageSize.Height;
+                    // изображение из распознавания
+                    //dmrData.rawImage = null;
 
                     var responseSgtin = await _dataApiService.LoadSgtinAsync(_sessionService.SelectedTaskInfo.DOCID);
                     if (responseSgtin == null)
@@ -415,24 +425,10 @@ namespace l2l_aggregator.ViewModels
                         _notificationService.ShowMessage(InfoMessage);
                         return;
                     }
-                    Dispatcher.UIThread.Post(() =>
+                    await Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         DMCells.Clear();
-                        //var cells = _dmScanService.BuildCellViewModels(
-                        //                                            dmrData,
-                        //                                            scaleX,
-                        //                                            scaleY,
-                        //                                            _sessionService,
-                        //                                            TemplateFields,
-                        //                                            responseSgtin,
-                        //                                            this,
-                        //                                            minX,
-                        //                                            minY,
-                        //                                            scaleImagaeX,
-                        //                                            scaleImagaeY);
-                        ////создание ячеек
-                        //DMCells = new ObservableCollection<DmCellViewModel>(cells);
-                        foreach (var cell in _dmScanService.BuildCellViewModels(
+                        foreach (DmCellViewModel cell in _dmScanService.BuildCellViewModels(
                                                                     dmrData,
                                                                     scaleX,
                                                                     scaleY,
@@ -441,11 +437,9 @@ namespace l2l_aggregator.ViewModels
                                                                     responseSgtin,
                                                                     this,
                                                                     minX,
-                                                                    minY,
-                                                                    scaleImagaeX,
-                                                                    scaleImagaeY))
+                                                                    minY))
                         {
-                            DMCells.Add(cell); // вызовет CollectionChanged
+                            DMCells.Add(cell);
                         }
                     });
 
@@ -456,27 +450,30 @@ namespace l2l_aggregator.ViewModels
                     canOpenTemplateSettings = true;
                     if (CurrentLayer == _sessionService.SelectedTaskInfo.LAYERS_QTY)
                     {
-                        СanPrintBoxLabel = true;
-                        if (validCountDMCells == numberOfLayers)
+                        if (validCountDMCells == DMCells.Count)
                         {
-
-                            canScan = false;
-                            canOpenTemplateSettings = false;
-                            сanPrintBoxLabel = true;//сделать 
-                            CurrentStepIndex = 1;
-                            if (CurrentBox == _sessionService.SelectedTaskInfo.IN_PALLET_BOX_QTY)
+                            СanPrintBoxLabel = true;
+                            if (validCountDMCells == numberOfLayers)
                             {
 
-                                if (CurrentPallet == _sessionService.SelectedTaskInfo.PALLET_QTY)
+                                canScan = false;
+                                canOpenTemplateSettings = false;
+                                сanPrintBoxLabel = true;//сделать 
+                                CurrentStepIndex = 1;
+                                if (CurrentBox == _sessionService.SelectedTaskInfo.IN_PALLET_BOX_QTY)
                                 {
-                                    //нужно сохранить 
-                                    //!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                                    if (CurrentPallet == _sessionService.SelectedTaskInfo.PALLET_QTY)
+                                    {
+                                        //нужно сохранить 
+                                        //!!!!!!!!!!!!!!!!!!!!!!!!!
+                                    }
                                 }
                             }
-                        }
-                        else
-                        {
-                            CurrentLayer++;
+                            else
+                            {
+                                // CurrentLayer++;
+                            }
                         }
                     }
                     else
@@ -671,10 +668,12 @@ namespace l2l_aggregator.ViewModels
         }
         public async void OnCellClicked(DmCellViewModel cell)
         {
-            int minX = dmrData.BOXs.Min(d => d.poseX - (d.width / 2));
-            int minY = dmrData.BOXs.Min(d => d.poseY - (d.height / 2));
-            int maxX = dmrData.BOXs.Max(d => d.poseX + (d.width / 2));
-            int maxY = dmrData.BOXs.Max(d => d.poseY + (d.height / 2));
+            double boxRadius = Math.Sqrt(dmrData.BOXs[0].height * dmrData.BOXs[0].height +
+                         dmrData.BOXs[0].width * dmrData.BOXs[0].width) / 2;
+            int minX = (int)dmrData.BOXs.Min(d => d.poseX - boxRadius);
+            int minY = (int)dmrData.BOXs.Min(d => d.poseY - boxRadius);
+            int maxX = (int)dmrData.BOXs.Max(d => d.poseX + boxRadius);
+            int maxY = (int)dmrData.BOXs.Max(d => d.poseY + boxRadius);
 
             SelectedSquareImage = _imageProcessingService.CropImage(
                 ScannedImage,
@@ -683,7 +682,8 @@ namespace l2l_aggregator.ViewModels
                 cell.SizeWidth,
                 cell.SizeHeight,
                 scaleXObrat,
-                scaleYObrat
+                scaleYObrat,
+                (float)cell.Angle
             );
 
             await Task.Delay(100);

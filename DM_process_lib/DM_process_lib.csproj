@@ -34,6 +34,9 @@
 	  <None Update="result - 23.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	  <None Update="result - Копировать.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	  <None Update="result.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>

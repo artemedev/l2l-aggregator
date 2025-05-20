@@ -134,7 +134,7 @@ namespace l2l_aggregator.Services.DmProcessing
             SessionService sessionService,
             ObservableCollection<TemplateField> fields,
             ArmJobSgtinResponse response,
-            AggregationViewModel thisModel, int minX, int minY, double scaleImagaeX, double scaleImagaeY)
+            AggregationViewModel thisModel, int minX, int minY)
         {
             var cells = new ObservableCollection<DmCellViewModel>();
             string json = BuildResultJson(dmrData);

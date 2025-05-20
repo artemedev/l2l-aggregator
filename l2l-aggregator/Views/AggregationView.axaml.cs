@@ -44,7 +44,7 @@ public partial class AggregationView : UserControl
     }
     private void OnCellsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
-        MainCanvas.Children.Clear();
+        MainCanvas.Children.Clear(); // ОЧИСТКА перед добавлением новых
 
         foreach (var cellVM in ((ObservableCollection<DmCellViewModel>)sender))
         {
