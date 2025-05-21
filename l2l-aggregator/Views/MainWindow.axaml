@@ -123,8 +123,10 @@
 					CornerRadius="0"/>
 			</Grid>
 		</Grid>
-		<controls:NotificationMessageContainer Manager="{Binding Manager}"  VerticalAlignment="Bottom"
-								HorizontalAlignment="Right"  ZIndex="1000"/>
+		<controls:NotificationMessageContainer Manager="{Binding Manager}"  
+											   VerticalAlignment="Bottom"
+											   HorizontalAlignment="Right"  ZIndex="1000"
+											   MaxWidth="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource QuarterWidthConverter}}"/>
 		<Panel Background="Transparent" Name="dialogpanel"  IsVisible="False">
 			<keyboard:VirtualKeyboard Name="VirtualKeyboardControl" IsVisible="False"></keyboard:VirtualKeyboard>
 		</Panel>

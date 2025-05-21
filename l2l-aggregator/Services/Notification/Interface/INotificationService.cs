@@ -1,18 +1,20 @@
 ﻿using Avalonia.Notification;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace l2l_aggregator.Services.Notification.Interface
 {
+    public enum NotificationType
+    {
+        Info,
+        Warn,
+        Error
+    }
     public interface INotificationService
     {
         INotificationMessageManager Manager { get; }
 
-        INotificationMessage ShowMessage(string message, string header = null, Action closeAction = null);
+        INotificationMessage ShowMessage(string message, NotificationType type = NotificationType.Info, Action closeAction = null);
 
         NotificationMessageBuilder Default();
 

@@ -7,15 +7,15 @@
 			 xmlns:vm="using:l2l_aggregator.ViewModels"
 			 x:DataType="vm:InitializationViewModel"
              x:Class="l2l_aggregator.Views.InitializationView">
-	<Grid HorizontalAlignment="Center" VerticalAlignment="Center" ShowGridLines="True">
+	<Grid HorizontalAlignment="Center" VerticalAlignment="Center">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
-		<Grid Grid.Column="1" ShowGridLines="True">
+		<Grid Grid.Column="1">
 			<Viewbox Stretch="Uniform">
-				<Grid ShowGridLines="True">
+				<Grid>
 					<Grid.RowDefinitions>
 						<RowDefinition Height="100"/>
 						<RowDefinition Height="*"/>

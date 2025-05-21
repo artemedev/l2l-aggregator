@@ -126,15 +126,15 @@ namespace l2l_aggregator.Services.Api
             }
             catch (ApiException apiEx)
             {
-                _notificationService.ShowMessage($"Ошибка API: {apiEx.StatusCode} — {apiEx.Message}");
+                _notificationService.ShowMessage($"Ошибка API: {apiEx.StatusCode} — {apiEx.Message}", NotificationType.Error);
             }
             catch (HttpRequestException httpEx)
             {
-                _notificationService.ShowMessage($"Ошибка HTTP-запроса: {httpEx.Message}");
+                _notificationService.ShowMessage($"Ошибка HTTP-запроса: {httpEx.Message}", NotificationType.Error);
             }
             catch (Exception ex)
             {
-                _notificationService.ShowMessage($"Непредвиденная ошибка: {ex.Message}");
+                _notificationService.ShowMessage($"Непредвиденная ошибка: {ex.Message}", NotificationType.Error);
             }
 
             return default;

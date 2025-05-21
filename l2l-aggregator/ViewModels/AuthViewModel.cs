@@ -74,7 +74,7 @@ namespace l2l_aggregator.ViewModels
                         else
                         {
                             //InfoMessage = $"Ошибка авторизации: {response.ERROR_TEXT}";
-                            _notificationService.ShowMessage($"Ошибка авторизации: {response.ERROR_TEXT}");
+                            _notificationService.ShowMessage($"Ошибка авторизации: {response.ERROR_TEXT}", NotificationType.Warn);
                         }
                     }
 
@@ -83,13 +83,13 @@ namespace l2l_aggregator.ViewModels
                 catch (Exception ex)
                 {
 
-                    _notificationService.ShowMessage(ex.Message);
+                    _notificationService.ShowMessage(ex.Message, NotificationType.Error);
                 }
 
             }
             catch (ApiException apiEx)
             {
-                _notificationService.ShowMessage($"API ошибка: {apiEx.Message}");
+                _notificationService.ShowMessage($"API ошибка: {apiEx.Message}", NotificationType.Error);
             }
         }
     }
