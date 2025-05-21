@@ -6,6 +6,7 @@ using System.Timers;
 using l2l_aggregator.ViewModels;
 using l2l_aggregator.Services;
 using Avalonia.Controls.Primitives;
+using Avalonia.Threading;
 
 namespace l2l_aggregator.Views
 {
@@ -43,6 +44,7 @@ namespace l2l_aggregator.Views
                     if (flyoutBorder != null)
                     {
                         flyoutBorder.Width = this.Bounds.Width / 3;
+                        flyoutBorder.MaxHeight = this.Bounds.Height * 2 / 3;
                     }
 
                     FlyoutBase.ShowAttachedFlyout(notificationsButton);

@@ -15,6 +15,11 @@
 			<Setter Property="MaxWidth" Value="1700"/>
 		</Style>
 	</Window.Styles>
+	<Window.Resources>
+		<Flyout x:Key="MySharedFlyout">
+			<!-- Flyout content here -->
+		</Flyout>
+	</Window.Resources>
 	<Grid>
 		<Grid>
 			<Grid.RowDefinitions>
@@ -48,28 +53,31 @@
 						FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource ResponsiveFontSizeConverter}}"
 						Margin="0"
 						BorderThickness="1,0,0,0"
-						CornerRadius="0">
+						CornerRadius="0"
+						Flyout="{StaticResource MySharedFlyout}">
 					<Button.Flyout>
-						<Flyout Placement="BottomEdgeAlignedRight" Flyout.FlyoutPresenterClasses="wider">
+						<Flyout Placement="BottomEdgeAlignedRight" Flyout.FlyoutPresenterClasses="wider" >
 							<Border Background="White"
 									BorderBrush="Gray"
 									BorderThickness="1"
-									Padding="10"
-									MaxHeight="400">
-								<Grid RowDefinitions="Auto,*">
+									Padding="10">
+								<Grid RowDefinitions="*,7*">
 									<!-- Заголовок + Кнопка -->
-									<DockPanel Grid.Row="0" Margin="0 0 0 10">
+									<Grid Grid.Row="0" ColumnDefinitions="2*,*" Margin="0,0,0,10">
 										<TextBlock Text="Уведомления"
+												   Grid.Column="0"
 												   FontWeight="Bold"
-												   DockPanel.Dock="Left"
-												   FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;12;40'}"/>
+												   FontSize="{Binding Bounds.Width, ElementName=NotificationsButton, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.05;18;40'}"/>
 										<Button Content="Очистить"
+												Grid.Column="1"
 												Command="{Binding ClearNotificationsCommand}"
-												HorizontalAlignment="Right"
-												DockPanel.Dock="Right"
-												Padding="4,0"
-												FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;12;40'}"/>
-									</DockPanel>
+												HorizontalAlignment="Stretch"
+												VerticalAlignment="Stretch"
+												HorizontalContentAlignment="Center"
+												VerticalContentAlignment="Center"
+												Padding="10"
+												FontSize="{Binding Bounds.Width, ElementName=NotificationsButton, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.05;18;40'}"/>
+									</Grid>
 
 									<!-- Список с прокруткой -->
 									<ScrollViewer Grid.Row="1" AllowAutoHide="False" IsScrollChainingEnabled="False" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -77,10 +85,10 @@
 											<ItemsControl.ItemTemplate>
 												<DataTemplate>
 													<StackPanel>
-														<TextBlock Text="{Binding}" 
-																   TextWrapping="Wrap" 
+														<TextBlock Text="{Binding}"
+																   TextWrapping="Wrap"
 																   Margin="5"
-																   FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource ResponsiveFontSizeConverter}}"/>
+																   FontSize="{Binding Bounds.Width, ElementName=NotificationsButton, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.05;18;40'}"/>
 														<Separator Margin="2"/>
 													</StackPanel>
 												</DataTemplate>
