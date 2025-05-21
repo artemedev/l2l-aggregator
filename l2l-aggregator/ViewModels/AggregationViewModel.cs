@@ -20,6 +20,7 @@ using l2l_aggregator.ViewModels.VisualElements;
 using l2l_aggregator.Views.Popup;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -128,6 +129,11 @@ namespace l2l_aggregator.ViewModels
         [ObservableProperty] private int currentBox = 1;
         [ObservableProperty] private int currentPallet = 1;
 
+
+        [ObservableProperty]
+        private bool recognizePack = true; // Добавление опции "распознавание коробки" в настройки распознавания
+
+        public IEnumerable<RecognitionType> RecognitionTypes => Enum.GetValues(typeof(RecognitionType)).Cast<RecognitionType>();
         public AggregationViewModel(
             DataApiService dataApiService,
             ImageHelper imageProcessingService,
@@ -275,7 +281,7 @@ namespace l2l_aggregator.ViewModels
                     softwareTrigger = true,
                     hardwareTrigger = false,
                     OCRRecogn = hasOcr,
-                    packRecogn = true,
+                    packRecogn = RecognizePack,
                     DMRecogn = hasDm
                 };
 
@@ -697,8 +703,10 @@ namespace l2l_aggregator.ViewModels
 
             foreach (var ocr in cell.OcrCells)
             {
-                double newX = (((ocr.X - minX) - (cell.X / scaleX)) * scaleXCell) + shiftX;
-                double newY = (((ocr.Y - minY) - (cell.Y / scaleX)) * scaleYCell) + shiftY;
+                //double newX = (((ocr.X - minX) - (cell.X / scaleX)) * scaleXCell) + shiftX;
+                //double newY = (((ocr.Y - minY) - (cell.Y / scaleX)) * scaleYCell) + shiftY;
+                double newX = ocr.X;
+                double newY = ocr.Y;
 
                 newOcrList.Add(new SquareCellViewModel
                 {
@@ -706,7 +714,8 @@ namespace l2l_aggregator.ViewModels
                     Y = newY,
                     SizeWidth = ocr.SizeWidth * scaleXCell,
                     SizeHeight = ocr.SizeHeight * scaleYCell,
-                    IsValid = ocr.IsValid
+                    IsValid = ocr.IsValid,
+                    Angle = ocr.Angle
                 });
             }
 

@@ -2,6 +2,7 @@
 using l2l_aggregator.Services.Notification.Interface;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,9 @@ namespace l2l_aggregator.Services.Notification
     public class NotificationService : INotificationService
     {
         public INotificationMessageManager Manager { get; }
+
+        // Коллекция всех уведомлений
+        public ObservableCollection<string> Notifications { get; } = new();
 
         public NotificationService()
         {
@@ -30,6 +34,9 @@ namespace l2l_aggregator.Services.Notification
 
         public INotificationMessage ShowMessage(string message, string header = null, Action closeAction = null)
         {
+            // 🆕 Добавляем сообщение в список
+            Notifications.Add(message);
+
             return Manager
                 .CreateMessage()
                 .Accent("#1751c3") // Цвет полоски

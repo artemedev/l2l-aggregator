@@ -5,6 +5,7 @@ using l2l_aggregator.Controls.Keyboard;
 using System.Timers;
 using l2l_aggregator.ViewModels;
 using l2l_aggregator.Services;
+using Avalonia.Controls.Primitives;
 
 namespace l2l_aggregator.Views
 {
@@ -30,6 +31,23 @@ namespace l2l_aggregator.Views
 
             InitializeComponent();
 
+            var notificationsButton = this.FindControl<Button>("NotificationsButton");
+            var notificationsFlyout = notificationsButton?.Flyout as Flyout;
+
+            notificationsButton.Click += (_, _) =>
+            {
+                if (notificationsFlyout != null)
+                {
+                    // Подгоняем ширину Flyout к ширине кнопки
+                    var flyoutBorder = notificationsFlyout.Content as Border;
+                    if (flyoutBorder != null)
+                    {
+                        flyoutBorder.Width = this.Bounds.Width / 3;
+                    }
+
+                    FlyoutBase.ShowAttachedFlyout(notificationsButton);
+                }
+            };
 
             virtualKeyboardTextInput = new VirtualKeyboardTextInputMethod((Window)this);
 

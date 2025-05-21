@@ -10,19 +10,23 @@
         x:DataType="vm:MainWindowViewModel"
 		Icon="/Assets/Images/Logo2.ico"
         Title="l2l_aggregator">
-
+	<Window.Styles>
+		<Style Selector="FlyoutPresenter.wider">
+			<Setter Property="MaxWidth" Value="1700"/>
+		</Style>
+	</Window.Styles>
 	<Grid>
 		<Grid>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="70"/>
 				<RowDefinition Height="*"/>
-				<RowDefinition Height="30"/>
+				<RowDefinition Height="50"/>
 			</Grid.RowDefinitions>
 			<Grid Background="{DynamicResource ResourceKey=PrimaryBackground}" Grid.Row="0" IsVisible="{Binding IsNotLoginPage}">
 
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="8*"/>
+					<ColumnDefinition Width="4*"/>
 					<ColumnDefinition Width="*"/>
 				</Grid.ColumnDefinitions>
 				<!--<StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center" VerticalAlignment="Center">-->
@@ -32,9 +36,9 @@
 						   VerticalAlignment="Center"
 					   />
 				</Border>
-				<Button Grid.Column="2"
-						Command="{Binding ButtonExit}"
-						Content="Выход"
+				<Button x:Name="NotificationsButton"
+						Grid.Column="2"
+						Content="Уведомления"
 						HorizontalAlignment="Stretch"
 						HorizontalContentAlignment="Center"
 						VerticalAlignment="Stretch"
@@ -44,14 +48,71 @@
 						FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource ResponsiveFontSizeConverter}}"
 						Margin="0"
 						BorderThickness="1,0,0,0"
-						CornerRadius="0"/>
+						CornerRadius="0">
+					<Button.Flyout>
+						<Flyout Placement="BottomEdgeAlignedRight" Flyout.FlyoutPresenterClasses="wider">
+							<Border Background="White"
+									BorderBrush="Gray"
+									BorderThickness="1"
+									Padding="10"
+									MaxHeight="400">
+								<Grid RowDefinitions="Auto,*">
+									<!-- Заголовок + Кнопка -->
+									<DockPanel Grid.Row="0" Margin="0 0 0 10">
+										<TextBlock Text="Уведомления"
+												   FontWeight="Bold"
+												   DockPanel.Dock="Left"
+												   FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;12;40'}"/>
+										<Button Content="Очистить"
+												Command="{Binding ClearNotificationsCommand}"
+												HorizontalAlignment="Right"
+												DockPanel.Dock="Right"
+												Padding="4,0"
+												FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;12;40'}"/>
+									</DockPanel>
+
+									<!-- Список с прокруткой -->
+									<ScrollViewer Grid.Row="1" AllowAutoHide="False" IsScrollChainingEnabled="False" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+										<ItemsControl ItemsSource="{Binding Notifications}">
+											<ItemsControl.ItemTemplate>
+												<DataTemplate>
+													<StackPanel>
+														<TextBlock Text="{Binding}" 
+																   TextWrapping="Wrap" 
+																   Margin="5"
+																   FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource ResponsiveFontSizeConverter}}"/>
+														<Separator Margin="2"/>
+													</StackPanel>
+												</DataTemplate>
+											</ItemsControl.ItemTemplate>
+										</ItemsControl>
+									</ScrollViewer>
+								</Grid>
+							</Border>
+						</Flyout>
+
+					</Button.Flyout>
+				</Button>
 			</Grid>
 			<ContentControl  Grid.Row="1" Content="{Binding Content}"></ContentControl>
-			<Grid Grid.Row="2" Background="LightBlue" IsVisible="{Binding IsNotLoginPage}" >
-				<StackPanel Orientation="Horizontal">
-					<TextBlock Text="Пользователь:" FontSize="16" FontWeight="Bold" Padding="5"/>
-					<TextBlock Text="{Binding User.USER_NAME}" FontSize="16" FontWeight="Bold" Padding="5"/>
+			<Grid Grid.Row="2" Background="LightBlue" IsVisible="{Binding IsNotLoginPage}" ColumnDefinitions="4*,*,*" >
+				<StackPanel Grid.Column="0" Orientation="Horizontal">
+					<TextBlock Text="Пользователь:" FontSize="16" FontWeight="Bold" Padding="5" VerticalAlignment="Center"/>
+					<TextBlock Text="{Binding User.USER_NAME}" FontSize="16" FontWeight="Bold" Padding="5" VerticalAlignment="Center"/>
 				</StackPanel>
+				<Button Grid.Column="2"
+					Command="{Binding ButtonExit}"
+					Content="Выход"
+					HorizontalAlignment="Stretch"
+					HorizontalContentAlignment="Center"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Center"
+					Background="Transparent"
+					BorderBrush="Gray"
+					FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource ResponsiveFontSizeConverter}}"
+					Margin="0"
+					BorderThickness="1,0,0,0"
+					CornerRadius="0"/>
 			</Grid>
 		</Grid>
 		<controls:NotificationMessageContainer Manager="{Binding Manager}"  VerticalAlignment="Bottom"

@@ -1,6 +1,8 @@
-﻿using Avalonia.Notification;
+﻿using Avalonia.Controls;
+using Avalonia.Notification;
 using Avalonia.SimpleRouter;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using l2l_aggregator.Models;
 using l2l_aggregator.Services;
 using l2l_aggregator.Services.Api;
@@ -8,6 +10,7 @@ using l2l_aggregator.Services.Database;
 using l2l_aggregator.Services.Notification.Interface;
 using Refit;
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -37,6 +40,16 @@ namespace l2l_aggregator.ViewModels
         private readonly ConfigurationLoaderService _configLoader;
         public INotificationMessageManager Manager => _notificationService.Manager;
 
+        //-------Notification--------
+        [ObservableProperty]
+        private ObservableCollection<string> _notifications = new();
+
+        public IRelayCommand ToggleNotificationsFlyoutCommand { get; }
+
+        private Flyout? _notificationsFlyout;
+        public IRelayCommand ClearNotificationsCommand { get; }
+
+
         public MainWindowViewModel(HistoryRouter<ViewModelBase> router, DatabaseService databaseService, INotificationService notificationService, SessionService sessionService, ConfigurationLoaderService configLoader)
         {
             _router = router;
@@ -54,9 +67,13 @@ namespace l2l_aggregator.ViewModels
                     await LoadUserData(Content); // Загружаем данные пользователя при входе
                 }
             };
+
             InitializeAsync();
 
             _ = InitializeSessionFromDatabaseAsync();
+            //-------Notification--------
+            Notifications = _notificationService.Notifications;
+            ClearNotificationsCommand = new RelayCommand(ClearNotifications);
         }
         //private async Task InitializeSessionFromDatabaseAsync()
         //{
@@ -120,7 +137,17 @@ namespace l2l_aggregator.ViewModels
         }
         public void ButtonExit()
         {
+            Notifications.Clear();
             _router.GoTo<AuthViewModel>();
+        }
+
+        public void SetFlyout(Flyout flyout)
+        {
+            _notificationsFlyout = flyout;
+        }
+        private void ClearNotifications()
+        {
+            Notifications.Clear();
         }
     }
 }

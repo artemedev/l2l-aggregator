@@ -165,9 +165,10 @@ namespace l2l_aggregator.Services.AggregationService
                     {
                         attr.Remove();
                     }
+                    element.SetAttributeValue("RecognitionType", field.Recognition.ToString()); // добавление атрибута распознавания
+
                     // Установка Type и Name
                     element.SetAttributeValue("Type", field.Type == "переменная" ? "variable" : "text");
-
                     if (field.Type == "переменная")
                     {
                         // Установка Name как имя переменной

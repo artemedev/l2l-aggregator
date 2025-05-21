@@ -82,7 +82,7 @@
 			<Button Grid.Row="1"
 					Command="{Binding OpenTemplateSettingsCommand}"
 					IsEnabled="{Binding CanOpenTemplateSettings}"
-					Content="Настройки шаблона"
+					Content="Настройки распознавания"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
 					Margin="5"
