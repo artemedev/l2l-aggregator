@@ -7,15 +7,17 @@ namespace l2l_aggregator.Services.Database
         public IUserAuthRepository UserAuth { get; }
         public IConfigRepository Config { get; }
         public IRegistrationDeviceRepository RegistrationDevice { get; }
-
+        public INotificationLogRepository NotificationLog { get; }
         public DatabaseService(
             IUserAuthRepository userAuth,
             IConfigRepository config,
-            IRegistrationDeviceRepository registrationDevice)
+            IRegistrationDeviceRepository registrationDevice,
+            INotificationLogRepository notificationLog)
         {
             UserAuth = userAuth;
             Config = config;
             RegistrationDevice = registrationDevice;
+            NotificationLog = notificationLog;
         }
     }
 }

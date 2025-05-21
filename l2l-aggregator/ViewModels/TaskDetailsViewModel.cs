@@ -1,23 +1,14 @@
 ﻿using Avalonia.SimpleRouter;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FastReport.Utils;
-using l2l_aggregator.Helpers;
-using l2l_aggregator.Helpers.AggregationHelpers;
 using l2l_aggregator.Models;
 using l2l_aggregator.Services;
 using l2l_aggregator.Services.Api;
 using l2l_aggregator.Services.Database;
-using l2l_aggregator.Services.Notification;
 using l2l_aggregator.Services.Notification.Interface;
-using MD.Devices;
-using Microsoft.Extensions.Logging;
-using Refit;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace l2l_aggregator.ViewModels

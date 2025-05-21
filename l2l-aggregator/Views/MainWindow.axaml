@@ -83,14 +83,25 @@
 									<ScrollViewer Grid.Row="1" AllowAutoHide="False" IsScrollChainingEnabled="False" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
 										<ItemsControl ItemsSource="{Binding Notifications}">
 											<ItemsControl.ItemTemplate>
+
 												<DataTemplate>
-													<StackPanel>
-														<TextBlock Text="{Binding}"
-																   TextWrapping="Wrap"
-																   Margin="5"
-																   FontSize="{Binding Bounds.Width, ElementName=NotificationsButton, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.05;18;40'}"/>
-														<Separator Margin="2"/>
-													</StackPanel>
+													<Border Background="{Binding Type, Converter={StaticResource NotificationTypeToBrushConverter}}"
+															Padding="5"
+															CornerRadius="4">
+														<StackPanel>
+															<TextBlock Text="{Binding Type}"
+																	   FontWeight="Bold"
+																	   Foreground="Gray"
+																	   Margin="0,0,0,2"
+																	   FontSize="{Binding Bounds.Width, ElementName=NotificationsButton, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.05;14;30'}"/>
+															
+															<TextBlock Text="{Binding Message}"
+																	   TextWrapping="Wrap"
+																	   Margin="5"
+																	   FontSize="{Binding Bounds.Width, ElementName=NotificationsButton, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.05;18;40'}"/>
+															<Separator Margin="2"/>
+														</StackPanel>
+													</Border>
 												</DataTemplate>
 											</ItemsControl.ItemTemplate>
 										</ItemsControl>
@@ -123,10 +134,10 @@
 					CornerRadius="0"/>
 			</Grid>
 		</Grid>
-		<controls:NotificationMessageContainer Manager="{Binding Manager}"  
+		<controls:NotificationMessageContainer Manager="{Binding Manager}"
 											   VerticalAlignment="Bottom"
 											   HorizontalAlignment="Right"  ZIndex="1000"
-											   MaxWidth="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource QuarterWidthConverter}}"/>
+											   MaxWidth="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource OneThirdWidthConverter}}"/>
 		<Panel Background="Transparent" Name="dialogpanel"  IsVisible="False">
 			<keyboard:VirtualKeyboard Name="VirtualKeyboardControl" IsVisible="False"></keyboard:VirtualKeyboard>
 		</Panel>

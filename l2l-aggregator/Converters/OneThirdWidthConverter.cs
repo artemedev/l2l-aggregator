@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace l2l_aggregator.Converters
 {
-    public class QuarterWidthConverter : IValueConverter
+    public class OneThirdWidthConverter: IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

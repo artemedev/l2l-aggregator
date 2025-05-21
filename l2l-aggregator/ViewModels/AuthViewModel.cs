@@ -1,6 +1,7 @@
 ﻿using Avalonia.SimpleRouter;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using l2l_aggregator.Services;
 using l2l_aggregator.Services.Api;
 using l2l_aggregator.Services.Database;
 using l2l_aggregator.Services.Notification.Interface;
@@ -26,14 +27,17 @@ namespace l2l_aggregator.ViewModels
         private readonly DatabaseService _databaseService;
         //private readonly IApiClientFactory _apiClientFactory;
         private readonly DataApiService _dataApiService;
+        private readonly SessionService _sessionService;
+
 
         private readonly INotificationService _notificationService;
-        public AuthViewModel(DatabaseService databaseService, HistoryRouter<ViewModelBase> router, INotificationService notificationService, DataApiService dataApiService)
+        public AuthViewModel(DatabaseService databaseService, HistoryRouter<ViewModelBase> router, INotificationService notificationService, DataApiService dataApiService, SessionService sessionService)
         {
             _databaseService = databaseService;
             _router = router;
             _notificationService = notificationService;
             _dataApiService = dataApiService;
+            _sessionService = sessionService;
             _login = "TESTINNO1";
             _password = "4QrcOUm6Wau+VuBX8g+IPg==";
         }
@@ -45,6 +49,7 @@ namespace l2l_aggregator.ViewModels
             {
                 if (await _databaseService.UserAuth.ValidateAdminUserAsync(Login, Password))
                 {
+                    _sessionService.User = new Models.UserAuthResponse { USER_NAME = Login };
                     _notificationService.ShowMessage("Админ вход. Переходим к настройкам...");
                     _router.GoTo<SettingsViewModel>();
                     return;
@@ -65,6 +70,7 @@ namespace l2l_aggregator.ViewModels
                     {
                         if (response.AUTH_OK == "1")
                         {
+                            _sessionService.User = response;
                             await _databaseService.UserAuth.SaveUserAuthAsync(response);
                             // Успешная авторизация
                             _notificationService.ShowMessage("Авторизация прошла успешно!");
@@ -78,7 +84,7 @@ namespace l2l_aggregator.ViewModels
                         }
                     }
 
-                    
+
                 }
                 catch (Exception ex)
                 {

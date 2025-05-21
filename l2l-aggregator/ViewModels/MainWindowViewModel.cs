@@ -14,6 +14,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using static l2l_aggregator.Services.Notification.NotificationService;
 
 namespace l2l_aggregator.ViewModels
 {
@@ -42,7 +43,7 @@ namespace l2l_aggregator.ViewModels
 
         //-------Notification--------
         [ObservableProperty]
-        private ObservableCollection<string> _notifications = new();
+        private ObservableCollection<NotificationItem> _notifications = new();
 
         public IRelayCommand ToggleNotificationsFlyoutCommand { get; }
 
@@ -129,15 +130,19 @@ namespace l2l_aggregator.ViewModels
 
             if (response != null)
             {
-                User = new UserAuthResponse
-                {
-                    USER_NAME = response.USER_NAME,
-                };
+                _sessionService.User = response; // Сохраняем ссылку глобально
+                User = response;                 // Локально для ViewModel
+                //User = new UserAuthResponse
+                //{
+                //    USER_NAME = response.USER_NAME,
+                //};
             }
         }
         public void ButtonExit()
         {
             Notifications.Clear();
+            _sessionService.User = null;
+            User = null;
             _router.GoTo<AuthViewModel>();
         }
 

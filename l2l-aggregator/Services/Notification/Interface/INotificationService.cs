@@ -1,6 +1,7 @@
 ﻿using Avalonia.Notification;
 using System;
 using System.Collections.ObjectModel;
+using static l2l_aggregator.Services.Notification.NotificationService;
 
 namespace l2l_aggregator.Services.Notification.Interface
 {
@@ -19,6 +20,6 @@ namespace l2l_aggregator.Services.Notification.Interface
         NotificationMessageBuilder Default();
 
         // Коллекция уведомлений для отображения в Flyout
-        ObservableCollection<string> Notifications { get; }
+        ObservableCollection<NotificationItem> Notifications { get; }
     }
 }

@@ -26,6 +26,7 @@
 		<converters:ResponsiveMarginConverter x:Key="ResponsiveMarginConverter" />
 		<converters:ResponsiveFontSizeConverter x:Key="ResponsiveFontSizeConverter" />
 		<converters:HalfConverter x:Key="HalfConverter" />
-		<converters:QuarterWidthConverter x:Key="QuarterWidthConverter"/>
+		<converters:OneThirdWidthConverter x:Key="OneThirdWidthConverter"/>
+		<converters:NotificationTypeToBrushConverter x:Key="NotificationTypeToBrushConverter"/>
 	</Application.Resources>
 </Application>

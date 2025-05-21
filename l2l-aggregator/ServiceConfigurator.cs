@@ -37,7 +37,8 @@ namespace l2l_aggregator
             //services.AddSingleton<DMProcessingService>();
             services.AddSingleton<ImageHelper>();
             services.AddSingleton<INotificationService, NotificationService>();
-            
+            services.AddSingleton<INotificationLogRepository, NotificationLogRepository>();
+
             // Регистрируем главную VM (она требует HistoryRouter)
             services.AddSingleton<MainWindowViewModel>();
 
