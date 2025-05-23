@@ -29,6 +29,11 @@ namespace l2l_aggregator.ViewModels.VisualElements
         public IBrush BorderColor => IsValid ? Brushes.Green : Brushes.Red;
         partial void OnIsValidChanged(bool value) => OnPropertyChanged(nameof(BorderColor));
 
+
+
+        [ObservableProperty]
+        public DmSquareViewModel dmCell;
+
         // **Список OCR-квадратов**, связанных с этим DM-квадратом:
         public ObservableCollection<SquareCellViewModel> OcrCells { get; set; }
             = new ObservableCollection<SquareCellViewModel>();

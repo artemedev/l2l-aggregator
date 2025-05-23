@@ -139,6 +139,10 @@ namespace l2l_aggregator.ViewModels
         [ObservableProperty]
         private string aggregationSummaryText = "Результат агрегации пока не рассчитан.";
 
+
+        //поле для запоминания предыдущего значения информации о агрегации для выхода из информации для клика по ячейке
+        private string _previousAggregationSummaryText;
+
         public AggregationViewModel(
             DataApiService dataApiService,
             ImageHelper imageProcessingService,
@@ -688,6 +692,8 @@ namespace l2l_aggregator.ViewModels
         }
         public async void OnCellClicked(DmCellViewModel cell)
         {
+            _previousAggregationSummaryText = AggregationSummaryText; // Сохраняем старый текст
+
             double boxRadius = Math.Sqrt(dmrData.BOXs[0].height * dmrData.BOXs[0].height +
                          dmrData.BOXs[0].width * dmrData.BOXs[0].width) / 2;
             int minX = (int)dmrData.BOXs.Min(d => d.poseX - boxRadius);
@@ -738,11 +744,33 @@ namespace l2l_aggregator.ViewModels
                 cell.OcrCellsInPopUp.Add(newOcr);
 
             IsPopupOpen = true;
+
+            // Обновление текста
+            AggregationSummaryText = $"""
+DM-код: {(string.IsNullOrWhiteSpace(cell.DmCell?.Data) ? "нет данных" : cell.DmCell.Data)}
+Валидность: {(cell.DmCell?.IsValid == true ? "Да" : "Нет")}
+Координаты: {(cell.DmCell is { } dm1 ? $"({dm1.X:0.##}, {dm1.Y:0.##})" : "нет данных")}
+Размер: {(cell.DmCell is { } dm ? $"({dm.SizeWidth:0.##} x {dm.SizeHeight:0.##})" : "нет данных")}
+Угол: {(cell.DmCell?.Angle is double a ? $"{a:0.##}°" : "нет данных")}
+OCR:
+{(cell.OcrCells.Count > 0
+                ? string.Join('\n', cell.OcrCells.Select(o =>
+                    $"- {(string.IsNullOrWhiteSpace(o.OcrName) ? "нет данных" : o.OcrName)}: {(string.IsNullOrWhiteSpace(o.OcrText) ? "нет данных" : o.OcrText)} ({(o.IsValid ? "валид" : "не валид")})"))
+                : "- нет данных")}
+""";
+
             Console.WriteLine($"SelectedDmCell == : {SelectedDmCell}");
             Console.WriteLine($"OcrCellsInPopUp.Count: {cell.OcrCellsInPopUp.Count}");
             foreach (var ocr in cell.OcrCellsInPopUp)
             {
                 Console.WriteLine($"OCR: X={ocr.X}, Y={ocr.Y}, W={ocr.SizeWidth}, H={ocr.SizeHeight}");
+            }
+        }
+        partial void OnIsPopupOpenChanged(bool value)
+        {
+            if (!value)
+            {
+                AggregationSummaryText = _previousAggregationSummaryText;
             }
         }
         [RelayCommand]

@@ -189,7 +189,9 @@ namespace l2l_aggregator.Services.DmProcessing
                         SizeWidth = ocr.width,
                         SizeHeight = ocr.height,
                         Angle = ocr.alpha,
-                        IsValid = isValid
+                        IsValid = isValid,
+                        OcrName = ocr.Name,
+                        OcrText = ocr.Text
                     });
 
                     if (!isValid)
@@ -202,15 +204,16 @@ namespace l2l_aggregator.Services.DmProcessing
                 }
                 if (dmd.DM.data != null)
                 {
-                    dmVm.OcrCells.Add(new SquareCellViewModel
+                    dmVm.DmCell = new DmSquareViewModel
                     {
                         X = dmd.DM.poseX,
                         Y = dmd.DM.poseY,
                         SizeWidth = dmd.DM.width,
                         SizeHeight = dmd.DM.height,
                         Angle = -dmd.DM.alpha,
-                        IsValid = !dmd.DM.isError
-                    });
+                        IsValid = !dmd.DM.isError,
+                        Data = dmd.DM.data
+                    };
                     if (dmd.DM.isError)
                         allValid = false;
                 }
