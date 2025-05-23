@@ -134,6 +134,11 @@ namespace l2l_aggregator.ViewModels
         private bool recognizePack = true; // Добавление опции "распознавание коробки" в настройки распознавания
 
         public IEnumerable<RecognitionType> RecognitionTypes => Enum.GetValues(typeof(RecognitionType)).Cast<RecognitionType>();
+
+
+        [ObservableProperty]
+        private string aggregationSummaryText = "Результат агрегации пока не рассчитан.";
+
         public AggregationViewModel(
             DataApiService dataApiService,
             ImageHelper imageProcessingService,
@@ -452,6 +457,15 @@ namespace l2l_aggregator.ViewModels
                     int validCountDMCells = DMCells.Count(c => c.IsValid);
                     // Обновление информационных текстов
                     UpdateLayerInfo(validCountDMCells, numberOfLayers);
+                    AggregationSummaryText = $@"
+Агрегируемая серия: {_sessionService.SelectedTaskInfo.RESOURCEID}
+Количество собранных коробов: {CurrentBox - 1}
+Номер собираемого короба: {CurrentBox}
+Номер слоя: {CurrentLayer}
+Количество слоев в коробе: {_sessionService.SelectedTaskInfo.LAYERS_QTY}
+Количество СИ, распознанное в слое: {validCountDMCells}
+Количество СИ, считанное в слое: {validCountDMCells}
+Количество СИ, ожидаемое в слое: {numberOfLayers}";
                     canScan = true;
                     canOpenTemplateSettings = true;
                     if (CurrentLayer == _sessionService.SelectedTaskInfo.LAYERS_QTY)

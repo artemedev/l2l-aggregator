@@ -121,7 +121,7 @@ namespace l2l_aggregator.ViewModels
             _printingService = printingService;
             _dataApiService = dataApiService;
 
-            AddCamera();
+            //AddCamera();
             //LoadCameras();
             _ = InitializeAsync();
 
@@ -135,52 +135,6 @@ namespace l2l_aggregator.ViewModels
         {
             await LoadAvailableScannersAsync();
             await LoadSettingsAsync();
-        }
-        [RelayCommand]
-        private async Task ToggleDisableVirtualKeyboardAsync()
-        {
-            await _databaseService.Config.SetConfigValueAsync("DisableVirtualKeyboard", DisableVirtualKeyboard.ToString());
-            SessionService.Instance.DisableVirtualKeyboard = DisableVirtualKeyboard;
-            InfoMessage = "Настройка клавиатуры сохранена.";
-            _notificationService.ShowMessage(InfoMessage);
-        }
-        partial void OnCheckControllerBeforeAggregationChanged(bool value)
-        {
-            _ = _databaseService.Config.SetConfigValueAsync("CheckController", value.ToString());
-            SessionService.Instance.CheckController = value;
-        }
-        partial void OnCheckCameraBeforeAggregationChanged(bool value)
-        {
-            _ = _databaseService.Config.SetConfigValueAsync("CheckCamera", value.ToString());
-            SessionService.Instance.CheckCamera = value;
-        }
-        partial void OnCheckPrinterBeforeAggregationChanged(bool value)
-        {
-            _ = _databaseService.Config.SetConfigValueAsync("CheckPrinter", value.ToString());
-            SessionService.Instance.CheckPrinter = value;
-        }
-        partial void OnCheckScannerBeforeAggregationChanged(bool value)
-        {
-            _ = _databaseService.Config.SetConfigValueAsync("CheckScanner", value.ToString());
-            SessionService.Instance.CheckScanner = value;
-        }
-
-        private async Task LoadSettingsAsync()
-        {
-            var (camera, disableVK) = await _configLoader.LoadSettingsToSessionAsync();
-
-            Camera = camera;
-            DisableVirtualKeyboard = disableVK;
-            ServerUri = await _databaseService.Config.GetConfigValueAsync("ServerUri");
-            PrinterIP = SessionService.Instance.PrinterIP;
-            SelectedPrinterModel = SessionService.Instance.PrinterModel;
-            ControllerIP = SessionService.Instance.ControllerIP;
-            SelectedCameraModel = SessionService.Instance.CameraModel;
-            CheckCameraBeforeAggregation = SessionService.Instance.CheckCamera;
-            CheckPrinterBeforeAggregation = SessionService.Instance.CheckPrinter;
-            CheckControllerBeforeAggregation = SessionService.Instance.CheckController;
-            CheckScannerBeforeAggregation = SessionService.Instance.CheckScanner;
-            SelectedScannerModel = SessionService.Instance.ScannerModel;
         }
 
         public async Task LoadAvailableScannersAsync()
@@ -218,6 +172,57 @@ namespace l2l_aggregator.ViewModels
                 SessionService.Instance.ScannerModel = null;
             }
         }
+
+        private async Task LoadSettingsAsync()
+        {
+            var (camera, disableVK) = await _configLoader.LoadSettingsToSessionAsync();
+
+            Camera = camera;
+            DisableVirtualKeyboard = disableVK;
+            ServerUri = await _databaseService.Config.GetConfigValueAsync("ServerUri");
+            PrinterIP = SessionService.Instance.PrinterIP;
+            SelectedPrinterModel = SessionService.Instance.PrinterModel;
+            ControllerIP = SessionService.Instance.ControllerIP;
+            SelectedCameraModel = SessionService.Instance.CameraModel;
+            CheckCameraBeforeAggregation = SessionService.Instance.CheckCamera;
+            CheckPrinterBeforeAggregation = SessionService.Instance.CheckPrinter;
+            CheckControllerBeforeAggregation = SessionService.Instance.CheckController;
+            CheckScannerBeforeAggregation = SessionService.Instance.CheckScanner;
+            SelectedScannerModel = SessionService.Instance.ScannerModel;
+        }
+
+        [RelayCommand]
+        private async Task ToggleDisableVirtualKeyboardAsync()
+        {
+            await _databaseService.Config.SetConfigValueAsync("DisableVirtualKeyboard", DisableVirtualKeyboard.ToString());
+            SessionService.Instance.DisableVirtualKeyboard = DisableVirtualKeyboard;
+            InfoMessage = "Настройка клавиатуры сохранена.";
+            _notificationService.ShowMessage(InfoMessage);
+        }
+        partial void OnCheckControllerBeforeAggregationChanged(bool value)
+        {
+            _ = _databaseService.Config.SetConfigValueAsync("CheckController", value.ToString());
+            SessionService.Instance.CheckController = value;
+        }
+        partial void OnCheckCameraBeforeAggregationChanged(bool value)
+        {
+            _ = _databaseService.Config.SetConfigValueAsync("CheckCamera", value.ToString());
+            SessionService.Instance.CheckCamera = value;
+        }
+        partial void OnCheckPrinterBeforeAggregationChanged(bool value)
+        {
+            _ = _databaseService.Config.SetConfigValueAsync("CheckPrinter", value.ToString());
+            SessionService.Instance.CheckPrinter = value;
+        }
+        partial void OnCheckScannerBeforeAggregationChanged(bool value)
+        {
+            _ = _databaseService.Config.SetConfigValueAsync("CheckScanner", value.ToString());
+            SessionService.Instance.CheckScanner = value;
+        }
+
+        
+
+        
 
         [RelayCommand]
         private void OpenCameraSettings()

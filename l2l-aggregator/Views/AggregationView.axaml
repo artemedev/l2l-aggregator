@@ -159,42 +159,23 @@
 					BorderThickness="1"
 					CornerRadius="4"
 					Padding="10" Grid.Row="8">
-				<Grid  Margin="10" Opacity="0">
-					<Grid.RowDefinitions>
-						<RowDefinition Height="*"/>
-						<RowDefinition Height="*"/>
-						<RowDefinition Height="*"/>
-						<RowDefinition Height="*"/>
-						<RowDefinition Height="*"/>
-						<RowDefinition Height="*"/>
-						<RowDefinition Height="*"/>
-						<RowDefinition Height="*"/>
-						<RowDefinition Height="*"/>
-						<RowDefinition Height="*"/>
-						<RowDefinition Height="*"/>
-					</Grid.RowDefinitions>
-					<TextBlock Grid.Row="0" Text="Результат " FontWeight="Bold"/>
-					<TextBlock Grid.Row="1" Text="Агрегируемая серия: 50325: " FontWeight="Bold"/>
-					<TextBlock Grid.Row="2" Text="Количество собранных коробов: 79"/>
-					<TextBlock Grid.Row="3" Text="Номер собираемого короба: 80"/>
-					<TextBlock Grid.Row="4" Text="Номер слоя: 1"/>
-					<TextBlock Grid.Row="5" Text="Количество слоев в коробе: 1"/>
-					<TextBlock Grid.Row="6" Text="Количество СИ, распознанное в слое: 50"/>
-					<TextBlock Grid.Row="7" Text="Количество СИ, считанное в слое: 50"/>
-					<TextBlock Grid.Row="8" Text="Количество СИ, ожидаемое в слое: 50"/>
-					<TextBlock Grid.Row="9" Text="Количество СИ, отбраковано: 0"/>
-					<TextBlock Grid.Row="10" Text="Количество СИ, отобрано: 0"/>
-				</Grid>
+				<Viewbox Stretch="Uniform" VerticalAlignment="Top">
+					<Grid RowDefinitions="Auto,Auto" >
+						<TextBlock Grid.Row="0" Text="Результат "
+								   FontWeight="Bold"/>
+						<TextBlock Grid.Row="1" Text="{Binding AggregationSummaryText}"/>
+					</Grid>
+				</Viewbox>
 			</Border>
 		</Grid>
 		<!-- 
             Третий слой: всплывающее окно (Popup) с увеличенным изображением 
             выбранного квадрата. Оно привязано к IsPopupOpen и SelectedSquareImage. 
         -->
-		<Popup IsOpen="{Binding IsPopupOpen}" 
-			   PlacementTarget="{Binding #scanImage}" 
-			   PlacementMode="Center" 
-			   Name="scanImagePopup" 
+		<Popup IsOpen="{Binding IsPopupOpen}"
+			   PlacementTarget="{Binding #scanImage}"
+			   PlacementMode="Center"
+			   Name="scanImagePopup"
 			   PointerPressed="Popup_PointerPressed">
 			<Border Background="White" BorderBrush="Black" BorderThickness="2" >
 				<Grid SizeChanged="OnImageGridSizeCellChanged">
