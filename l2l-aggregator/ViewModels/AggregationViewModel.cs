@@ -9,6 +9,7 @@ using CommunityToolkit.Mvvm.Input;
 using DM_wraper_NS;
 using l2l_aggregator.Helpers.AggregationHelpers;
 using l2l_aggregator.Models;
+using l2l_aggregator.Models.AggregationModels;
 using l2l_aggregator.Services;
 using l2l_aggregator.Services.AggregationService;
 using l2l_aggregator.Services.Api;
@@ -23,8 +24,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace l2l_aggregator.ViewModels
 {
@@ -143,6 +144,31 @@ namespace l2l_aggregator.ViewModels
         //поле для запоминания предыдущего значения информации о агрегации для выхода из информации для клика по ячейке
         private string _previousAggregationSummaryText;
 
+
+        //
+        public class AggregationProgressModel
+        {
+            public int CurrentLayer { get; set; }
+            public int CurrentBox { get; set; }
+            public int CurrentPallet { get; set; }
+            public List<AggregationCellData> DmCells { get; set; } = new();
+        }
+
+        public class AggregationCellData
+        {
+            public string DataMatrixData { get; set; }
+            public bool IsValid { get; set; }
+            public List<OcrCellData> Ocr { get; set; } = new();
+        }
+
+        public class OcrCellData
+        {
+            public string Name { get; set; }
+            public string Text { get; set; }
+            public bool IsValid { get; set; }
+        }
+
+
         public AggregationViewModel(
             DataApiService dataApiService,
             ImageHelper imageProcessingService,
@@ -176,6 +202,65 @@ namespace l2l_aggregator.ViewModels
 
             InitializeAsync();
         }
+        private void InitializeFromSavedState()
+        {
+            if (_sessionService.HasUnfinishedAggregation)
+            {
+                try
+                {
+                    var progress = JsonSerializer.Deserialize<AggregationProgressModel>(_sessionService.LoadedProgressJson!);
+                    if (progress != null)
+                    {
+                        CurrentLayer = progress.CurrentLayer;
+                        CurrentBox = progress.CurrentBox;
+                        CurrentPallet = progress.CurrentPallet;
+
+                        DMCells.Clear();
+                        foreach (var cell in progress.DmCells)
+                        {
+                            var dmCell = new DmCellViewModel(this)
+                            {
+                                IsValid = cell.IsValid,
+                                DmCell = new DmSquareViewModel
+                                {
+                                    Data = cell.DataMatrixData,
+                                    IsValid = cell.IsValid
+                                    // можно также X, Y, SizeWidth, SizeHeight, Angle — если есть
+                                }
+                            };
+
+                            foreach (var ocr in cell.Ocr)
+                            {
+                                dmCell.OcrCells.Add(new SquareCellViewModel
+                                {
+                                    OcrName = ocr.Name,
+                                    OcrText = ocr.Text,
+                                    IsValid = ocr.IsValid
+                                });
+                            }
+
+                            DMCells.Add(dmCell);
+                        }
+                        int validCountDMCells = DMCells.Count(c => c.IsValid);
+                        AggregationSummaryText = $@"
+Агрегируемая серия: {_sessionService.SelectedTaskInfo.RESOURCEID}
+Количество собранных коробов: {CurrentBox - 1}
+Номер собираемого короба: {CurrentBox}
+Номер слоя: {CurrentLayer}
+Количество слоев в коробе: {_sessionService.SelectedTaskInfo.LAYERS_QTY}
+Количество СИ, распознанное в слое: {validCountDMCells}
+Количество СИ, считанное в слое: {DMCells.Count}
+Количество СИ, ожидаемое в слое: {numberOfLayers}";
+                        //AggregationSummaryText = $"Загружено сохранённое состояние. Короб {CurrentBox}, Слой {CurrentLayer}, Паллет {CurrentPallet}.";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _notificationService.ShowMessage($"Ошибка восстановления прогресса: {ex.Message}", NotificationType.Warn);
+                }
+            }
+        }
+
         private async void InitializeAsync()
         {
             //переделать на сервис
@@ -214,6 +299,8 @@ namespace l2l_aggregator.ViewModels
 
 
             LoadTemplateFromSession(); //заполнение из шаблона в модальное окно для выбора элементов для сканирования
+
+            InitializeFromSavedState();
         }
         private void LoadTemplateFromSession()
         {
@@ -394,8 +481,33 @@ namespace l2l_aggregator.ViewModels
                     InfoMessage = $"Ошбика распознавания {ex.Message}.";
                     _notificationService.ShowMessage(InfoMessage);
                 }
+                //Сохраняем при сканировании в бд
                 if (dmrData.rawImage != null)
                 {
+                    string taskInfoJson = JsonSerializer.Serialize(_sessionService.SelectedTaskInfo);
+                    //if (taskInfoJson.Length > 100_000)
+                    //{
+                        //throw new InvalidOperationException("TaskInfoJson слишком длинный");
+                        await _databaseService.AggregationState.SaveStateAsync(new AggregationState
+                        {
+                            Username = _sessionService.User.USER_NAME,
+                            TaskId = _sessionService.SelectedTaskInfo.DOCID,
+                            TemplateJson = _lastUsedTemplateJson,
+                            TaskInfoJson = JsonSerializer.Serialize(_sessionService.SelectedTaskInfo),
+                            ProgressJson = JsonSerializer.Serialize(new
+                            {
+                                CurrentLayer,
+                                CurrentBox,
+                                CurrentPallet,
+                                DmCells = DMCells.Select(c => new
+                                {
+                                    c.DmCell.Data,
+                                    c.IsValid,
+                                    Ocr = c.OcrCells.Select(o => new { o.OcrName, o.OcrText, o.IsValid })
+                                })
+                            })
+                        });
+                    //}
                     double boxRadius = Math.Sqrt(dmrData.BOXs[0].height * dmrData.BOXs[0].height +
                               dmrData.BOXs[0].width * dmrData.BOXs[0].width) / 2;
                     int minX = (int)dmrData.BOXs.Min(d => d.poseX - boxRadius);
@@ -468,10 +580,11 @@ namespace l2l_aggregator.ViewModels
 Номер слоя: {CurrentLayer}
 Количество слоев в коробе: {_sessionService.SelectedTaskInfo.LAYERS_QTY}
 Количество СИ, распознанное в слое: {validCountDMCells}
-Количество СИ, считанное в слое: {validCountDMCells}
+Количество СИ, считанное в слое: {DMCells.Count}
 Количество СИ, ожидаемое в слое: {numberOfLayers}";
                     canScan = true;
                     canOpenTemplateSettings = true;
+                   // SaveAggregationProgressAsync();
                     if (CurrentLayer == _sessionService.SelectedTaskInfo.LAYERS_QTY)
                     {
                         if (validCountDMCells == DMCells.Count)
@@ -521,6 +634,36 @@ namespace l2l_aggregator.ViewModels
                 InfoMessage = $"Ошибка сканирования";
                 _notificationService.ShowMessage(InfoMessage);
             }
+        }
+
+        private async Task SaveAggregationProgressAsync()
+        {
+            var progress = new AggregationProgressModel
+            {
+                CurrentBox = CurrentBox,
+                CurrentLayer = CurrentLayer,
+                CurrentPallet = CurrentPallet,
+                DmCells = DMCells.Select(c => new AggregationCellData
+                {
+                    DataMatrixData = c.DmCell?.Data,
+                    IsValid = c.IsValid,
+                    Ocr = c.OcrCells.Select(o => new OcrCellData
+                    {
+                        Name = o.OcrName,
+                        Text = o.OcrText,
+                        IsValid = o.IsValid
+                    }).ToList()
+                }).ToList()
+            };
+
+            await _databaseService.AggregationState.SaveStateAsync(new AggregationState
+            {
+                Username = _sessionService.User?.USER_NAME ?? "unknown",
+                TaskId = _sessionService.SelectedTaskInfo?.DOCID ?? 0,
+                TemplateJson = _lastUsedTemplateJson ?? "",
+                ProgressJson = JsonSerializer.Serialize(progress),
+                LastUpdated = DateTime.Now
+            });
         }
 
         private void UpdateLayerInfo(int validCount, int expectedPerLayer)
@@ -597,16 +740,20 @@ namespace l2l_aggregator.ViewModels
 
         //Завершить агрегацию
         [RelayCommand]
-        public void CompleteAggregation()
+        public async Task CompleteAggregation()
         {
-
+            await _databaseService.AggregationState.ClearStateAsync(_sessionService.User.USER_NAME);
+            _notificationService.ShowMessage("Агрегация завершена.");
+            _router.GoTo<TaskListViewModel>();
         }
 
         //отменить агрегацию
         [RelayCommand]
-        public void CancelAggregation()
+        public async Task CancelAggregation()
         {
-
+            await _databaseService.AggregationState.ClearStateAsync(_sessionService.User.USER_NAME);
+            _notificationService.ShowMessage("Агрегация завершена.");
+            _router.GoTo<TaskListViewModel>();
         }
 
         //сканирование кода этикетки
@@ -754,9 +901,9 @@ DM-код: {(string.IsNullOrWhiteSpace(cell.DmCell?.Data) ? "нет данных
 Угол: {(cell.DmCell?.Angle is double a ? $"{a:0.##}°" : "нет данных")}
 OCR:
 {(cell.OcrCells.Count > 0
-                ? string.Join('\n', cell.OcrCells.Select(o =>
-                    $"- {(string.IsNullOrWhiteSpace(o.OcrName) ? "нет данных" : o.OcrName)}: {(string.IsNullOrWhiteSpace(o.OcrText) ? "нет данных" : o.OcrText)} ({(o.IsValid ? "валид" : "не валид")})"))
-                : "- нет данных")}
+? string.Join('\n', cell.OcrCells.Select(o =>
+    $"- {(string.IsNullOrWhiteSpace(o.OcrName) ? "нет данных" : o.OcrName)}: {(string.IsNullOrWhiteSpace(o.OcrText) ? "нет данных" : o.OcrText)} ({(o.IsValid ? "валид" : "не валид")})"))
+: "- нет данных")}
 """;
 
             Console.WriteLine($"SelectedDmCell == : {SelectedDmCell}");

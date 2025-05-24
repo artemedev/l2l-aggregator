@@ -1,6 +1,8 @@
 ﻿using l2l_aggregator.Models;
 using l2l_aggregator.Services.Database;
 using l2l_aggregator.Services.Database.Repositories.Interfaces;
+using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace l2l_aggregator.Services
@@ -9,6 +11,8 @@ namespace l2l_aggregator.Services
     {
         private static SessionService? _instance;
         public static SessionService Instance => _instance ??= new SessionService();
+
+        // Настройки устройств
         public bool DisableVirtualKeyboard { get; set; }
         public string? ScannerPort { get; set; }
         public string? CameraIP { get; set; }
@@ -16,19 +20,46 @@ namespace l2l_aggregator.Services
         public string? PrinterIP { get; set; }
         public string? PrinterModel { get; set; }
         public string? ControllerIP { get; set; }
+
         public bool CheckCamera { get; set; }
         public bool CheckPrinter { get; set; }
         public bool CheckController { get; set; }
         public bool CheckScanner { get; set; }
+
         public string? ScannerModel { get; set; }
 
+        // Пользователь и задание
         public UserAuthResponse? User { get; set; }
         public ArmJobRecord? SelectedTask { get; set; }
-
         public ArmJobInfoRecord? SelectedTaskInfo { get; set; }
         public ArmJobSsccRecord? SelectedTaskSscc { get; set; }
         public ArmJobSgtinRecord? SelectedTaskSgtin { get; set; }
-        public async Task InitializeCheckFlagsAsync(DatabaseService db)
+
+        // Восстановление состояния агрегации
+        public string? LoadedTemplateJson { get; set; }
+        public string? LoadedProgressJson { get; set; }
+        public bool HasUnfinishedAggregation => SelectedTaskInfo != null &&
+    !string.IsNullOrWhiteSpace(LoadedTemplateJson) &&
+    !string.IsNullOrWhiteSpace(LoadedProgressJson);
+
+        // Инициализация настроек
+        public async Task InitializeAsync(DatabaseService db)
+        {
+            await InitializeCheckFlagsAsync(db);
+
+            var config = db.Config;
+
+            PrinterIP = await config.GetConfigValueAsync("PrinterIP");
+            PrinterModel = await config.GetConfigValueAsync("PrinterModel");
+            ControllerIP = await config.GetConfigValueAsync("ControllerIP");
+            CameraIP = await config.GetConfigValueAsync("CameraIP");
+            CameraModel = await config.GetConfigValueAsync("CameraModel");
+            ScannerPort = await config.GetConfigValueAsync("ScannerCOMPort");
+            ScannerModel = await config.GetConfigValueAsync("ScannerModel");
+            DisableVirtualKeyboard = bool.TryParse(await config.GetConfigValueAsync("DisableVirtualKeyboard"), out var vkParsed) && vkParsed;
+        }
+
+        private async Task InitializeCheckFlagsAsync(DatabaseService db)
         {
             var config = db.Config;
 
@@ -49,20 +80,27 @@ namespace l2l_aggregator.Services
 
             return bool.TryParse(value, out var parsed) && parsed;
         }
-        public async Task InitializeAsync(DatabaseService db)
+
+        // Загрузка сохранённого состояния агрегации
+        public async Task LoadAggregationStateAsync(DatabaseService db)
         {
-            await InitializeCheckFlagsAsync(db);
-
-            var config = db.Config;
-
-            PrinterIP = await config.GetConfigValueAsync("PrinterIP");
-            PrinterModel = await config.GetConfigValueAsync("PrinterModel");
-            ControllerIP = await config.GetConfigValueAsync("ControllerIP");
-            CameraIP = await config.GetConfigValueAsync("CameraIP");
-            CameraModel = await config.GetConfigValueAsync("CameraModel");
-            ScannerPort = await config.GetConfigValueAsync("ScannerCOMPort");
-            ScannerModel = await config.GetConfigValueAsync("ScannerModel");
-            DisableVirtualKeyboard = bool.TryParse(await config.GetConfigValueAsync("DisableVirtualKeyboard"), out var vkParsed) && vkParsed;
+            if (User == null || string.IsNullOrWhiteSpace(User.USER_NAME))
+                return;
+            try
+            {
+                var state = await db.AggregationState.LoadStateAsync(User.USER_NAME);
+                if (state != null)
+                {
+                    SelectedTaskInfo = JsonSerializer.Deserialize<ArmJobInfoRecord>(state.TaskInfoJson);
+                    //SelectedTaskInfo = new ArmJobInfoRecord { DOCID = state.TaskId };
+                    LoadedTemplateJson = state.TemplateJson;
+                    LoadedProgressJson = state.ProgressJson;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ошибка при загрузке состояния агрегации", ex);
+            }
         }
     }
 }

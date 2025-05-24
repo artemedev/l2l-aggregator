@@ -25,11 +25,8 @@ namespace l2l_aggregator.ViewModels
 
         private readonly HistoryRouter<ViewModelBase> _router;
         private readonly DatabaseService _databaseService;
-        //private readonly IApiClientFactory _apiClientFactory;
         private readonly DataApiService _dataApiService;
         private readonly SessionService _sessionService;
-
-
         private readonly INotificationService _notificationService;
         public AuthViewModel(DatabaseService databaseService, HistoryRouter<ViewModelBase> router, INotificationService notificationService, DataApiService dataApiService, SessionService sessionService)
         {
@@ -38,6 +35,7 @@ namespace l2l_aggregator.ViewModels
             _notificationService = notificationService;
             _dataApiService = dataApiService;
             _sessionService = sessionService;
+            // Тестовые/заготовленные значения
             _login = "TESTINNO1";
             _password = "4QrcOUm6Wau+VuBX8g+IPg==";
         }
@@ -47,6 +45,7 @@ namespace l2l_aggregator.ViewModels
         {
             try
             {
+                // Локальный админ вход
                 if (await _databaseService.UserAuth.ValidateAdminUserAsync(Login, Password))
                 {
                     _sessionService.User = new Models.UserAuthResponse { USER_NAME = Login };
@@ -55,7 +54,7 @@ namespace l2l_aggregator.ViewModels
                     return;
                 }
 
-                // Если не admin, то делаем запрос на USER_AUTH
+                // Получаем адрес сервера из настроек, запрос на USER_AUTH
                 var serverUri = await _databaseService.Config.GetConfigValueAsync("ServerUri");
                 if (string.IsNullOrWhiteSpace(serverUri))
                 {
@@ -63,6 +62,7 @@ namespace l2l_aggregator.ViewModels
                     _notificationService.ShowMessage("Сервер не настроен!");
                     return;
                 }
+                // Попытка входа через API
                 try
                 {
                     var response = await _dataApiService.LoginAsync(Login, Password);
@@ -71,11 +71,39 @@ namespace l2l_aggregator.ViewModels
                         if (response.AUTH_OK == "1")
                         {
                             _sessionService.User = response;
+                            // Сохраняем в локальную базу
                             await _databaseService.UserAuth.SaveUserAuthAsync(response);
                             // Успешная авторизация
                             _notificationService.ShowMessage("Авторизация прошла успешно!");
-                            // Переходим к списку задач
-                            _router.GoTo<TaskListViewModel>();
+
+                            // Загружаем сохранённое состояние (если есть)
+                            await _sessionService.LoadAggregationStateAsync(_databaseService);
+
+
+                            if (_sessionService.HasUnfinishedAggregation)
+                            {
+                                _notificationService.ShowMessage("Обнаружена незавершённая агрегация. Продолжаем...");
+                                _router.GoTo<AggregationViewModel>();
+                            }
+                            else
+                            {
+                                _router.GoTo<TaskListViewModel>();
+                            }
+                            //// Переходим к списку задач
+                            //var state = await _databaseService.AggregationState.LoadStateAsync(Login);
+                            //if (state != null)
+                            //{
+                            //    _sessionService.SelectedTaskInfo = await LoadTaskInfoById(state.TaskId);
+                            //    _sessionService.LoadedTemplateJson = state.TemplateJson;
+                            //    _sessionService.LoadedProgressJson = state.ProgressJson;
+
+                            //    _notificationService.ShowMessage("Восстановление незавершенной агрегации...");
+                            //    _router.GoTo<AggregationViewModel>();
+                            //}
+                            //else
+                            //{
+                            //    _router.GoTo<TaskListViewModel>();
+                            //}
                         }
                         else
                         {
@@ -83,19 +111,26 @@ namespace l2l_aggregator.ViewModels
                             _notificationService.ShowMessage($"Ошибка авторизации: {response.ERROR_TEXT}", NotificationType.Warn);
                         }
                     }
-
+                    else
+                    {
+                        _notificationService.ShowMessage("Ошибка: пустой ответ от сервера.", NotificationType.Error);
+                    }
 
                 }
                 catch (Exception ex)
                 {
 
-                    _notificationService.ShowMessage(ex.Message, NotificationType.Error);
+                    _notificationService.ShowMessage($"Ошибка входа: {ex.Message}", NotificationType.Error);
                 }
 
             }
             catch (ApiException apiEx)
             {
                 _notificationService.ShowMessage($"API ошибка: {apiEx.Message}", NotificationType.Error);
+            }
+            catch (Exception ex)
+            {
+                _notificationService.ShowMessage($"Ошибка: {ex.Message}", NotificationType.Error);
             }
         }
     }

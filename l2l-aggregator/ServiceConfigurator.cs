@@ -60,8 +60,9 @@ namespace l2l_aggregator
             services.AddSingleton<IUserAuthRepository, UserAuthRepository>();
             services.AddSingleton<IConfigRepository, ConfigRepository>();
             services.AddSingleton<IRegistrationDeviceRepository, RegistrationDeviceRepository>();
+            services.AddSingleton<IAggregationStateRepository, AggregationStateRepository>();
 
-            
+
 
             services.AddSingleton<DatabaseService>();
             services.AddSingleton<DatabaseInitializer>(sp =>
