@@ -5,13 +5,10 @@ using Avalonia.Input;
 using Avalonia.Input.TextInput;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media;
-using Avalonia.Media.TextFormatting;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using CommunityToolkit.Mvvm.Input;
 using l2l_aggregator.Controls.Keyboard.Layout;
-using Material.Icons.Avalonia;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,34 +36,13 @@ public partial class VirtualKeyboard : UserControl
     public static async Task<string?> ShowDialog(TextInputOptions options, Window? owner = null)
     {
         var keyboard = new VirtualKeyboard();
-
-
-        //if (options.ContentType == TextInputContentType.)
-        //{
-        //    keyboard.TextBox.Text = textBox.Text;
-        //    keyboard.TextBox.PasswordChar = textBox.PasswordChar;
-
-        //    if (textBox.Tag != null && ((string)textBox.Tag).Contains("numeric"))
-        //    {
-        //        keyboard.targetLayout = "numpad";
-        //    }
-        //}
-
-
-
         var window = new CoporateWindow();
         window.CoporateContent = keyboard;
         window.Title = "Keyboard";
-
         var mw = ((IClassicDesktopStyleApplicationLifetime)App.Current.ApplicationLifetime).MainWindow;
-
-
-
         await window.ShowDialog(owner ?? mw);
         if (window.Tag is string s)
         {
-            //if (options.Source is TextBox tb)
-            //    tb.Text = s;
             return s;
         }
         return null;
@@ -174,56 +150,8 @@ public partial class VirtualKeyboard : UserControl
                 AdjustTextBoxFontSize();
             }
         };
-        //// Замените подписку на ContentChanged в конструкторе:
-        //TransitioningContentControl_.PropertyChanged += (sender, e) =>
-        //{
-        //    if (e.Property == ContentControl.ContentProperty) // Проверяем, что изменилось именно Content
-        //    {
-        //        Dispatcher.UIThread.Post(() =>
-        //        {
-        //            UpdateKeyVisuals(this.Bounds.Width);
-        //        }, DispatcherPriority.Loaded);
-        //    }
-        //};
         _keyboardState = VirtualKeyboardState.Default;
     }
-    //private void UpdateKeyMargins(double width)
-    //{
-    //    double adaptiveMargin = Math.Clamp(width * 0.003, 0.5, 10); // Пример: 1.5% от ширины
-
-    //    var keys = this.GetVisualDescendants().OfType<VirtualKey>();
-    //    foreach (var key in keys)
-    //    {
-    //        key.Margin = new Thickness(adaptiveMargin);
-    //    }
-    //}
-    //private void UpdateKeyVisuals(double width)
-    //{
-    //    double margin = Math.Clamp(width * 0.003, 0.5, 10);
-    //    double fontSize = Math.Clamp(width * 0.02, 10, 36);      // Пример: от 10 до 36
-    //    double iconSize = Math.Clamp(width * 0.025, 16, 48);     // Пример: от 16 до 48
-    //    double textBoxFontSize = Math.Clamp(width * 0.02, 14, 36); // Текстбокс
-
-    //    if (TransitioningContentControl_.Content is Control layoutRoot)
-    //    {
-    //        var keys = layoutRoot.GetVisualDescendants().OfType<VirtualKey>();
-    //        foreach (var key in keys)
-    //        {
-    //            key.Margin = new Thickness(margin);
-    //            key.FontSize = fontSize;
-
-    //            // Обработка MaterialIcon, если используется
-    //            var icon = key.GetVisualDescendants().OfType<MaterialIcon>().FirstOrDefault();
-    //            if (icon != null)
-    //                icon.Width = icon.Height = iconSize;
-
-    //            // Или обработка Image, если у вас иконки как изображения
-    //            var image = key.GetVisualDescendants().OfType<Image>().FirstOrDefault();
-    //            if (image != null)
-    //                image.Width = image.Height = iconSize;
-    //        }
-    //    }
-    //}
     private void UpdateKeyVisuals(double width)
     {
         double margin = Math.Clamp(width * 0.003, 0.5, 10);
@@ -254,39 +182,8 @@ public partial class VirtualKeyboard : UserControl
                 }
             }
         }
-
-        //// Адаптивный шрифт для TextBox — по его собственной ширине
-        //if (TextBox_ != null && TextBox_.Bounds.Width > 0)
-        //{
-        //    double textboxFontSize = Math.Clamp(TextBox_.Bounds.Width * 0.05, 12, 40);
-        //    TextBox_.FontSize = textboxFontSize;
-        //}
     }
-    //private void AdjustTextBoxFontSize()
-    //{
-    //    if (TextBox_ == null || string.IsNullOrWhiteSpace(TextBox_.Text))
-    //        return;
-
-    //    double availableWidth = TextBox_.Bounds.Width - 20;
-    //    double availableHeight = TextBox_.Bounds.Height - 10;
-
-    //    string text = TextBox_.Text;
-    //    double fontSize = 80;
-
-    //    // Грубый коэффициент ширины: 0.6 — эмпирически подходит для большинства шрифтов
-    //    while (fontSize >= 8)
-    //    {
-    //        double estimatedWidth = text.Length * fontSize * 0.6;
-    //        double estimatedHeight = fontSize * 1.5;
-
-    //        if (estimatedWidth <= availableWidth && estimatedHeight <= availableHeight)
-    //            break;
-
-    //        fontSize -= 1;
-    //    }
-
-    //    TextBox_.FontSize = fontSize;
-    //}
+   
     private void AdjustTextBoxFontSize()
     {
         if (TextBox_ == null)
@@ -313,10 +210,6 @@ public partial class VirtualKeyboard : UserControl
         TextBox_.FontSize = fontSize;
     }
 
-
-
-
-
     private void closeClicked(object? sender, RoutedEventArgs e)
     {
         Close();
@@ -324,8 +217,6 @@ public partial class VirtualKeyboard : UserControl
 
     public void Close()
     {
-
-
         TextBox_.Text = "";
         IsVisible = false;
         ((Control)this.Parent).IsVisible = false;
@@ -342,7 +233,6 @@ public partial class VirtualKeyboard : UserControl
 
         this.TextBox_.PasswordChar = source.PasswordChar;
         this.TextBox_.Text = source.Text == null ? "" : source.Text;
-        //this.TextBox_.CaretIndex = this.TextBox_.Text.Length;
         this.IsVisible = true;
         ((Control)this.Parent).IsVisible = true;
         TransitioningContentControl_.Content = Activator.CreateInstance(DefaultLayout.Invoke());
@@ -378,19 +268,13 @@ public partial class VirtualKeyboard : UserControl
 
     private void acceptClicked(object? sender, RoutedEventArgs e)
     {
-
         source.Text = TextBox_.Text;
-
         Close();
-
     }
 
     public void ProcessText(string text)
     {
         TextBox_.Focus();
-        // place the pressed text at the createIndex into the textbox
-
-
         if (TextBox_.CaretIndex <= TextBox_.Text.Length)
         {
             TextBox_.Text = TextBox_.Text.Insert(TextBox_.CaretIndex, text);
@@ -399,7 +283,6 @@ public partial class VirtualKeyboard : UserControl
 
         TextBox_.Focus();
 
-        //InputManager.Instance.ProcessInput(new RawTextInputEventArgs(KeyboardDevice.Instance, (ulong)DateTime.Now.Ticks, (Window)TextBox.GetVisualRoot(), text));
         if (_keyboardState == VirtualKeyboardState.Shift)
         {
             KeyboardState = VirtualKeyboardState.Default; // это вызовет событие
@@ -566,11 +449,6 @@ public partial class VirtualKeyboard : UserControl
             else
             {
                 TextBox_.Focus();
-
-
-
-                //InputManager.Instance.ProcessInput(new RawKeyEventArgs(KeyboardDevice.Instance, (ulong)DateTime.Now.Ticks, (Window)TextBox.GetVisualRoot(), RawKeyEventType.KeyDown, key, RawInputModifiers.None));
-                //InputManager.Instance.ProcessInput(new RawKeyEventArgs(KeyboardDevice.Instance, (ulong)DateTime.Now.Ticks, (Window)TextBox.GetVisualRoot(), RawKeyEventType.KeyUp, key, RawInputModifiers.None));
             }
         }
     }

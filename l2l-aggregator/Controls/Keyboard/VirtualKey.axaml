@@ -8,5 +8,4 @@
 	<Design.PreviewWith>
 		<keyboard:VirtualKey />
 	</Design.PreviewWith>
-
 </UserControl>

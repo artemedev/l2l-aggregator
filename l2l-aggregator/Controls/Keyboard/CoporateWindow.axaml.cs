@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 
 namespace l2l_aggregator.Controls.Keyboard;

@@ -1,5 +1,4 @@
 using Avalonia.Markup.Xaml;
-using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace l2l_aggregator.Controls.Keyboard.Layout;
 public partial class VirtualKeyboardLayoutNumpad : KeyboardLayout

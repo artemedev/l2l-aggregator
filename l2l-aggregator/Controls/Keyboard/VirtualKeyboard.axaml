@@ -11,19 +11,14 @@
 	<UserControl.Styles>
 
 		<Style Selector="keyboard|VirtualKey">
-
-			<!--<Setter Property="Margin" Value=" 7 7 7 7"/>-->
 			<Setter Property="Background" Value="#33ffffff" />
 			<Setter Property="Foreground" Value="Black" />
-
-
 		</Style>
 
 		<Style Selector="keyboard|VirtualKey /template/ Button /template/ ContentPresenter#PART_ContentPresenter">
 			<Setter Property="Background" Value="#33ffffff" />
 			<Setter Property="Foreground" Value="Black" />
 			<Setter Property="CornerRadius" Value="15"/>
-			<!--<Setter Property="FontSize" Value="45"/>-->
 			<Setter Property="VerticalContentAlignment" Value="Center"/>
 			<Setter Property="HorizontalContentAlignment" Value="Center"/>
 		</Style>
@@ -33,7 +28,6 @@
 			<Setter Property="Background" Value="#33ffffff" />
 			<Setter Property="Foreground" Value="Black" />
 			<Setter Property="CornerRadius" Value="15"/>
-			<!--<Setter Property="FontSize" Value="45"/>-->
 			<Setter Property="VerticalContentAlignment" Value="Center"/>
 			<Setter Property="HorizontalContentAlignment" Value="Center"/>
 		</Style>
@@ -46,7 +40,6 @@
 			<Setter Property="Background" Value="#33ffffff" />
 			<Setter Property="Foreground" Value="Black" />
 			<Setter Property="CornerRadius" Value="15"/>
-			<!--<Setter Property="FontSize" Value="45"/>-->
 			<Setter Property="VerticalContentAlignment" Value="Center"/>
 			<Setter Property="HorizontalContentAlignment" Value="Center"/>
 		</Style>

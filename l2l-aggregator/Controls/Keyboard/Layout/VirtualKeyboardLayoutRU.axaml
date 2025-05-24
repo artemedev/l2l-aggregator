@@ -11,7 +11,7 @@
 	<DockPanel>
 		<Grid Margin="5" RowDefinitions="*,*,*,*,*">
 
-			<!-- Row 1 -->
+			<!-- Первая строка -->
 			<Grid Grid.Row="0" ColumnDefinitions="1.2*,*,*,*,*,*,*,*,*,*,*,*,*,*,1.6*">
 				<keyboard:VirtualKey Grid.Column="0" SpecialKey="Back" SpecialIcon="KeyboardEsc" />
 				<keyboard:VirtualKey Grid.Column="1" NormalKey="ё" ShiftKey="Ё" />
@@ -30,7 +30,7 @@
 				<keyboard:VirtualKey Grid.Column="14" SpecialKey="Back" SpecialIcon="KeyboardBackspace" />
 			</Grid>
 
-			<!-- Row 2 -->
+			<!-- Вторая строка -->
 			<Grid Grid.Row="1" ColumnDefinitions="1.4*,*,*,*,*,*,*,*,*,*,*,*,*,*,*">
 				<keyboard:VirtualKey Grid.Column="0" NormalKey="Tab" ShiftKey="Tab" SpecialKey="Tab" />
 				<keyboard:VirtualKey Grid.Column="1" NormalKey="й" ShiftKey="Й" />
@@ -49,7 +49,7 @@
 				<keyboard:VirtualKey Grid.Column="14" SpecialKey="Delete" NormalKey="Del" ShiftKey="Del" />
 			</Grid>
 
-			<!-- Row 3 -->
+			<!-- Третья строка -->
 			<Grid Grid.Row="2" ColumnDefinitions="1.6*,*,*,*,*,*,*,*,*,*,*,*,1.8*">
 				<keyboard:VirtualKey Grid.Column="0" SpecialKey="CapsLock" NormalKey="Caps lock" ShiftKey="Caps lock"/>
 				<keyboard:VirtualKey Grid.Column="1" NormalKey="ф" ShiftKey="Ф" />
@@ -66,7 +66,7 @@
 				<keyboard:VirtualKey Grid.Column="12" SpecialKey="Enter" SpecialIcon="KeyboardReturn" />
 			</Grid>
 
-			<!-- Row 4 -->
+			<!-- Четвёртая строка -->
 			<Grid Grid.Row="3" ColumnDefinitions="1.4*,*,*,*,*,*,*,*,*,*,*,*,2*">
 				<keyboard:VirtualKey Grid.Column="0" SpecialKey="LeftShift" NormalKey="Shift" ShiftKey="Shift" />
 				<keyboard:VirtualKey Grid.Column="1" NormalKey="я" ShiftKey="Я" />
@@ -89,8 +89,6 @@
 				<keyboard:VirtualKey Grid.Column="1" SpecialKey="LeftAlt" NormalKey="Alt" ShiftKey="Alt"/>
 				<keyboard:VirtualKey Grid.Column="2" SpecialKey="LaunchApplication1" NormalKey="Lang" ShiftKey="Lang"/>
 				<keyboard:VirtualKey Grid.Column="3" NormalKey=" " />
-				<!--<keyboard:VirtualKey Grid.Column="4" SpecialKey="RightAlt}" NormalKey="Alt" ShiftKey="Alt"/>
-				<keyboard:VirtualKey Grid.Column="5" SpecialKey="RightCtrl}" NormalKey="Ctrl" ShiftKey="Ctrl" SpecialIcon="Keyboard"/>-->
 				<keyboard:VirtualKey Grid.Column="4" SpecialKey="Left" SpecialIcon="ChevronLeft"/>
 				<keyboard:VirtualKey Grid.Column="5" SpecialKey="Down" SpecialIcon="ChevronDown"/>
 				<keyboard:VirtualKey Grid.Column="6" SpecialKey="Right" SpecialIcon="ChevronRight"/>

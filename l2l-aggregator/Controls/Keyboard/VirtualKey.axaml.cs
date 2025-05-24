@@ -92,16 +92,6 @@ public partial class VirtualKey : TemplatedControl
     {
         DataContext = this;
 
-        //this.PropertyChanged += (_, e) =>
-        //{
-        //    if (e.Property == BoundsProperty)
-        //    {
-        //        var width = Bounds.Width;
-        //        FontSize = width / 6;
-        //    }
-        //};
-
-
         Initialized += (sender, args) =>
         {
             VirtualKeyboard keyboard = null;
@@ -189,15 +179,6 @@ public partial class VirtualKey : TemplatedControl
                             throw new ArgumentOutOfRangeException(nameof(state), state, null);
                     }
                 };
-
-                //_toggleButton.IsChecked = state switch
-                //{
-                //    VirtualKeyboardState.Default => false,
-                //    VirtualKeyboardState.Shift => SpecialKey == Key.LeftShift || SpecialKey == Key.RightShift,
-                //    VirtualKeyboardState.Capslock => SpecialKey == Key.CapsLock,
-                //    VirtualKeyboardState.AltCtrl => SpecialKey == Key.RightAlt,
-                //    _ => false
-                //};
             }
             else
             {
@@ -231,7 +212,6 @@ public partial class VirtualKey : TemplatedControl
             }
             if (string.IsNullOrEmpty(NormalKey) && SpecialKey != Key.None)
             {
-                // special cases
                 switch (SpecialKey)
                 {
                     case Key.Tab:
@@ -271,22 +251,6 @@ public partial class VirtualKey : TemplatedControl
             {
                 Caption = NormalKey;
             }
-            //if (string.IsNullOrEmpty(NormalKey) && SpecialKey == Key.None)
-            //{
-            //    Caption = new MaterialIcon
-            //    {
-            //        Kind = SpecialIcon,
-            //        Width = 24,
-            //        Height = 24,
-            //        BorderBrush = Brushes.Gray,
-            //        Background = Brushes.White,
-            //        Foreground = Brushes.Black, // Текст и иконки будут черными
-            //    };
-            //}
-            //else
-            //{
-            //    Caption = NormalKey;
-            //}
         };
     }
 
