@@ -5,14 +5,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using l2l_aggregator.Models;
 using l2l_aggregator.Services;
-using l2l_aggregator.Services.Api;
 using l2l_aggregator.Services.Database;
 using l2l_aggregator.Services.Notification.Interface;
-using Refit;
-using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using static l2l_aggregator.Services.Notification.NotificationService;
 
@@ -76,26 +72,6 @@ namespace l2l_aggregator.ViewModels
             Notifications = _notificationService.Notifications;
             ClearNotificationsCommand = new RelayCommand(ClearNotifications);
         }
-        //private async Task InitializeSessionFromDatabaseAsync()
-        //{
-        //    await _sessionService.InitializeCheckFlagsAsync(_databaseService);
-        //    var config = _databaseService.Config;
-
-        //    _sessionService.PrinterIP = await config.GetConfigValueAsync("PrinterIP");
-        //    _sessionService.PrinterModel = await config.GetConfigValueAsync("PrinterModel");
-        //    _sessionService.ControllerIP = await config.GetConfigValueAsync("ControllerIP");
-        //    _sessionService.CameraIP = await config.GetConfigValueAsync("CameraIP");
-        //    _sessionService.CameraModel = await config.GetConfigValueAsync("CameraModel");
-        //    _sessionService.ScannerPort = await config.GetConfigValueAsync("ScannerCOMPort");
-        //    _sessionService.ScannerModel = await config.GetConfigValueAsync("ScannerModel");
-
-        //    _sessionService.DisableVirtualKeyboard = bool.TryParse(await config.GetConfigValueAsync("DisableVirtualKeyboard"), out var parsed) && parsed;
-
-        //    _sessionService.CheckCamera = await config.GetConfigValueAsync("CheckCamera") == "True";
-        //    _sessionService.CheckPrinter = await config.GetConfigValueAsync("CheckPrinter") == "True";
-        //    _sessionService.CheckController = await config.GetConfigValueAsync("CheckController") == "True";
-        //    _sessionService.CheckScanner = await config.GetConfigValueAsync("CheckScanner") == "True";
-        //}
         private async Task InitializeSessionFromDatabaseAsync()
         {
             var (camera, disableVK) = await _configLoader.LoadSettingsToSessionAsync();
@@ -105,8 +81,7 @@ namespace l2l_aggregator.ViewModels
         {
             var serverUri = await _databaseService.Config.GetConfigValueAsync("ServerUri");
 
-            // Redirect to appropriate startup page
-            if (!string.IsNullOrEmpty(serverUri))
+            if (!string.IsNullOrEmpty(serverUri))ы
             {
                 _router.GoTo<AuthViewModel>();
             }
@@ -132,10 +107,6 @@ namespace l2l_aggregator.ViewModels
             {
                 _sessionService.User = response; // Сохраняем ссылку глобально
                 User = response;                 // Локально для ViewModel
-                //User = new UserAuthResponse
-                //{
-                //    USER_NAME = response.USER_NAME,
-                //};
             }
         }
         public void ButtonExit()

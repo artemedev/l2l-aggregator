@@ -72,7 +72,6 @@ namespace l2l_aggregator.ViewModels
         [ObservableProperty] private Bitmap selectedSquareImage;
         [ObservableProperty] private ObservableCollection<string> layers = new();
         [ObservableProperty] private ObservableCollection<string> palletBoxes = new();
-        //[ObservableProperty] private ObservableCollection<AggregatedItem> aggregatedItems = new();
         [ObservableProperty] private int selectedTabIndex;
 
         [ObservableProperty] private int aggregatedLayers;
@@ -485,29 +484,26 @@ namespace l2l_aggregator.ViewModels
                 if (dmrData.rawImage != null)
                 {
                     string taskInfoJson = JsonSerializer.Serialize(_sessionService.SelectedTaskInfo);
-                    //if (taskInfoJson.Length > 100_000)
-                    //{
-                        //throw new InvalidOperationException("TaskInfoJson слишком длинный");
-                        await _databaseService.AggregationState.SaveStateAsync(new AggregationState
+                    await _databaseService.AggregationState.SaveStateAsync(new AggregationState
+                    {
+                        Username = _sessionService.User.USER_NAME,
+                        TaskId = _sessionService.SelectedTaskInfo.DOCID,
+                        TemplateJson = _lastUsedTemplateJson,
+                        TaskInfoJson = JsonSerializer.Serialize(_sessionService.SelectedTaskInfo),
+                        ProgressJson = JsonSerializer.Serialize(new
                         {
-                            Username = _sessionService.User.USER_NAME,
-                            TaskId = _sessionService.SelectedTaskInfo.DOCID,
-                            TemplateJson = _lastUsedTemplateJson,
-                            TaskInfoJson = JsonSerializer.Serialize(_sessionService.SelectedTaskInfo),
-                            ProgressJson = JsonSerializer.Serialize(new
+                            CurrentLayer,
+                            CurrentBox,
+                            CurrentPallet,
+                            DmCells = DMCells.Select(c => new
                             {
-                                CurrentLayer,
-                                CurrentBox,
-                                CurrentPallet,
-                                DmCells = DMCells.Select(c => new
-                                {
-                                    c.DmCell.Data,
-                                    c.IsValid,
-                                    Ocr = c.OcrCells.Select(o => new { o.OcrName, o.OcrText, o.IsValid })
-                                })
+                                c.DmCell.Data,
+                                c.IsValid,
+                                Ocr = c.OcrCells.Select(o => new { o.OcrName, o.OcrText, o.IsValid })
                             })
-                        });
-                    //}
+                        })
+                    });
+
                     double boxRadius = Math.Sqrt(dmrData.BOXs[0].height * dmrData.BOXs[0].height +
                               dmrData.BOXs[0].width * dmrData.BOXs[0].width) / 2;
                     int minX = (int)dmrData.BOXs.Min(d => d.poseX - boxRadius);
@@ -529,17 +525,8 @@ namespace l2l_aggregator.ViewModels
 
                     await Task.Delay(100); //исправить
 
-                    //scaleX = imageSize.Width / ScannedImage.PixelSize.Width;
-
                     scaleX = imageSize.Width / ScannedImage.PixelSize.Width;
                     scaleY = imageSize.Height / ScannedImage.PixelSize.Height;
-                    //scaleImagaeX = 1.2611200;
-                    //scaleImagaeY = 1.216;
-                    //scaleImagaeX = dmrData.rawImage.Width / ScannedImage.PixelSize.Width;
-                    //scaleImagaeY = dmrData.rawImage.Height / ScannedImage.PixelSize.Height;
-
-                    //scaleXObrat = dmrData.rawImage.Width / imageSize.Width;
-                    //scaleYObrat = dmrData.rawImage.Height / imageSize.Height;
                     scaleXObrat = ScannedImage.PixelSize.Width / imageSize.Width;
                     scaleYObrat = ScannedImage.PixelSize.Height / imageSize.Height;
                     // изображение из распознавания
@@ -584,7 +571,7 @@ namespace l2l_aggregator.ViewModels
 Количество СИ, ожидаемое в слое: {numberOfLayers}";
                     canScan = true;
                     canOpenTemplateSettings = true;
-                   // SaveAggregationProgressAsync();
+
                     if (CurrentLayer == _sessionService.SelectedTaskInfo.LAYERS_QTY)
                     {
                         if (validCountDMCells == DMCells.Count)
@@ -669,14 +656,6 @@ namespace l2l_aggregator.ViewModels
         private void UpdateLayerInfo(int validCount, int expectedPerLayer)
         {
             InfoLayerText = $"Слой {CurrentLayer} из {_sessionService.SelectedTaskInfo.LAYERS_QTY}. Распознано {validCount} из {expectedPerLayer}";
-            //InfoDMText = $"Распознано {validCount} из {expectedPerLayer}";
-
-            //IsHelperTextVisible = validCount == expectedPerLayer &&
-            //                    CurrentLayer == _sessionService.SelectedTaskInfo.LAYERS_QTY;
-
-            //InfoHelperText = IsHelperTextVisible
-            //    ? "Короб агрегирован. Запечатайте, наклейте этикетку и считайте сканером."
-            //    : string.Empty;
         }
 
         //Печать этикетки коробки
@@ -870,8 +849,6 @@ namespace l2l_aggregator.ViewModels
 
             foreach (var ocr in cell.OcrCells)
             {
-                //double newX = (((ocr.X - minX) - (cell.X / scaleX)) * scaleXCell) + shiftX;
-                //double newY = (((ocr.Y - minY) - (cell.Y / scaleX)) * scaleYCell) + shiftY;
                 double newX = ocr.X;
                 double newY = ocr.Y;
 

@@ -1,6 +1,5 @@
 ﻿using HidSharp;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -35,54 +34,6 @@ namespace l2l_aggregator.Services.AggregationService
             _stream?.Close();
         }
 
-        //private async Task Listen(CancellationToken token)
-        //{
-        //    try
-        //    {
-        //        if (_device.TryOpen(out _stream))
-        //        {
-        //            Debug.WriteLine("[Scanner] Сканер открыт, начинаем читать поток...");
-        //            var reportLength = _device.GetMaxInputReportLength();
-        //            var buffer = new byte[reportLength];
-        //            _stream.ReadTimeout = 100000; // 3 секунды
-        //            var sb = new StringBuilder();
-
-        //            while (!token.IsCancellationRequested)
-        //            {
-        //                HidStream _stream1 = _stream;
-        //                int bytesRead = await _stream1.ReadAsync(buffer, 0, buffer.Length, token);
-        //                Debug.WriteLine($"[Scanner] BytesRead: {bytesRead}");
-        //                Debug.WriteLine("[Scanner] RAW: " + BitConverter.ToString(buffer.Take(bytesRead).ToArray()));
-        //                if (bytesRead > 0)
-        //                {
-        //                    // HID устройства обычно отправляют коды клавиш, нужно конвертировать
-        //                    // Простейшее преобразование (внимание: это заглушка! нужен парсинг HID-кодов!)
-        //                    foreach (var b in buffer.Skip(2).Where(b => b > 0))
-        //                    {
-        //                        char ch = TranslateHidKeyToChar(b);
-        //                        if (ch == '\n' || ch == '\r')
-        //                        {
-        //                            if (sb.Length > 0)
-        //                            {
-        //                                Debug.WriteLine($"[Scanner] Вызов события BarcodeScanned: {sb}");
-        //                                BarcodeScanned?.Invoke(sb.ToString());
-        //                                sb.Clear();
-        //                            }
-        //                        }
-        //                        else
-        //                        {
-        //                            sb.Append(ch);
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Debug.WriteLine("Ошибка чтения со сканера: " + ex.Message);
-        //    }
-        //}
         private async Task Listen(CancellationToken token)
         {
             try

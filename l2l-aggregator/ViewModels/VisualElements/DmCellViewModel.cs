@@ -1,7 +1,6 @@
 ﻿using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using l2l_aggregator.ViewModels;
 using System.Collections.ObjectModel;
 
 namespace l2l_aggregator.ViewModels.VisualElements

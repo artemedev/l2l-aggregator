@@ -27,18 +27,11 @@
 					<Image Source="avares://l2l_aggregator/Assets/Images/Logo.png"
 						   Margin="0,10,0,10"
 						   Grid.Row="0"/>
-
-					<!--<TextBlock Text="Введите адрес сервера:"
-							   HorizontalAlignment="Center"
-							   Margin="0,0,0,0"
-							   Grid.Row="1"/>-->
-
 					<TextBox Text="{Binding ServerUri, Mode=TwoWay}"
 							 Margin="0,0,0,0"
 							 Watermark="Введите адрес сервера"
 							 Grid.Row="2" 
 							 />
-
 					<Button Content="Проверить и Сохранить"
 							Command="{Binding CheckServerCommand}"
 							HorizontalAlignment="Stretch"

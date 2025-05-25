@@ -16,20 +16,16 @@ namespace l2l_aggregator.Views
         private VirtualKeyboardTextInputMethod virtualKeyboardTextInput = null;
         private bool iskeyboardCooldown;
         private bool iskeyboardCooldownStarted;
-        //private bool _isVirtualKeyboardDisabled = true;
         private l2l_aggregator.Controls.Keyboard.VirtualKeyboard keyboard;
 
         private Timer keyboardCoolDown;
 
         public MainWindow()
         {
-
             l2l_aggregator.Controls.Keyboard.VirtualKeyboard.AddLayout<VirtualKeyboardLayoutUS>();
-            // VirtualKeyboard.Controls.Keyboard.VirtualKeyboard.AddLayout<VirtualKeyboardLayoutDE>();
             l2l_aggregator.Controls.Keyboard.VirtualKeyboard.AddLayout<VirtualKeyboardLayoutRU>();
             l2l_aggregator.Controls.Keyboard.VirtualKeyboard.SetDefaultLayout(() => typeof(VirtualKeyboardLayoutRU));
-
-
+            
             InitializeComponent();
 
             var notificationsButton = this.FindControl<Button>("NotificationsButton");
@@ -80,13 +76,7 @@ namespace l2l_aggregator.Views
 
             if (e.Source.GetType() == typeof(TextBox) && !keyboard.IsVisible)
             {
-
-                //virtualKeyboardTextInput.SetActive(true, e);
                 var tb = e.Source as Control;
-
-
-
-
                 switch (tb.Tag?.ToString())
                 {
                     case "numpad":
@@ -99,16 +89,8 @@ namespace l2l_aggregator.Views
                         keyboard.ShowKeyboard(e.Source as TextBox);
                         break;
                 }
-
-
-
-                //keyboard.IsVisible = true;
-                //((Control)keyboard.Parent).IsVisible = true;
-
                 iskeyboardCooldown = true;
             }
-
-
         }
     }
 }

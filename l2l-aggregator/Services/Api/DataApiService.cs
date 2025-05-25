@@ -1,17 +1,14 @@
 ﻿using l2l_aggregator.Models;
 using l2l_aggregator.Services.Api.Interfaces;
 using l2l_aggregator.Services.Database;
-using l2l_aggregator.Services.Notification;
 using l2l_aggregator.Services.Notification.Interface;
 using Refit;
 
 
 //using l2l_aggregator.Services.Database.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace l2l_aggregator.Services.Api

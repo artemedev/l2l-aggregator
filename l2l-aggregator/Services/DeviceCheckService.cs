@@ -1,16 +1,10 @@
 ﻿using DM_wraper_NS;
-using l2l_aggregator.Helpers.AggregationHelpers;
-using l2l_aggregator.Helpers;
 using l2l_aggregator.Services.DmProcessing;
-using l2l_aggregator.Services.ScannerService.Interfaces;
-using MD.Devices;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using l2l_aggregator.Services.Printing;
+using l2l_aggregator.Services.ScannerService.Interfaces;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace l2l_aggregator.Services
 {

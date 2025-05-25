@@ -44,7 +44,6 @@ namespace l2l_aggregator.ViewModels
             _sessionService = sessionService;
             _notificationService = notificationService;
             _deviceCheckService = deviceCheckService;
-            //Task = _sessionService.SelectedTask;
             LoadTaskAsync(_sessionService.SelectedTask.DOCID);
         }
         private async Task LoadTaskAsync(long docId)
@@ -59,24 +58,10 @@ namespace l2l_aggregator.ViewModels
 
                     return;
                 }
-                //HttpClientHandler httpClientHandler = new HttpClientHandler();
-                //httpClientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
-                //var client = RestService.For<ITaskApi>(new HttpClient(httpClientHandler)
-                //{
-                //    BaseAddress = new Uri(serverUri)
-                //});
                 var request = new ArmJobInfoRequest { docid = docId };
-                //ArmJobInfoResponse response = await _dataApiService.GetJobDetailsAsync(docId);
                 var jobInfo = await _dataApiService.GetJobDetailsAsync(docId);
-                //await client.GetJob(request);
                 Task = jobInfo;
-                //_sessionService.SelectedTaskInfo = response.RECORDSET.FirstOrDefault();
                 _sessionService.SelectedTaskInfo = jobInfo;
-                //_sessionService.SelectedTaskSscc = ssccInfo;
-                //var requestSscc = new ArmJobSsccRequest { docid = docId };
-                //ArmJobSsccResponse respSscc = await _dataApiService.GetSsccAsync(docId);
-                //await client.GetJobSscc(requestSscc);
-                //_sessionService.SelectedTaskSscc = respSscc.RECORDSET.FirstOrDefault();
             }
             catch (Exception ex)
             {

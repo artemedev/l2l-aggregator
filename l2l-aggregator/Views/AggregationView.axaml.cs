@@ -24,14 +24,7 @@ public partial class AggregationView : UserControl
         // Подписка на изменение Bounds у ScannedImageControl:
     }
     private AggregationViewModel? _lastViewModel;
-    //private void ScannedImageControl_SizeChanged(object? sender, SizeChangedEventArgs e)
-    //{
-    //    if (DataContext is AggregationViewModel vm)
-    //    {
-    //        vm.ImageWidth = e.NewSize.Width;
-    //        vm.ImageHeight = e.NewSize.Height;
-    //    }
-    //}
+
     private void OnDataContextChanged(object? sender, EventArgs e)
     {
         if (_lastViewModel != null)
@@ -48,52 +41,6 @@ public partial class AggregationView : UserControl
 
         foreach (var cellVM in ((ObservableCollection<DmCellViewModel>)sender))
         {
-            //var border = new Border
-            //{
-            //    BorderBrush = cellVM.BorderColor,
-            //    BorderThickness = new Thickness(3),
-            //    Background = Brushes.Transparent,
-            //    Width = cellVM.SizeWidth,
-            //    Height = cellVM.SizeHeight,
-            //    DataContext = cellVM,
-            //    Styles =
-            //    {
-            //        new Style(x => x.OfType<Border>())
-            //        {
-            //            Setters =
-            //            {
-            //                new Setter(
-            //                    Border.RenderTransformProperty,
-            //                    TransformOperations.Parse("rotate(-90deg)"))
-            //            },
-            //        },
-            //    },
-            //    Transitions = new Avalonia.Animation.Transitions
-            //    {
-            //        new TransformOperationsTransition
-            //        {
-            //            Property = ,
-            //            Duration = 
-            //            X = cellVM.X,
-            //            Y = cellVM.Y
-            //        }
-            //    }
-
-
-
-            // Добавляем трансформации
-            //    border.RenderTransform = new TransformGroup
-            //    {
-            //        Children =
-            //{
-            //    new TranslateTransform(cellVM.X, cellVM.Y),
-            //    new RotateTransform(cellVM.Angle)
-            //    {
-            //        CenterX = cellVM.SizeWidth / 2,
-            //        CenterY = cellVM.SizeHeight / 2
-            //    }
-            //}
-            //    };
             var border = new Border
             {
                 BorderBrush = cellVM.BorderColor,
@@ -110,10 +57,6 @@ public partial class AggregationView : UserControl
 
             //// Только поворот
             border.RenderTransform = new RotateTransform(cellVM.Angle, 0, 0);
-            //{
-            //    CenterX = cellVM.SizeWidth / 2,
-            //    CenterY = cellVM.SizeHeight / 2
-            //};
 
             border.PointerPressed += (s, e) =>
                 {
@@ -125,16 +68,6 @@ public partial class AggregationView : UserControl
             MainCanvas.Children.Add(border);
         }
     }
-
-    //private void HandleCellPointerPressed(object sender, PointerPressedEventArgs e)
-    //{
-    //    if (sender is Border border &&
-    //        border.DataContext is DmCellViewModel vm &&
-    //        DataContext is AggregationViewModel avm)
-    //    {
-    //        avm.OnCellClicked(vm);
-    //    }
-    //}
     private void OnImageSizeChanged(object? sender, SizeChangedEventArgs e)
     {
         if (DataContext is AggregationViewModel vm)
@@ -162,10 +95,8 @@ public partial class AggregationView : UserControl
         {
             vm.IsPopupOpen = false; // Закрываем Popup через привязанное свойство
         }
-        //scanImagePopup.IsOpen = false; // Закрываем popup при нажатии
     }
-    // Чтобы был доступ к элементу x:Name="ScannedImageControl":
-    //public Image ScannedImageControl => this.FindControl<Image>("ScannedImageControl");
+
     public void OnRawScanReceived(string scannedData)
     {
         // Найдём активную ViewModel

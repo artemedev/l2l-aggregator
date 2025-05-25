@@ -1,19 +1,13 @@
-﻿using FastReport.Export.Zpl;
+﻿using FastReport;
+using FastReport.Export.Zpl;
 using l2l_aggregator.Helpers.AggregationHelpers;
-using l2l_aggregator.Helpers;
 using l2l_aggregator.Services.Notification.Interface;
 using MD.Devices;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using l2l_aggregator.Models;
-using FastReport;
-using l2l_aggregator.Services.Database;
 
 namespace l2l_aggregator.Services.Printing
 {
@@ -81,7 +75,6 @@ namespace l2l_aggregator.Services.Printing
             }
             catch (Exception ex)
             {
-                //_notificationService.ShowMessage($"Ошибка подключения к принтеру: {ex.Message}");
                 device.StopWork();
                 throw;
             }

@@ -29,8 +29,6 @@
 					<Viewbox>
 						<TextBlock Text="{Binding InfoLayerText}" VerticalAlignment="Center" HorizontalAlignment="Center" />
 					</Viewbox>
-					<!--<TextBlock Grid.Column="1" Text="{Binding InfoDMText}" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="48" TextAlignment="Center"/>
-						<TextBlock  Grid.Column="2" Text="{Binding InfoHelperText}" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="48" TextAlignment="Start"/>-->
 				</Border>
 			</Grid>
 			<Grid Grid.Row="1"
@@ -58,13 +56,6 @@
 				<RowDefinition Height="*"/>
 				<RowDefinition Height="*"/>
 				<RowDefinition Height="*"/>
-				<!--<RowDefinition Height="*"/>-->
-				<!--<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>-->
-				<!--<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="*"/>-->
 				<RowDefinition Height="4*"/>
 			</Grid.RowDefinitions>
 			<Button Grid.Row="0"
@@ -77,8 +68,6 @@
 					HorizontalContentAlignment="Center"
 					VerticalContentAlignment="Center"
 					FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
-			<!--<Button Grid.Row="2" Command="{Binding CompleteStepCommand}" Content="Завершить агрегацию" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>-->
-			<!--<Button Grid.Row="3" Command="{Binding GoToNextStepCommand}"  Content="Следующий шаг: Агрегация коробки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>-->
 			<Button Grid.Row="1"
 					Command="{Binding OpenTemplateSettingsCommand}"
 					IsEnabled="{Binding CanOpenTemplateSettings}"
@@ -89,8 +78,6 @@
 					HorizontalContentAlignment="Center"
 					VerticalContentAlignment="Center"
 					FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
-			<!--<Button Grid.Row="5" Command="{Binding ClearBoxCommand}" Content="Очистить короб" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>-->
-			<!--<Button Grid.Row="6" Command="{Binding CompleteStepCommand}" Content="Завершить агрегацию" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>-->
 			<Button Grid.Row="2"
 					Command="{Binding PrintBoxLabelCommand}"
 					IsEnabled="{Binding СanPrintBoxLabel}"
@@ -111,8 +98,6 @@
 					HorizontalContentAlignment="Center"
 					VerticalContentAlignment="Center"
 					FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
-			<!--<Button Grid.Row="6" Command="{Binding ScanBoxBarcodeCommand}" Content="Сканировать штрихкод коробки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>-->
-			<!--<Button Grid.Row="9" Command="{Binding GoToNextStepCommand}" Content="Следующий шаг: Агрегация паллеты" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>-->
 			<Button Grid.Row="4"
 					Command="{Binding ClearBoxCommand}"
 					IsEnabled="{Binding CanClearBox}"
@@ -153,7 +138,6 @@
 					HorizontalContentAlignment="Center"
 					VerticalContentAlignment="Center"
 					FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
-			<!--<Button Grid.Row="12" Command="{Binding PrintLabelCommand}" Content="Печать этикетки" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>-->
 			<Border Margin="0,5,0,10"
 					BorderBrush="LightGray"
 					BorderThickness="1"
@@ -187,13 +171,6 @@
 						   MaxHeight="{Binding ImageSize.Height}"
 						   SizeChanged="OnImageSizeCellChanged"
 						   />
-					<!--<ListBox ItemsSource="{Binding SelectedDmCell.OcrCellsInPopUp}">
-						<ListBox.ItemTemplate>
-							<DataTemplate>
-								<TextBlock Text="{Binding X}" />
-							</DataTemplate>
-						</ListBox.ItemTemplate>
-					</ListBox>-->
 					<ItemsControl ItemsSource="{Binding SelectedDmCell.OcrCellsInPopUp}">
 						<ItemsControl.ItemsPanel>
 							<ItemsPanelTemplate>

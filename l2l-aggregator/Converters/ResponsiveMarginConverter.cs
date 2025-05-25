@@ -1,29 +1,19 @@
-﻿using Avalonia.Data.Converters;
-using Avalonia;
+﻿using Avalonia;
+using Avalonia.Data.Converters;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace l2l_aggregator.Converters
 {
     public class ResponsiveMarginConverter : IValueConverter
     {
-        /// <summary>
-        /// Минимальное значение отступа
-        /// </summary>
+        // Минимальное значение отступа
         public double MinMargin { get; set; } = 4;
 
-        /// <summary>
-        /// Максимальное значение отступа
-        /// </summary>
+        // Максимальное значение отступа
         public double MaxMargin { get; set; } = 20;
 
-        /// <summary>
-        /// Масштабный коэффициент (на сколько процентов от ширины рассчитывается отступ)
-        /// </summary>
+        // Масштабный коэффициент (на сколько процентов от ширины рассчитывается отступ)
         public double ScaleFactor { get; set; } = 0.02; // 2%
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

@@ -89,25 +89,9 @@ namespace l2l_aggregator.ViewModels
                             {
                                 _router.GoTo<TaskListViewModel>();
                             }
-                            //// Переходим к списку задач
-                            //var state = await _databaseService.AggregationState.LoadStateAsync(Login);
-                            //if (state != null)
-                            //{
-                            //    _sessionService.SelectedTaskInfo = await LoadTaskInfoById(state.TaskId);
-                            //    _sessionService.LoadedTemplateJson = state.TemplateJson;
-                            //    _sessionService.LoadedProgressJson = state.ProgressJson;
-
-                            //    _notificationService.ShowMessage("Восстановление незавершенной агрегации...");
-                            //    _router.GoTo<AggregationViewModel>();
-                            //}
-                            //else
-                            //{
-                            //    _router.GoTo<TaskListViewModel>();
-                            //}
                         }
                         else
                         {
-                            //InfoMessage = $"Ошибка авторизации: {response.ERROR_TEXT}";
                             _notificationService.ShowMessage($"Ошибка авторизации: {response.ERROR_TEXT}", NotificationType.Warn);
                         }
                     }

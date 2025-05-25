@@ -162,7 +162,6 @@
 								  FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}">
 							<CheckBox.Styles>
 								<Style>
-									<!--<Setter Property="FontSize" Value="20"/>-->
 									<Setter Property="Template">
 										<ControlTemplate TargetType="CheckBox">
 											<StackPanel Orientation="Horizontal" Spacing="8">

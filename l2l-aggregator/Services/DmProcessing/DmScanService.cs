@@ -11,10 +11,8 @@ using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -43,7 +41,6 @@ namespace l2l_aggregator.Services.DmProcessing
         {
             string filePath = "./tmp/template.xml"; // Или .fr3 — в зависимости от формата
 
-            //SaveXmlToFile(base64Template, filePath);
             _dmrDataReady = new TaskCompletionSource<bool>();
             _recognWrapper.SendPrintPatternXML(base64Template);
             _DMP.update_PP();
@@ -98,15 +95,6 @@ namespace l2l_aggregator.Services.DmProcessing
         {
             return await Task.Run(() =>
             {
-                //int imageWidth = dmrData.rawImage.Width;
-                //int imageHeight = dmrData.rawImage.Height;
-
-                //// Увеличиваем зону обрезки на 20 пикселей с каждой стороны
-                //minX = Math.Max(0, minX - 20);
-                //minY = Math.Max(0, minY - 20);
-                //maxX = Math.Min(imageWidth, maxX + 20);
-                //maxY = Math.Min(imageHeight, maxY + 20);
-
                 int cropWidth = maxX - minX;
                 int cropHeight = maxY - minY;
 
@@ -138,9 +126,6 @@ namespace l2l_aggregator.Services.DmProcessing
         {
             var cells = new ObservableCollection<DmCellViewModel>();
             string json = BuildResultJson(dmrData);
-            //foreach (var dmd in dmrData.BOXs)
-            //{
-            //var boo = dmrData.BOXs.First();
             foreach (var dmd in dmrData.BOXs)
             {
                 var dmVm = new DmCellViewModel(thisModel)
@@ -225,21 +210,6 @@ namespace l2l_aggregator.Services.DmProcessing
         }
         public void SaveRawImageAsJpeg(result_data dmrData, string outputPath, int quality = 90)
         {
-            //if (_dmrData.rawImage == null)
-            //    throw new InvalidOperationException("Изображение не загружено или результат сканирования отсутствует.");
-
-            //using var image = dmrData.rawImage.Clone(); // Создаем копию
-            //var encoder = new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder
-            //{
-            //    Quality = quality
-            //};
-
-            //// Убедимся, что путь существует
-            //var dir = Path.GetDirectoryName(outputPath);
-            //if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
-            //    Directory.CreateDirectory(dir);
-
-            //image.Save(outputPath, encoder);
             if (dmrData.rawImage == null)
                 throw new InvalidOperationException("Изображение не загружено или результат сканирования отсутствует.");
 

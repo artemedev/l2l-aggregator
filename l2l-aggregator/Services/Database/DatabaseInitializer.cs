@@ -16,7 +16,6 @@ namespace l2l_aggregator.Services.Database
         }
         public FbConnection GetConnection()
         {
-            //CreateDataBase();
             if (!File.Exists(_databasePath))
             {
                 CreateDataBase();

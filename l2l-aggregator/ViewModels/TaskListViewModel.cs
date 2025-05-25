@@ -5,12 +5,9 @@ using l2l_aggregator.Models;
 using l2l_aggregator.Services;
 using l2l_aggregator.Services.Api;
 using l2l_aggregator.Services.Database;
-using l2l_aggregator.Services.Notification;
 using l2l_aggregator.Services.Notification.Interface;
-using Refit;
 using System;
 using System.Collections.ObjectModel;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace l2l_aggregator.ViewModels

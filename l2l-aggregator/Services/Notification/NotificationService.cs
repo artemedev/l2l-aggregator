@@ -32,9 +32,8 @@ namespace l2l_aggregator.Services.Notification
             _sessionService = sessionService;
         }
 
-        /// <summary>
-        /// Билдер по умолчанию для уведомлений
-        /// </summary>
+
+        // Билдер по умолчанию для уведомлений
         public NotificationMessageBuilder Default()
         {
             // Настройки по умолчанию: фоновый цвет, анимация и т.п.

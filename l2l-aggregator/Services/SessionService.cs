@@ -39,8 +39,8 @@ namespace l2l_aggregator.Services
         public string? LoadedTemplateJson { get; set; }
         public string? LoadedProgressJson { get; set; }
         public bool HasUnfinishedAggregation => SelectedTaskInfo != null &&
-    !string.IsNullOrWhiteSpace(LoadedTemplateJson) &&
-    !string.IsNullOrWhiteSpace(LoadedProgressJson);
+                    !string.IsNullOrWhiteSpace(LoadedTemplateJson) &&
+                    !string.IsNullOrWhiteSpace(LoadedProgressJson);
 
         // Инициализация настроек
         public async Task InitializeAsync(DatabaseService db)
@@ -92,7 +92,6 @@ namespace l2l_aggregator.Services
                 if (state != null)
                 {
                     SelectedTaskInfo = JsonSerializer.Deserialize<ArmJobInfoRecord>(state.TaskInfoJson);
-                    //SelectedTaskInfo = new ArmJobInfoRecord { DOCID = state.TaskId };
                     LoadedTemplateJson = state.TemplateJson;
                     LoadedProgressJson = state.ProgressJson;
                 }

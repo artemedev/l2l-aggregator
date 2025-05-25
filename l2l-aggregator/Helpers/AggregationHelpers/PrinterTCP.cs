@@ -6,9 +6,7 @@ namespace l2l_aggregator.Helpers.AggregationHelpers
 {
     public class PrinterTCP(string name, ILogger logger) : MD.Devices.TCP.Device(name, logger), IPrinter
     {
-        /// <summary>
-        /// Конфигурация принтера
-        /// </summary>
+        // Конфигурация принтера
         private PrinterTcpConfig printerConfig = new();
 
         /// <inheritdoc/>
@@ -17,14 +15,11 @@ namespace l2l_aggregator.Helpers.AggregationHelpers
             base.Configure(configuration);
             configuration.Bind(printerConfig);
         }
-        /// <summary>
-        /// Счетчик для расчетного определения размера буфера
-        /// </summary>
+        // Счетчик для расчетного определения размера буфера
         private int bufferSize = 0;
 
-        /// <inheritdoc/>
         public int BufferSize => bufferSize;
-        /// <inheritdoc/>
+
         public void Confirm(int count = 1)
         {
             bufferSize -= count;

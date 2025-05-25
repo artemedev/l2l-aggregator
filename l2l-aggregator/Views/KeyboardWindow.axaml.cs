@@ -28,7 +28,6 @@ public partial class KeyboardWindow : Window
     public KeyboardWindow()
     {
         InitializeComponent();
-        //Opacity = 0;
         BuildKeyboard();
 
         this.Opened += (_, _) =>
@@ -80,7 +79,6 @@ public partial class KeyboardWindow : Window
     {
         if (_targetTextBox != null && !_targetTextBox.IsFocused && !IsFocused)
         {
-            //Close();
             _focusTimer.Stop();
         }
     }

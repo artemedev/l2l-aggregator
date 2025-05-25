@@ -1,10 +1,5 @@
-﻿using Dapper;
-using FirebirdSql.Data.FirebirdClient;
-using l2l_aggregator.Models;
+﻿using FirebirdSql.Data.FirebirdClient;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace l2l_aggregator.Services.Database

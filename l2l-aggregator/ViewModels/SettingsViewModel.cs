@@ -2,90 +2,47 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DM_wraper_NS;
-using l2l_aggregator.Helpers;
-using l2l_aggregator.Helpers.AggregationHelpers;
 using l2l_aggregator.Models;
 using l2l_aggregator.Services;
 using l2l_aggregator.Services.Api;
+using l2l_aggregator.Services.Api.Interfaces;
 using l2l_aggregator.Services.Database;
 using l2l_aggregator.Services.DmProcessing;
 using l2l_aggregator.Services.Notification.Interface;
 using l2l_aggregator.Services.Printing;
 using l2l_aggregator.Services.ScannerService.Interfaces;
 using l2l_aggregator.ViewModels.VisualElements;
-using MD.Devices;
-using Microsoft.Extensions.Logging;
 using Refit;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using l2l_aggregator.Services.Api.Interfaces;
 
 namespace l2l_aggregator.ViewModels
 {
     public partial class SettingsViewModel : ViewModelBase
     {
-
         [ObservableProperty] private string _serverUri;
-
         [ObservableProperty] private string _cameraIP;
-        [ObservableProperty]
-        private string _serverIP;
-        [ObservableProperty]
-        private string _printerIP;
-
-        [ObservableProperty]
-        private string _controllerIP;
-
-        //[ObservableProperty]
-        //private string _selectedScannerModel;
-
-
-
+        [ObservableProperty] private string _serverIP;
+        [ObservableProperty] private string _printerIP;
+        [ObservableProperty] private string _controllerIP;
         [ObservableProperty] private string _licenseNumber = "XXXX-XXXX-XXXX-XXXX";
-
-        [ObservableProperty]
-        private bool _checkForUpdates;
-
-
-        [ObservableProperty]
-        private string _infoMessage;
-
-
-        [ObservableProperty]
-        private bool _disableVirtualKeyboard;
-
-
-
-        [ObservableProperty]
-        private string _selectedCameraModel;
-
-        [ObservableProperty]
-        private ObservableCollection<string> _printerModels = new() { "Zebra" };
-
+        [ObservableProperty] private bool _checkForUpdates;
+        [ObservableProperty] private string _infoMessage;
+        [ObservableProperty] private bool _disableVirtualKeyboard;
+        [ObservableProperty] private string _selectedCameraModel;
+        [ObservableProperty] private ObservableCollection<string> _printerModels = new() { "Zebra" };
         [ObservableProperty] private string _selectedPrinterModel;
-
-
-
-        [ObservableProperty]
-        private ObservableCollection<string> _cameraModels = new() { "Basler" };
-
-        [ObservableProperty]
-        private ObservableCollection<string> _scannerModels = new() { "Honeywell" };
-
-        [ObservableProperty]
-        private string _selectedScannerModel;
-
+        [ObservableProperty] private ObservableCollection<string> _cameraModels = new() { "Basler" };
+        [ObservableProperty] private ObservableCollection<string> _scannerModels = new() { "Honeywell" };
+        [ObservableProperty] private string _selectedScannerModel;
         [ObservableProperty] private bool isConnectedCamera;
-        //[ObservableProperty] private ObservableCollection<CameraViewModel> _cameras = new();
         [ObservableProperty] private CameraViewModel _camera = new();
-
         [ObservableProperty] private ObservableCollection<ScannerDevice> _availableScanners = new();
         [ObservableProperty] private ScannerDevice _selectedScanner;
         [ObservableProperty] private string _scannerCOMPort;
-
         [ObservableProperty] private bool _checkCameraBeforeAggregation = true;
         [ObservableProperty] private bool _checkPrinterBeforeAggregation = true;
         [ObservableProperty] private bool _checkControllerBeforeAggregation = true;
@@ -120,16 +77,7 @@ namespace l2l_aggregator.ViewModels
             _dmScanService = dmScanService;
             _printingService = printingService;
             _dataApiService = dataApiService;
-
-            //AddCamera();
-            //LoadCameras();
             _ = InitializeAsync();
-
-
-            //if (Cameras.Count == 0)
-            //{
-
-            //}
         }
         private async Task InitializeAsync()
         {
@@ -220,10 +168,6 @@ namespace l2l_aggregator.ViewModels
             SessionService.Instance.CheckScanner = value;
         }
 
-        
-
-        
-
         [RelayCommand]
         private void OpenCameraSettings()
         {
@@ -235,16 +179,11 @@ namespace l2l_aggregator.ViewModels
 
         }
 
-
-
-
-
         [RelayCommand]
         public async Task CheckAndSaveUriAsync()
         {
             if (!string.IsNullOrWhiteSpace(ServerUri))
             {
-                // InfoMessage = "Введите адрес сервера!";
                 try
                 {
                     var request = new ArmDeviceRegistrationRequest
@@ -279,7 +218,6 @@ namespace l2l_aggregator.ViewModels
                     InfoMessage = "URI успешно сохранён!";
                     _notificationService.ShowMessage(InfoMessage);
 
-                    //_router.GoTo<AuthViewModel>();
                 }
                 catch (Exception ex)
                 {
@@ -306,14 +244,7 @@ namespace l2l_aggregator.ViewModels
         [RelayCommand]
         private async void SaveSettings()
         {
-            // Save all camera settings to DatabaseService
-            // For each camera in Cameras collection
-            //foreach (var camera in Cameras)
-            //{
-            //    // _databaseService.SaveCameraSettings(camera.Id, camera.CameraIP, camera.SelectedCameraModel);
-            //}
             await _databaseService.Config.SetConfigValueAsync("DisableVirtualKeyboard", DisableVirtualKeyboard.ToString());
-
             InfoMessage = "Настройки успешно сохранены!";
             _notificationService.ShowMessage(InfoMessage);
 
@@ -443,30 +374,6 @@ namespace l2l_aggregator.ViewModels
         [RelayCommand]
         public async Task TestScannerConnectionAsync()
         {
-            //if (SelectedScanner == null)
-            //{
-            //    InfoMessage = "Сканер не выбран!";
-            //    _notificationService.ShowMessage(InfoMessage);
-            //    return;
-            //}
-
-            //try
-            //{
-            //    await _databaseService.Config.SaveScannerDeviceAsync(SelectedScanner);
-            //    await _databaseService.Config.SetConfigValueAsync("ScannerCOMPort", SelectedScanner.Id);
-            //    await _databaseService.Config.SetConfigValueAsync("CheckScanner", CheckScannerBeforeAggregation.ToString());
-
-            //    SessionService.Instance.ScannerPort = SelectedScanner.Id;
-            //    SessionService.Instance.CheckScanner = CheckScannerBeforeAggregation;
-
-            //    InfoMessage = $"Сканер '{SelectedScanner.Id}' сохранён!";
-            //    _notificationService.ShowMessage(InfoMessage);
-            //}
-            //catch (Exception ex)
-            //{
-            //    InfoMessage = $"Ошибка: {ex.Message}";
-            //    _notificationService.ShowMessage(InfoMessage);
-            //}
             if (SelectedScanner == null)
             {
                 InfoMessage = "Сканер не выбран!";
@@ -478,9 +385,6 @@ namespace l2l_aggregator.ViewModels
             {
                 if (SelectedScannerModel == "Honeywell")
                 {
-                    //await _databaseService.Config.SetConfigValueAsync("ScannerId", SelectedScanner.Id);
-
-                    //await _databaseService.Config.SaveScannerDeviceAsync(SelectedScanner);
                     await _databaseService.Config.SetConfigValueAsync("ScannerCOMPort", SelectedScanner.Id);
                     await _databaseService.Config.SetConfigValueAsync("ScannerModel", SelectedScannerModel);
                     await _databaseService.Config.SetConfigValueAsync("CheckScanner", CheckScannerBeforeAggregation.ToString());

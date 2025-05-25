@@ -7,9 +7,6 @@ namespace l2l_aggregator.Services.AggregationService
 {
     internal class ScannerWorker(string portName) : BackgroundWorker
     {
-        /*
-         private SerialPort port = new SerialPort("com1", 9600, Parity.None, 8, StopBits.One);
-         */
         public event Action<string> BarcodeScanned;
 
         private System.IO.Ports.SerialPort scannerPort = new System.IO.Ports.SerialPort(portName, 9600, System.IO.Ports.Parity.None, 8, System.IO.Ports.StopBits.One);
@@ -35,7 +32,6 @@ namespace l2l_aggregator.Services.AggregationService
                 Debug.WriteLine($"[ScannerWorker] Ошибка чтения: {ex.Message}");
             }
 
-            //BarcodeScanned?.Invoke(barcode.Trim()); // Отправляем вверх
         }
 
         protected override void Dispose(bool disposing)
