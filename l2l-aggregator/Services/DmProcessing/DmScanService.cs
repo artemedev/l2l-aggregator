@@ -24,13 +24,15 @@ namespace l2l_aggregator.Services.DmProcessing
         private readonly DM_recogn_wraper _recognWrapper;
         private readonly DM_process _dmProcess;
         private static TaskCompletionSource<bool> _dmrDataReady;
-
+        private TaskCompletionSource<bool>? _startOkSignal;
         public DmScanService()
         {
             _recognWrapper = new DM_recogn_wraper();
             _recognWrapper.Init();
             _recognWrapper.swNewDMResult += OnNewResult;
-
+            _recognWrapper.alarmEvent += alarmEvent;
+            _recognWrapper.swStartOk += OnStartOk;
+            _recognWrapper.swFindedCamerasList += showListOfCam;
             _dmProcess = new DM_process();
             _dmProcess.Init(_recognWrapper);
         }
@@ -39,11 +41,13 @@ namespace l2l_aggregator.Services.DmProcessing
 
         public void StartScan(string base64Template)
         {
-            string filePath = "./tmp/template.xml"; // Или .fr3 — в зависимости от формата
+            //string filePath = "./tmp/template.xml"; // Или .fr3 — в зависимости от формата
 
             _dmrDataReady = new TaskCompletionSource<bool>();
             _recognWrapper.SendPrintPatternXML(base64Template);
-            _DMP.update_PP();
+            _recognWrapper.SendStartShotComand();
+
+            //_DMP.update_PP();
         }
         public void SaveXmlToFile(string xmlContent, string filePath)
         {
@@ -73,10 +77,19 @@ namespace l2l_aggregator.Services.DmProcessing
         {
             _recognWrapper.SendStopShotComand();
         }
-        public void getScan()
+        private void OnStartOk()
+        {
+            _startOkSignal?.TrySetResult(true);
+        }
+        public Task WaitForStartOkAsync()
+        {
+            _startOkSignal = new TaskCompletionSource<bool>();
+            return _startOkSignal.Task;
+        }
+        public void startShot()
         {
             _dmrDataReady = new TaskCompletionSource<bool>();
-            _recognWrapper.SendStartShotComand();
+            //_recognWrapper.SendStartShotComand();
             _recognWrapper.SendShotFrameComand();
         }
         public async Task<result_data> WaitForResultAsync()
@@ -89,8 +102,31 @@ namespace l2l_aggregator.Services.DmProcessing
         {
             _dmrData = _recognWrapper.GetDMResult();
             _dmrDataReady.TrySetResult(true);
+           // _recognWrapper.SendShotFrameComand();
+
         }
 
+        //новое 23.05-------------------------
+        private static void showListOfCam(string[] res)
+        {
+            if (res == null || res.Length < 1)
+            {
+                Console.WriteLine("CAMERA NOT AVALIBLE!");
+                return;
+            }
+            foreach (string s in res)
+            {
+                Console.WriteLine(s);
+            }
+            Console.WriteLine("All cameras finded");
+        }
+
+
+        public static void alarmEvent(string textEvent, string typeEvent)
+        {
+            Console.WriteLine($"ALARM EVENT {typeEvent} {textEvent}");
+        }
+        //-----------------------------------
         public async Task<Bitmap> GetCroppedImage(result_data dmrData, int minX, int minY, int maxX, int maxY)
         {
             return await Task.Run(() =>

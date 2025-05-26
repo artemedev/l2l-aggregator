@@ -210,10 +210,12 @@ namespace l2l_aggregator.ViewModels
                     var progress = JsonSerializer.Deserialize<AggregationProgressModel>(_sessionService.LoadedProgressJson!);
                     if (progress != null)
                     {
+                        if(_sessionService.LoadedTemplateJson != null)
+                            _lastUsedTemplateJson = _sessionService.LoadedTemplateJson;
+
                         CurrentLayer = progress.CurrentLayer;
                         CurrentBox = progress.CurrentBox;
                         CurrentPallet = progress.CurrentPallet;
-
                         DMCells.Clear();
                         foreach (var cell in progress.DmCells)
                         {
@@ -262,6 +264,7 @@ namespace l2l_aggregator.ViewModels
 
         private async void InitializeAsync()
         {
+            await _sessionService.InitializeAsync(_databaseService);
             //переделать на сервис
             var savedScanner = await _databaseService.Config.GetConfigValueAsync("ScannerCOMPort");
             if (savedScanner is not null)
@@ -338,6 +341,7 @@ namespace l2l_aggregator.ViewModels
         [RelayCommand]
         public async Task Scan()
         {
+            //bool StartScan = false;
             if (_sessionService.SelectedTaskInfo == null)
             {
                 InfoMessage = "Ошибка: отсутствует информация о задании.";
@@ -386,6 +390,12 @@ namespace l2l_aggregator.ViewModels
                     //отправка шаблона в библиотеку распознавания
                     _dmScanService.StartScan(currentTemplate);
                     _lastUsedTemplateJson = currentTemplate;
+                    //StartScan = true;
+                    ////TODO WRAPTER swStartOk;
+                    //Thread.Sleep(4000);
+                    ////Thread.Sleep(1000);
+                    ////старт распознавания
+                    //_dmScanService.startShot();
                 }
                 catch (Exception ex)
                 {
@@ -398,7 +408,9 @@ namespace l2l_aggregator.ViewModels
                 try
                 {
                     //старт распознавания
-                    _dmScanService.getScan();
+                    await _dmScanService.WaitForStartOkAsync();
+                    _dmScanService.startShot();
+                    //_dmScanService.startShot();
                     //ожидание результата распознавания
                     dmrData = await _dmScanService.WaitForResultAsync();
                     Console.WriteLine($"[INFO] Получено {dmrData.BOXs.Count} BOX элементов");

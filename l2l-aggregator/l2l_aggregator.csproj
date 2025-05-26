@@ -62,4 +62,19 @@
 		  <HintPath>..\DM_wraper_lib\bin\Debug\net8.0\DM_wraper_lib.dll</HintPath>
 	  </Reference>-->
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="basler.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="config.toml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="decode.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Pharma_0-9A-Z_Rej .omc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

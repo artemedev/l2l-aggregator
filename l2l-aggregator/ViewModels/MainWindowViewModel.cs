@@ -81,7 +81,7 @@ namespace l2l_aggregator.ViewModels
         {
             var serverUri = await _databaseService.Config.GetConfigValueAsync("ServerUri");
 
-            if (!string.IsNullOrEmpty(serverUri))ы
+            if (!string.IsNullOrEmpty(serverUri))
             {
                 _router.GoTo<AuthViewModel>();
             }

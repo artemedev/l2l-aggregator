@@ -64,7 +64,7 @@
 									   Text="{Binding Name}"
 									   VerticalAlignment="Center"
 									   Margin="5,0"
-									   FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.05;16;36'}"/>
+									   FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.025;16;36'}"/>
 								
 							</CheckBox>
 							<TextBlock Grid.Column="2"
