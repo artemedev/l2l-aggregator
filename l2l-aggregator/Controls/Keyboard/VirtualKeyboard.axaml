@@ -86,7 +86,7 @@
 							HorizontalAlignment="Stretch"
 							VerticalContentAlignment="Center" 
 							HorizontalContentAlignment="Center">
-						Ok
+						OK
 					</Button>
 				</Grid>
 			</Border>

@@ -15,6 +15,7 @@ using l2l_aggregator.Services.AggregationService;
 using l2l_aggregator.Services.Api;
 using l2l_aggregator.Services.Database;
 using l2l_aggregator.Services.DmProcessing;
+using l2l_aggregator.Services.GS1ParserService;
 using l2l_aggregator.Services.Notification.Interface;
 using l2l_aggregator.Services.Printing;
 using l2l_aggregator.ViewModels.VisualElements;
@@ -879,11 +880,17 @@ namespace l2l_aggregator.ViewModels
             foreach (var newOcr in newOcrList)
                 cell.OcrCellsInPopUp.Add(newOcr);
 
+            //foreach(var ocr in cell.)
             IsPopupOpen = true;
-
+            var gS1Parser = new GS1Parser();
+            GS1_data newGS = gS1Parser.ParseGTIN(cell.DmCell?.Data);
+            var GS1 = newGS.GS1isCorrect;
+            var GTIN = newGS.GTIN;
+            
             // Обновление текста
             AggregationSummaryText = $"""
-DM-код: {(string.IsNullOrWhiteSpace(cell.DmCell?.Data) ? "нет данных" : cell.DmCell.Data)}
+GS1-код: {(GS1 ? "нет данных" : GS1)}
+GTIN-код: {(string.IsNullOrWhiteSpace(GTIN) ? "нет данных" : GTIN)}
 Валидность: {(cell.DmCell?.IsValid == true ? "Да" : "Нет")}
 Координаты: {(cell.DmCell is { } dm1 ? $"({dm1.X:0.##}, {dm1.Y:0.##})" : "нет данных")}
 Размер: {(cell.DmCell is { } dm ? $"({dm.SizeWidth:0.##} x {dm.SizeHeight:0.##})" : "нет данных")}
@@ -899,7 +906,7 @@ OCR:
             Console.WriteLine($"OcrCellsInPopUp.Count: {cell.OcrCellsInPopUp.Count}");
             foreach (var ocr in cell.OcrCellsInPopUp)
             {
-                Console.WriteLine($"OCR: X={ocr.X}, Y={ocr.Y}, W={ocr.SizeWidth}, H={ocr.SizeHeight}");
+                Console.WriteLine($"OCR: X={ocr.X}, Y={ocr.Y}, W={ocr.SizeWidth}, H={ocr.SizeHeight}, Angle={ocr.Angle}");
             }
         }
         partial void OnIsPopupOpenChanged(bool value)

@@ -282,6 +282,16 @@ namespace l2l_aggregator.Services.DmProcessing
                     width = cell.width,
                     height = cell.height,
                     angle = cell.alpha,
+                    cell_dm = new DM_data
+                    {
+                        data = cell.DM.data,
+                        poseX = cell.DM.poseX,
+                        poseY = cell.DM.poseY,
+                        width = cell.DM.width,
+                        height = cell.DM.height,
+                        alpha = cell.DM.alpha,
+                        isError = cell.DM.isError
+                    },
                     cell_ocr = cell.OCR.Select(o => new OcrField
                     {
                         data = o.Text,
@@ -314,7 +324,16 @@ namespace l2l_aggregator.Services.DmProcessing
             public int height { get; set; }
             public int angle { get; set; }
         }
-
+        public class DM_data
+        {
+            public string data { get; set; }
+            public int poseX { get; set; }
+            public int poseY { get; set; }
+            public int height { get; set; }
+            public int width { get; set; }
+            public int alpha { get; set; }
+            public bool isError { get; set; }
+        }
         public class CellData
         {
             public int cell_id { get; set; }
@@ -323,6 +342,7 @@ namespace l2l_aggregator.Services.DmProcessing
             public int width { get; set; }
             public int height { get; set; }
             public int angle { get; set; }
+            public DM_data cell_dm { get; set; }
             public List<OcrField> cell_ocr { get; set; }
         }
     }
