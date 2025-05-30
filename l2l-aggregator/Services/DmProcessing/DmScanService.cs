@@ -214,6 +214,7 @@ namespace l2l_aggregator.Services.DmProcessing
                         OcrName = ocr.Name,
                         OcrText = ocr.Text
                     });
+                    //thisModel.OnCellClicked(dmVm);
 
                     if (!isValid)
                         allValid = false;

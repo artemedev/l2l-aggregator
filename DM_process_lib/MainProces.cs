@@ -13,6 +13,19 @@ namespace DM_process_lib
         public MainProces()
         {
         }
+        public void MP_StartShot()
+        {
+            Console.WriteLine("MainProces : Start shot process");
+
+            // Логируем
+            _DMP._dM_recogn_wraper.Send_log_event("Начат поток съемки (аппаратный триггер)", "Info");
+
+            // Здесь можно вставить инициализацию потока или других механизмов, если надо
+            // Например: запуск захвата с камеры
+
+            // Уведомляем об успешном запуске
+            _DMP._dM_recogn_wraper.sendStartOk();
+        }
         public void MP_TakeShot()
         {
             Thread th_pShot = new Thread(_shot_proces);
@@ -47,6 +60,8 @@ namespace DM_process_lib
             }
             Console.WriteLine("Add new DM codes");
             _DMP._dM_recogn_wraper.Update_result_data(dmrd);
+
+            _DMP._dM_recogn_wraper.sendShotOk(); // ← обязательно для завершения цепочки
 
         }
         /// <summary>

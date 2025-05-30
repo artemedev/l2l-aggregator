@@ -496,26 +496,26 @@ namespace l2l_aggregator.ViewModels
                 //Сохраняем при сканировании в бд
                 if (dmrData.rawImage != null)
                 {
-                    string taskInfoJson = JsonSerializer.Serialize(_sessionService.SelectedTaskInfo);
-                    await _databaseService.AggregationState.SaveStateAsync(new AggregationState
-                    {
-                        Username = _sessionService.User.USER_NAME,
-                        TaskId = _sessionService.SelectedTaskInfo.DOCID,
-                        TemplateJson = _lastUsedTemplateJson,
-                        TaskInfoJson = JsonSerializer.Serialize(_sessionService.SelectedTaskInfo),
-                        ProgressJson = JsonSerializer.Serialize(new
-                        {
-                            CurrentLayer,
-                            CurrentBox,
-                            CurrentPallet,
-                            DmCells = DMCells.Select(c => new
-                            {
-                                c.DmCell.Data,
-                                c.IsValid,
-                                Ocr = c.OcrCells.Select(o => new { o.OcrName, o.OcrText, o.IsValid })
-                            })
-                        })
-                    });
+                    //string taskInfoJson = JsonSerializer.Serialize(_sessionService.SelectedTaskInfo);
+                    //await _databaseService.AggregationState.SaveStateAsync(new AggregationState
+                    //{
+                    //    Username = _sessionService.User.USER_NAME,
+                    //    TaskId = _sessionService.SelectedTaskInfo.DOCID,
+                    //    TemplateJson = _lastUsedTemplateJson,
+                    //    TaskInfoJson = JsonSerializer.Serialize(_sessionService.SelectedTaskInfo),
+                    //    ProgressJson = JsonSerializer.Serialize(new
+                    //    {
+                    //        CurrentLayer,
+                    //        CurrentBox,
+                    //        CurrentPallet,
+                    //        DmCells = DMCells.Select(c => new
+                    //        {
+                    //            c.DmCell.Data,
+                    //            c.IsValid,
+                    //            Ocr = c.OcrCells.Select(o => new { o.OcrName, o.OcrText, o.IsValid })
+                    //        })
+                    //    })
+                    //});
 
                     double boxRadius = Math.Sqrt(dmrData.BOXs[0].height * dmrData.BOXs[0].height +
                               dmrData.BOXs[0].width * dmrData.BOXs[0].width) / 2;
