@@ -26,5 +26,6 @@
 		<converters:HalfConverter x:Key="HalfConverter" />
 		<converters:OneThirdWidthConverter x:Key="OneThirdWidthConverter"/>
 		<converters:NotificationTypeToBrushConverter x:Key="NotificationTypeToBrushConverter"/>
+		<converters:AngleToRotateTransformConverter x:Key="AngleToRotateTransformConverter" />
 	</Application.Resources>
 </Application>

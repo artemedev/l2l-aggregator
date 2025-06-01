@@ -10,7 +10,6 @@
             _DMP.updateWraper(dM_recogn_wraper);
             Console.WriteLine("DM_process - initialisation");
             //Подписались на событие
-            dM_recogn_wraper.libStartShot += _MP.MP_StartShot;
             dM_recogn_wraper.libTakeShot += _MP.MP_TakeShot;
             dM_recogn_wraper.libUpdateParams += _DMP.update_DMP;
             dM_recogn_wraper.libUpdatePrintPattern += _DMP.update_PP;

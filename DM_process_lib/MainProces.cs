@@ -13,19 +13,6 @@ namespace DM_process_lib
         public MainProces()
         {
         }
-        public void MP_StartShot()
-        {
-            Console.WriteLine("MainProces : Start shot process");
-
-            // Логируем
-            _DMP._dM_recogn_wraper.Send_log_event("Начат поток съемки (аппаратный триггер)", "Info");
-
-            // Здесь можно вставить инициализацию потока или других механизмов, если надо
-            // Например: запуск захвата с камеры
-
-            // Уведомляем об успешном запуске
-            _DMP._dM_recogn_wraper.sendStartOk();
-        }
         public void MP_TakeShot()
         {
             Thread th_pShot = new Thread(_shot_proces);
@@ -61,8 +48,6 @@ namespace DM_process_lib
             Console.WriteLine("Add new DM codes");
             _DMP._dM_recogn_wraper.Update_result_data(dmrd);
 
-            _DMP._dM_recogn_wraper.sendShotOk(); // ← обязательно для завершения цепочки
-
         }
         /// <summary>
         /// Отдельная функция, которая формирует BOX_data, заполняет его списком OCR 
@@ -79,7 +64,17 @@ namespace DM_process_lib
                 alpha = cell.angle,
                 packType = "PackageType",
                 isError = false,
-                OCR = new List<OCR_data>()
+                OCR = new List<OCR_data>(),
+                DM = new DM_wraper_NS.DM_data
+                {
+                    data = cell.cell_dm?.data,
+                    poseX = cell.cell_dm?.poseX ?? 0,
+                    poseY = cell.cell_dm?.poseY ?? 0,
+                    width = cell.cell_dm?.width ?? 0,
+                    height = cell.cell_dm?.height ?? 0,
+                    alpha = cell.cell_dm?.angle ?? 0,
+                    isError = cell.cell_dm?.isError ?? false
+                }
             };
 
 
@@ -103,7 +98,7 @@ namespace DM_process_lib
                         poseY = entry.poseY,
                         width = entry.width,
                         height = entry.height,
-                        alpha = entry.alpha,
+                        alpha = entry.angle,
 
                     });
                 }
@@ -198,10 +193,19 @@ namespace DM_process_lib
             public int width { get; set; }
             public int height { get; set; }
             public int angle { get; set; }
-
+            public DM_data cell_dm { get; set; }
             public List<Cell_OCR> cell_ocr { get; set; }
         }
-
+        public class DM_data
+        {
+            public string data { get; set; }
+            public int poseX { get; set; }
+            public int poseY { get; set; }
+            public int height { get; set; }
+            public int width { get; set; }
+            public int angle { get; set; }
+            public bool isError { get; set; }
+        }
         private class Cell_OCR
         {
             public string data { get; set; }
@@ -210,7 +214,7 @@ namespace DM_process_lib
             public int poseY { get; set; }
             public int width { get; set; }
             public int height { get; set; }
-            public int alpha { get; set; }
+            public int angle { get; set; }
 
         }
     }

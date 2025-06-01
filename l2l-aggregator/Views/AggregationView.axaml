@@ -162,7 +162,7 @@
 			   Name="scanImagePopup"
 			   PointerPressed="Popup_PointerPressed">
 			<Border Background="White" BorderBrush="Black" BorderThickness="2" >
-				<Grid SizeChanged="OnImageGridSizeCellChanged">
+				<Grid>
 					<Image Source="{Binding SelectedSquareImage}"
 						   Stretch="Uniform"
 						   HorizontalAlignment="Center"
@@ -184,6 +184,7 @@
 										BorderThickness="3"
 										Background="Transparent"
 										CommandParameter="{Binding}">
+									
 									<TextBlock Text="OCR"
 											   Foreground="Black"
 											   Opacity="0"/>

@@ -21,6 +21,8 @@ using l2l_aggregator.Services.Printing;
 using l2l_aggregator.ViewModels.VisualElements;
 using l2l_aggregator.Views.Popup;
 using Microsoft.Extensions.Logging;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -32,56 +34,66 @@ namespace l2l_aggregator.ViewModels
 {
     public partial class AggregationViewModel : ViewModelBase
     {
+        //сервис работы с сессией
         private readonly SessionService _sessionService;
+
+        //сервис работы с api
         private readonly DataApiService _dataApiService;
+
+        //сервис кропа изображения выбранной ячейки пользователем
         private readonly ImageHelper _imageProcessingService;
+
+        //сервис обработки шаблона, после выбора пользователя элементов в ui. Для дальнейшей отправки в библиотеку распознавания
         private readonly TemplateService _templateService;
+
+        //сервис обработки и работы с библиотекой распознавания, нужно сделать только чтобы была работа с распознавание, перенести обработку!!!!!!!!!!!!!!!!!!!!!!!!!
         private readonly DmScanService _dmScanService;
-        private readonly ScannerListenerService _scannerListener;
+
+        //сервис работы с бд
         private readonly DatabaseService _databaseService;
-        private readonly ScannerInputService _scannerInputService;
+
+        //сервис сканера через comport
         private ScannerWorker _scannerWorker;
+
+        //сервис нотификаций
         private readonly INotificationService _notificationService;
+
+        //сервис роутинга
         private readonly HistoryRouter<ViewModelBase> _router;
+
+        //сервис принтера
         private readonly PrintingService _printingService;
 
-        private ILogger? logger;
-
-        public IBrush BorderColor => !IsValid ? Brushes.Red : Brushes.Green;
-        partial void OnIsValidChanged(bool value) => OnPropertyChanged(nameof(BorderColor));
-
-        [ObservableProperty] private bool isValid;
-
-
+        //для обновления размеров ячейки, UI
+        public IRelayCommand<SizeChangedEventArgs> ImageSizeChangedCommand { get; }
+        public IRelayCommand<SizeChangedEventArgs> ImageSizeCellChangedCommand { get; }
         [ObservableProperty] private Avalonia.Size imageSize;
         [ObservableProperty] private Avalonia.Size imageSizeCell;
-        [ObservableProperty] private Avalonia.Size imageSizeGridCell;
-
         [ObservableProperty] private double imageWidth;
         [ObservableProperty] private double imageHeight;
         [ObservableProperty] private double imageCellWidth;
         [ObservableProperty] private double imageCellHeight;
 
-        [ObservableProperty] private int currentStepIndex;
+        //валидация ячейки будет она красная или зеленая, UI
+        [ObservableProperty] private bool isValid;
+
+        //изображение слоя, UI
         [ObservableProperty] private Bitmap scannedImage;
-        [ObservableProperty] private string infoMessage;
-        [ObservableProperty] private bool isTemplateLoaded;
 
+        //Данные ячеек, UI
         [ObservableProperty] private ObservableCollection<DmCellViewModel> dMCells = new();
-        [ObservableProperty] private bool isPopupOpen;
-        [ObservableProperty] private DmCellViewModel selectedDmCell;
-        [ObservableProperty] private Bitmap selectedSquareImage;
-        [ObservableProperty] private ObservableCollection<string> layers = new();
-        [ObservableProperty] private ObservableCollection<string> palletBoxes = new();
-        [ObservableProperty] private int selectedTabIndex;
 
-        [ObservableProperty] private int aggregatedLayers;
-        [ObservableProperty] private int aggregatedBoxes;
-        [ObservableProperty] private int aggregatedPallets;
-        [ObservableProperty] private string scannedBarcode;
+        //переменная для открытия всплывающего окна с изображением выбранной ячейки
+        [ObservableProperty] private bool isPopupOpen;
+
+        //перемення для отображения элементов в выбранной ячейке
+        [ObservableProperty] private DmCellViewModel selectedDmCell;
+        //изображение выбранной ячейки
+        [ObservableProperty] private Bitmap selectedSquareImage;
 
         //состояние кнопок
         //Кнопока сканировать
+        //для отслеживания состояния загрузки шаблона
         [ObservableProperty] private bool canScan = true;
         //Кнопока настройки шаблона
         [ObservableProperty] private bool canOpenTemplateSettings = true;
@@ -95,79 +107,78 @@ namespace l2l_aggregator.ViewModels
         [ObservableProperty] private bool canClearPallet = false;
         //Завершить агрегацию
         [ObservableProperty] private bool canCompleteAggregation = false;
-        //Fields это 
+
+        //переменная на каком мы шаге находимся, 1-агрегация пачек, 2 агрегация короба, 3 агрегация паллеты, 4 сканирование короба, 5 сканирование паллеты
+        private int CurrentStepIndex;
+
+        //переменная для сообщений нотификации
+        private string InfoMessage;
+
+        //элементы шаболона в список всплывающего окна 
         public ObservableCollection<TemplateField> TemplateFields { get; } = new();
-        public ObservableCollection<ScannedItem> ScannedData { get; } = new();
-        public ObservableCollection<object> BoxAggregationData { get; set; } = new();
-        public ObservableCollection<object> PalletAggregationData { get; set; } = new();
 
-        private double scaleX, scaleY, scaleXObrat, scaleYObrat, scaleImagaeX, scaleImagaeY;
+        //переменные для высчитывания разницы между кропнутым изображением и изображением из интерфейса
+        private double scaleX, scaleY, scaleXObrat, scaleYObrat;
 
-        FastReport.Export.Zpl.ZplExport? exporter;
-
-        public JobConfiguration configZPL;
-        public IRelayCommand<SizeChangedEventArgs> ImageSizeChangedCommand { get; }
-        public IRelayCommand<SizeChangedEventArgs> ImageSizeCellChangedCommand { get; }
-        public IRelayCommand<SizeChangedEventArgs> ImageSizeGridCellChangedCommand { get; }
-
+        //переменная для сохранение шаблона при показе информацию из ячейки
         private string? _lastUsedTemplateJson;
 
+        //переменная для колличества слоёв всего
         private int numberOfLayers;
+
+        //переменная для колличества слоёв всего, не используются но нужны!!!!!
         private int numberOfBoxes;
         private int numberOfPallets;
+
+        //переменная для шаблона коробки, для печати
         private byte[] frxBoxBytes;
+
+        //переменная для шаблона паллеты, для печати
         private byte[] frxPalletBytes;
+
+        //данные из api о sscc
         ArmJobSsccResponse responseSscc;
 
+        //данные распознавания
         static result_data dmrData;
 
 
-        [ObservableProperty] private string infoLayerText = "Выберите элементы шаблона для агрегации и нажмите кнопку сканировать!";
-        [ObservableProperty] private string infoDMText = "Распознано 0 из 0";
-        [ObservableProperty] private string infoHelperText;
-        [ObservableProperty] private bool isHelperTextVisible;
+        //текущий слой
         [ObservableProperty] private int currentLayer = 1;
+        //текущая коробка
         [ObservableProperty] private int currentBox = 1;
+        //текущая паллета
         [ObservableProperty] private int currentPallet = 1;
 
+        // Добавление опции "распознавание коробки" в настройки распознавания
+        [ObservableProperty] private bool recognizePack = true;
 
-        [ObservableProperty]
-        private bool recognizePack = true; // Добавление опции "распознавание коробки" в настройки распознавания
+        //информационное текстовое поле выше изображения 
+        [ObservableProperty] private string infoLayerText = "Выберите элементы шаблона для агрегации и нажмите кнопку сканировать!";
 
-        public IEnumerable<RecognitionType> RecognitionTypes => Enum.GetValues(typeof(RecognitionType)).Cast<RecognitionType>();
-
-
-        [ObservableProperty]
-        private string aggregationSummaryText = "Результат агрегации пока не рассчитан.";
-
+        //информационное текстовое поле справа изображения
+        [ObservableProperty] private string aggregationSummaryText = "Результат агрегации пока не рассчитан.";
 
         //поле для запоминания предыдущего значения информации о агрегации для выхода из информации для клика по ячейке
         private string _previousAggregationSummaryText;
 
-
-        //
+        private int minX;
+        private int minY;
+        private int maxX;
+        private int maxY;
+        //модель для сохранения агрегационного состояния
         public class AggregationProgressModel
         {
             public int CurrentLayer { get; set; }
             public int CurrentBox { get; set; }
             public int CurrentPallet { get; set; }
-            public List<AggregationCellData> DmCells { get; set; } = new();
+            public List<DmCellViewModel> CurrentDmCells { get; set; } = new();
         }
 
-        public class AggregationCellData
-        {
-            public string DataMatrixData { get; set; }
-            public bool IsValid { get; set; }
-            public List<OcrCellData> Ocr { get; set; } = new();
-        }
+        //-----------------------------------------------
 
-        public class OcrCellData
-        {
-            public string Name { get; set; }
-            public string Text { get; set; }
-            public bool IsValid { get; set; }
-        }
 
+        private Image<Rgba32> _croppedImageRaw;
 
         public AggregationViewModel(
             DataApiService dataApiService,
@@ -188,20 +199,38 @@ namespace l2l_aggregator.ViewModels
             _imageProcessingService = imageProcessingService;
             _templateService = templateService;
             _dmScanService = dmScanService;
-            _scannerListener = scannerListener;
+            //_scannerListener = scannerListener;
             _databaseService = databaseService;
-            _scannerInputService = scannerInputService;
+            //_scannerInputService = scannerInputService;
             _notificationService = notificationService;
             _router = router;
             _printingService = printingService;
 
             ImageSizeChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeChanged);
             ImageSizeCellChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeCellChanged);
-            ImageSizeGridCellChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeGridCellChanged);
+            //ImageSizeGridCellChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeGridCellChanged);
 
 
             InitializeAsync();
         }
+
+        private async void InitializeAsync()
+        {
+            ////инициализация предыдущего состояния если оно есть
+            //InitializeFromSavedState();
+
+            //инициализация сканера
+            InitializeScanner();
+
+            //инициализация в переменны
+            InitializeNumberOfLayers();
+            //
+            InitializeSsccAsync();
+
+            //заполнение из шаблона в модальное окно для выбора элементов для сканирования
+            InitializeTemplate();
+        }
+
         private void InitializeFromSavedState()
         {
             if (_sessionService.HasUnfinishedAggregation)
@@ -211,39 +240,35 @@ namespace l2l_aggregator.ViewModels
                     var progress = JsonSerializer.Deserialize<AggregationProgressModel>(_sessionService.LoadedProgressJson!);
                     if (progress != null)
                     {
-                        if(_sessionService.LoadedTemplateJson != null)
-                            _lastUsedTemplateJson = _sessionService.LoadedTemplateJson;
-
+                        DMCells.Clear();
                         CurrentLayer = progress.CurrentLayer;
                         CurrentBox = progress.CurrentBox;
                         CurrentPallet = progress.CurrentPallet;
-                        DMCells.Clear();
-                        foreach (var cell in progress.DmCells)
+
+
+                        foreach (var c in progress.CurrentDmCells)
                         {
-                            var dmCell = new DmCellViewModel(this)
+                            var cell = new DmCellViewModel(this)
                             {
-                                IsValid = cell.IsValid,
-                                DmCell = new DmSquareViewModel
-                                {
-                                    Data = cell.DataMatrixData,
-                                    IsValid = cell.IsValid
-                                    // можно также X, Y, SizeWidth, SizeHeight, Angle — если есть
-                                }
+                                X = c.X,
+                                Y = c.Y,
+                                SizeHeight = c.SizeHeight,
+                                SizeWidth = c.SizeWidth,
+                                Angle = c.Angle,
+                                IsValid = c.IsValid,
+                                Dm_data = c.Dm_data
                             };
 
-                            foreach (var ocr in cell.Ocr)
+                            foreach (var ocr in c.OcrCells)
                             {
-                                dmCell.OcrCells.Add(new SquareCellViewModel
-                                {
-                                    OcrName = ocr.Name,
-                                    OcrText = ocr.Text,
-                                    IsValid = ocr.IsValid
-                                });
+                                cell.OcrCells.Add(ocr); // или создайте копии если нужно
                             }
 
-                            DMCells.Add(dmCell);
+                            DMCells.Add(cell);
                         }
                         int validCountDMCells = DMCells.Count(c => c.IsValid);
+
+
                         AggregationSummaryText = $@"
 Агрегируемая серия: {_sessionService.SelectedTaskInfo.RESOURCEID}
 Количество собранных коробов: {CurrentBox - 1}
@@ -263,14 +288,13 @@ namespace l2l_aggregator.ViewModels
             }
         }
 
-        private async void InitializeAsync()
+        private void InitializeScanner()
         {
-            await _sessionService.InitializeAsync(_databaseService);
-            //переделать на сервис
-            var savedScanner = await _databaseService.Config.GetConfigValueAsync("ScannerCOMPort");
+            var savedScanner = _sessionService.ScannerPort;
+
             if (savedScanner is not null)
             {
-                var modelScanner = await _databaseService.Config.GetConfigValueAsync("ScannerModel");
+                var modelScanner = _sessionService.ScannerModel;
 
                 if (modelScanner == "Honeywell")
                 {
@@ -284,10 +308,17 @@ namespace l2l_aggregator.ViewModels
                     _notificationService.ShowMessage(InfoMessage);
                 }
             }
-            InitializeSsccAsync();
+        }
+
+        private void InitializeNumberOfLayers()
+        {
             if (_sessionService.SelectedTaskInfo != null)
             {
                 numberOfLayers = _sessionService.SelectedTaskInfo.IN_BOX_QTY / _sessionService.SelectedTaskInfo.LAYERS_QTY;
+                //шаблон коробки
+                frxBoxBytes = Convert.FromBase64String(_sessionService.SelectedTaskInfo.BOX_TEMPLATE);
+                //шаблон паллеты
+                frxPalletBytes = Convert.FromBase64String(_sessionService.SelectedTaskInfo.PALLETE_TEMPLATE);
             }
             else
             {
@@ -295,26 +326,6 @@ namespace l2l_aggregator.ViewModels
                 _notificationService.ShowMessage(InfoMessage);
                 return;
             }
-            //шаблон коробки
-            frxBoxBytes = Convert.FromBase64String(_sessionService.SelectedTaskInfo.BOX_TEMPLATE);
-            //шаблон паллеты
-            frxPalletBytes = Convert.FromBase64String(_sessionService.SelectedTaskInfo.PALLETE_TEMPLATE);
-
-
-            LoadTemplateFromSession(); //заполнение из шаблона в модальное окно для выбора элементов для сканирования
-
-            InitializeFromSavedState();
-        }
-        private void LoadTemplateFromSession()
-        {
-
-            TemplateFields.Clear();
-            var loadedFields = _templateService.LoadTemplate(_sessionService.SelectedTaskInfo.UN_TEMPLATE_FR);
-            foreach (var f in loadedFields)
-                TemplateFields.Add(f);
-
-            IsTemplateLoaded = TemplateFields.Count > 0;
-
         }
 
         private async void InitializeSsccAsync()
@@ -334,6 +345,150 @@ namespace l2l_aggregator.ViewModels
             }
             _sessionService.SelectedTaskSscc = responseSscc.RECORDSET.FirstOrDefault();
         }
+
+        private void InitializeTemplate()
+        {
+
+            TemplateFields.Clear();
+            var loadedFields = _templateService.LoadTemplate(_sessionService.SelectedTaskInfo.UN_TEMPLATE_FR);
+            foreach (var f in loadedFields)
+                TemplateFields.Add(f);
+
+            CanScan = TemplateFields.Count > 0;
+
+        }
+        //        private void InitializeFromSavedState()
+        //        {
+        //            if (_sessionService.HasUnfinishedAggregation)
+        //            {
+        //                try
+        //                {
+        //                    var progress = JsonSerializer.Deserialize<AggregationProgressModel>(_sessionService.LoadedProgressJson!);
+        //                    if (progress != null)
+        //                    {
+        //                        if(_sessionService.LoadedTemplateJson != null)
+        //                            _lastUsedTemplateJson = _sessionService.LoadedTemplateJson;
+
+        //                        CurrentLayer = progress.CurrentLayer;
+        //                        CurrentBox = progress.CurrentBox;
+        //                        CurrentPallet = progress.CurrentPallet;
+        //                        DMCells.Clear();
+        //                        foreach (var cell in progress.DmCells)
+        //                        {
+        //                            var dmCell = new DmCellViewModel(this)
+        //                            {
+        //                                IsValid = cell.IsValid,
+        //                                DmCell = new DmSquareViewModel
+        //                                {
+        //                                    Data = cell.DataMatrixData,
+        //                                    IsValid = cell.IsValid
+        //                                    // можно также X, Y, SizeWidth, SizeHeight, Angle — если есть
+        //                                }
+        //                            };
+
+        //                            foreach (var ocr in cell.Ocr)
+        //                            {
+        //                                dmCell.OcrCells.Add(new SquareCellViewModel
+        //                                {
+        //                                    OcrName = ocr.Name,
+        //                                    OcrText = ocr.Text,
+        //                                    IsValid = ocr.IsValid
+        //                                });
+        //                            }
+
+        //                            DMCells.Add(dmCell);
+        //                        }
+        //                        int validCountDMCells = DMCells.Count(c => c.IsValid);
+        //                        AggregationSummaryText = $@"
+        //Агрегируемая серия: {_sessionService.SelectedTaskInfo.RESOURCEID}
+        //Количество собранных коробов: {CurrentBox - 1}
+        //Номер собираемого короба: {CurrentBox}
+        //Номер слоя: {CurrentLayer}
+        //Количество слоев в коробе: {_sessionService.SelectedTaskInfo.LAYERS_QTY}
+        //Количество СИ, распознанное в слое: {validCountDMCells}
+        //Количество СИ, считанное в слое: {DMCells.Count}
+        //Количество СИ, ожидаемое в слое: {numberOfLayers}";
+        //                        //AggregationSummaryText = $"Загружено сохранённое состояние. Короб {CurrentBox}, Слой {CurrentLayer}, Паллет {CurrentPallet}.";
+        //                    }
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    _notificationService.ShowMessage($"Ошибка восстановления прогресса: {ex.Message}", NotificationType.Warn);
+        //                }
+        //            }
+        //        }
+
+        //        private async void InitializeAsync()
+        //        {
+        //            await _sessionService.InitializeAsync(_databaseService);
+        //            //переделать на сервис
+        //            var savedScanner = await _databaseService.Config.GetConfigValueAsync("ScannerCOMPort");
+        //            if (savedScanner is not null)
+        //            {
+        //                var modelScanner = await _databaseService.Config.GetConfigValueAsync("ScannerModel");
+
+        //                if (modelScanner == "Honeywell")
+        //                {
+        //                    _scannerWorker = new ScannerWorker(savedScanner);
+        //                    _scannerWorker.BarcodeScanned += HandleScannedBarcode;
+        //                    _scannerWorker.RunWorkerAsync();
+        //                }
+        //                else
+        //                {
+        //                    InfoMessage = $"Модель сканера '{modelScanner}' пока не поддерживается.";
+        //                    _notificationService.ShowMessage(InfoMessage);
+        //                }
+        //            }
+        //            InitializeSsccAsync();
+        //            if (_sessionService.SelectedTaskInfo != null)
+        //            {
+        //                numberOfLayers = _sessionService.SelectedTaskInfo.IN_BOX_QTY / _sessionService.SelectedTaskInfo.LAYERS_QTY;
+        //            }
+        //            else
+        //            {
+        //                InfoMessage = "Ошибка: отсутствует информация о задании.";
+        //                _notificationService.ShowMessage(InfoMessage);
+        //                return;
+        //            }
+        //            //шаблон коробки
+        //            frxBoxBytes = Convert.FromBase64String(_sessionService.SelectedTaskInfo.BOX_TEMPLATE);
+        //            //шаблон паллеты
+        //            frxPalletBytes = Convert.FromBase64String(_sessionService.SelectedTaskInfo.PALLETE_TEMPLATE);
+
+
+        //            LoadTemplateFromSession(); //заполнение из шаблона в модальное окно для выбора элементов для сканирования
+
+        //            InitializeFromSavedState();
+        //        }
+        //        private void LoadTemplateFromSession()
+        //        {
+
+        //            TemplateFields.Clear();
+        //            var loadedFields = _templateService.LoadTemplate(_sessionService.SelectedTaskInfo.UN_TEMPLATE_FR);
+        //            foreach (var f in loadedFields)
+        //                TemplateFields.Add(f);
+
+        //            IsTemplateLoaded = TemplateFields.Count > 0;
+
+        //        }
+
+        //        private async void InitializeSsccAsync()
+        //        {
+        //            if (_sessionService.SelectedTaskInfo == null)
+        //            {
+        //                InfoMessage = "Не выбрано задание. Невозможно загрузить SSCC.";
+        //                _notificationService.ShowMessage(InfoMessage);
+        //                return;
+        //            }
+        //            responseSscc = await _dataApiService.LoadSsccAsync(_sessionService.SelectedTaskInfo.DOCID);
+        //            if (responseSscc == null)
+        //            {
+        //                InfoMessage = "Ошибка загрузки SSCC данных.";
+        //                _notificationService.ShowMessage(InfoMessage);
+        //                return;
+        //            }
+        //            _sessionService.SelectedTaskSscc = responseSscc.RECORDSET.FirstOrDefault();
+        //        }
         ~AggregationViewModel()
         {
             _scannerWorker?.Dispose();
@@ -342,18 +497,31 @@ namespace l2l_aggregator.ViewModels
         [RelayCommand]
         public async Task Scan()
         {
-            //bool StartScan = false;
             if (_sessionService.SelectedTaskInfo == null)
             {
                 InfoMessage = "Ошибка: отсутствует информация о задании.";
                 _notificationService.ShowMessage(InfoMessage);
                 return;
             }
-            //при сканировании это всегда перый шаг сканирования
-            CurrentStepIndex = 0;
-            // Генерация шаблона
-            var currentTemplate = _templateService.GenerateTemplate(TemplateFields.ToList());
+            ////при сканировании это всегда перый шаг сканирования
+            //CurrentStepIndex = 1;
+            //_cellsReadyTcs = new TaskCompletionSource<bool>();
 
+            //отправляет шаблон распознавания в библиотеку
+            var templateOk = await SendTemplateToRecognizerAsync();
+            if (!templateOk)
+                return;
+
+            //выполняет процесс получения данных от распознавания и отображение результата в UI
+            await StartScanningAsync();
+
+        }
+
+        //отправляет шаблон распознавания в библиотеку
+        public async Task<bool> SendTemplateToRecognizerAsync()
+        {
+            // Генерация шаблона из ui
+            var currentTemplate = _templateService.GenerateTemplate(TemplateFields.ToList());
             // Сравнение текущего шаблона с последним использованным
             if (_lastUsedTemplateJson != currentTemplate)
             {
@@ -362,15 +530,13 @@ namespace l2l_aggregator.ViewModels
                     f.IsSelected && (
                         f.Element.Name.LocalName == "TfrxMemoView" ||
                         f.Element.Name.LocalName == "TfrxTemplateMemoView"
-                    )
-                );
+                    ));
 
                 bool hasDm = TemplateFields.Any(f =>
                     f.IsSelected && (
                         f.Element.Name.LocalName == "TfrxBarcode2DView" ||
                         f.Element.Name.LocalName == "TfrxTemplateBarcode2DView"
-                    )
-                );
+                    ));
                 // Настройки параметров камеры для библиотеки распознавания
                 var recognParams = new recogn_params
                 {
@@ -384,196 +550,141 @@ namespace l2l_aggregator.ViewModels
                     packRecogn = RecognizePack,
                     DMRecogn = hasDm
                 };
-
+                //отправка настроек камеры в библиотеку распознавания
                 _dmScanService.ConfigureParams(recognParams);
+
                 try
                 {
                     //отправка шаблона в библиотеку распознавания
                     _dmScanService.StartScan(currentTemplate);
                     _lastUsedTemplateJson = currentTemplate;
-                    //StartScan = true;
-                    ////TODO WRAPTER swStartOk;
-                    //Thread.Sleep(4000);
-                    ////Thread.Sleep(1000);
-                    ////старт распознавания
-                    //_dmScanService.startShot();
+                    return true;
                 }
                 catch (Exception ex)
                 {
                     InfoMessage = $"Ошбика отправки шаблона {ex.Message}.";
                     _notificationService.ShowMessage(InfoMessage);
+                    return false;
                 }
             }
-            if (_lastUsedTemplateJson != null)
+
+            return true; // шаблон не изменился, можно использовать старый
+        }
+
+        //выполняет процесс получения данных от распознавания и отображение результата в UI
+        public async Task StartScanningAsync()
+        {
+            if (_lastUsedTemplateJson == null)
             {
-                try
+                _notificationService.ShowMessage("Шаблон не отправлен. Сначала выполните отправку шаблона.");
+                return;
+            }
+
+            if (!await TryReceiveScanDataAsync())
+                return;
+
+            if (!await TryCropImageAsync())
+                return;
+
+            if (!await TryBuildCellsAsync())
+                return;
+
+            UpdateInfoAndUI();
+
+            // await SaveAggregationProgressAsync();
+        }
+
+        // Получение данных распознавания
+        private async Task<bool> TryReceiveScanDataAsync()
+        {
+            try
+            {
+                _dmScanService.getScan();
+                dmrData = await _dmScanService.WaitForResultAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                InfoMessage = $"Ошибка распознавания: {ex.Message}";
+                _notificationService.ShowMessage(InfoMessage);
+                return false;
+            }
+        }
+
+        // Кроп изображения
+        private async Task<bool> TryCropImageAsync()
+        {
+            if (dmrData.rawImage == null)
+            {
+                InfoMessage = "Изображение из распознавания не получено.";
+                _notificationService.ShowMessage(InfoMessage);
+                return false;
+            }
+
+            double boxRadius = Math.Sqrt(dmrData.BOXs[0].height * dmrData.BOXs[0].height +
+                                         dmrData.BOXs[0].width * dmrData.BOXs[0].width) / 2;
+
+            minX = Math.Max(0, (int)dmrData.BOXs.Min(d => d.poseX - boxRadius));
+            minY = Math.Max(0, (int)dmrData.BOXs.Min(d => d.poseY - boxRadius));
+            maxX = Math.Min(dmrData.rawImage.Width, (int)dmrData.BOXs.Max(d => d.poseX + boxRadius));
+            maxY = Math.Min(dmrData.rawImage.Height, (int)dmrData.BOXs.Max(d => d.poseY + boxRadius));
+
+            //кроп изображения
+            //ScannedImage = await _dmScanService.GetCroppedImage(dmrData, minX, minY, maxX, maxY);
+            _croppedImageRaw = _imageProcessingService.GetCroppedImage(dmrData, minX, minY, maxX, maxY);
+
+            // Освобождаем старое изображение перед новым
+            ScannedImage?.Dispose(); // Освобождаем старое
+            ScannedImage = _imageProcessingService.ConvertToAvaloniaBitmap(_croppedImageRaw);
+
+            await Task.Delay(100); //исправить
+            scaleX = imageSize.Width / ScannedImage.PixelSize.Width;
+            scaleY = imageSize.Height / ScannedImage.PixelSize.Height;
+
+            scaleXObrat = ScannedImage.PixelSize.Width / imageSize.Width;
+            scaleYObrat = ScannedImage.PixelSize.Height / imageSize.Height;
+
+            return true;
+        }
+
+        // Построение ячеек
+        private async Task<bool> TryBuildCellsAsync()
+        {
+            var responseSgtin = await _dataApiService.LoadSgtinAsync(_sessionService.SelectedTaskInfo.DOCID);
+            if (responseSgtin == null)
+            {
+                InfoMessage = "Ошибка загрузки данных SGTIN.";
+                _notificationService.ShowMessage(InfoMessage);
+                return false;
+            }
+
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                DMCells.Clear();
+                foreach (var cell in _imageProcessingService.BuildCellViewModels(
+                             dmrData,
+                             scaleX,
+                             scaleY,
+                             _sessionService,
+                             TemplateFields,
+                             responseSgtin,
+                             this,
+                             minX, minY))
                 {
-                    //старт распознавания
-                    await _dmScanService.WaitForStartOkAsync();
-                    _dmScanService.startShot();
-                    //_dmScanService.startShot();
-                    //ожидание результата распознавания
-                    dmrData = await _dmScanService.WaitForResultAsync();
-                    Console.WriteLine($"[INFO] Получено {dmrData.BOXs.Count} BOX элементов");
-
-                    int i = 0;
-                    foreach (var box in dmrData.BOXs)
-                    {
-                        Console.WriteLine($"--- BOX #{i} ---");
-                        Console.WriteLine($"Position: ({box.poseX}, {box.poseY}), Size: {box.width}x{box.height}, Angle: {box.alpha}");
-                        Console.WriteLine($"PackType: {box.packType}, Error: {box.isError}");
-
-                        if (box.DM.data != null)
-                        {
-                            Console.WriteLine($"  DM Data: {box.DM.data}, Error: {box.DM.isError}");
-                        }
-                        else
-                        {
-                            Console.WriteLine($"  DM Data: null");
-                        }
-                        if (box.DM.poseX > 0)
-                        {
-                            Console.WriteLine($"  DM poseX: {box.DM.poseX}");
-                        }
-                        else
-                        {
-                            Console.WriteLine($"  DM poseX: 0");
-                        }
-                        if (box.DM.poseY > 0)
-                        {
-                            Console.WriteLine($"  DM poseY: {box.DM.poseY}");
-                        }
-                        else
-                        {
-                            Console.WriteLine($"  DM poseY: 0");
-                        }
-                        if (box.DM.width > 0)
-                        {
-                            Console.WriteLine($"  DM width: {box.DM.width}");
-                        }
-                        else
-                        {
-                            Console.WriteLine($"  DM width: 0");
-                        }
-                        if (box.DM.height > 0)
-                        {
-                            Console.WriteLine($"  DM height: {box.DM.height}");
-                        }
-                        else
-                        {
-                            Console.WriteLine($"  DM height: 0");
-                        }
-                        if (box.OCR != null && box.OCR.Count > 0)
-                        {
-                            foreach (var ocr in box.OCR)
-                            {
-                                if (ocr.Name != null)
-                                {
-                                    Console.WriteLine($"  OCR Name: {ocr.Name}, Text: {ocr.Text}, Pos: ({ocr.poseX}, {ocr.poseY}), Size: {ocr.width}x{ocr.height}, Angle: {ocr.alpha}, Error: {ocr.isError}");
-                                }
-                                else
-                                {
-                                    Console.WriteLine($"  OCR Name: null");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine($"  box.OCR: null");
-                        }
-
-
-                        i++;
-                    }
-                    Console.WriteLine($"----------------------------------");
-
+                    DMCells.Add(cell);
                 }
-                catch (Exception ex)
-                {
-                    InfoMessage = $"Ошбика распознавания {ex.Message}.";
-                    _notificationService.ShowMessage(InfoMessage);
-                }
-                //Сохраняем при сканировании в бд
-                if (dmrData.rawImage != null)
-                {
-                    //string taskInfoJson = JsonSerializer.Serialize(_sessionService.SelectedTaskInfo);
-                    //await _databaseService.AggregationState.SaveStateAsync(new AggregationState
-                    //{
-                    //    Username = _sessionService.User.USER_NAME,
-                    //    TaskId = _sessionService.SelectedTaskInfo.DOCID,
-                    //    TemplateJson = _lastUsedTemplateJson,
-                    //    TaskInfoJson = JsonSerializer.Serialize(_sessionService.SelectedTaskInfo),
-                    //    ProgressJson = JsonSerializer.Serialize(new
-                    //    {
-                    //        CurrentLayer,
-                    //        CurrentBox,
-                    //        CurrentPallet,
-                    //        DmCells = DMCells.Select(c => new
-                    //        {
-                    //            c.DmCell.Data,
-                    //            c.IsValid,
-                    //            Ocr = c.OcrCells.Select(o => new { o.OcrName, o.OcrText, o.IsValid })
-                    //        })
-                    //    })
-                    //});
+            });
 
-                    double boxRadius = Math.Sqrt(dmrData.BOXs[0].height * dmrData.BOXs[0].height +
-                              dmrData.BOXs[0].width * dmrData.BOXs[0].width) / 2;
-                    int minX = (int)dmrData.BOXs.Min(d => d.poseX - boxRadius);
-                    int minY = (int)dmrData.BOXs.Min(d => d.poseY - boxRadius);
-                    int maxX = (int)dmrData.BOXs.Max(d => d.poseX + boxRadius);
-                    int maxY = (int)dmrData.BOXs.Max(d => d.poseY + boxRadius);
-
-
-                    minX = Math.Max(0, minX);
-                    minY = Math.Max(0, minY);
-                    maxX = Math.Min(dmrData.rawImage.Width, maxX);
-                    maxY = Math.Min(dmrData.rawImage.Height, maxY);
-
-                    // Освобождаем старое изображение перед новым
-                    ScannedImage?.Dispose();
-                    //кроп изображения
-                    ScannedImage = await _dmScanService.GetCroppedImage(dmrData, minX, minY, maxX, maxY);
-
-
-                    await Task.Delay(100); //исправить
-
-                    scaleX = imageSize.Width / ScannedImage.PixelSize.Width;
-                    scaleY = imageSize.Height / ScannedImage.PixelSize.Height;
-                    scaleXObrat = ScannedImage.PixelSize.Width / imageSize.Width;
-                    scaleYObrat = ScannedImage.PixelSize.Height / imageSize.Height;
-                    // изображение из распознавания
-                    //dmrData.rawImage = null;
-
-                    var responseSgtin = await _dataApiService.LoadSgtinAsync(_sessionService.SelectedTaskInfo.DOCID);
-                    if (responseSgtin == null)
-                    {
-                        InfoMessage = "Ошибка загрузки данных SGTIN.";
-                        _notificationService.ShowMessage(InfoMessage);
-                        return;
-                    }
-                    await Dispatcher.UIThread.InvokeAsync(() =>
-                    {
-                        DMCells.Clear();
-                        foreach (DmCellViewModel cell in _dmScanService.BuildCellViewModels(
-                                                                    dmrData,
-                                                                    scaleX,
-                                                                    scaleY,
-                                                                    _sessionService,
-                                                                    TemplateFields,
-                                                                    responseSgtin,
-                                                                    this,
-                                                                    minX,
-                                                                    minY))
-                        {
-                            DMCells.Add(cell);
-                        }
-                    });
-
-                    int validCountDMCells = DMCells.Count(c => c.IsValid);
-                    // Обновление информационных текстов
-                    UpdateLayerInfo(validCountDMCells, numberOfLayers);
-                    AggregationSummaryText = $@"
+            return true;
+        }
+        //Обновление UI и состояния
+        private void UpdateInfoAndUI()
+        {
+            int validCountDMCells = DMCells.Count(c => c.IsValid);
+            // Обновление информационного текста выше изображения
+            InfoLayerText = $"Слой {CurrentLayer} из {_sessionService.SelectedTaskInfo.LAYERS_QTY}. Распознано {validCountDMCells} из {numberOfLayers}";
+            // Обновление информационного текста справа изображения
+            AggregationSummaryText = $"""
 Агрегируемая серия: {_sessionService.SelectedTaskInfo.RESOURCEID}
 Количество собранных коробов: {CurrentBox - 1}
 Номер собираемого короба: {CurrentBox}
@@ -581,61 +692,21 @@ namespace l2l_aggregator.ViewModels
 Количество слоев в коробе: {_sessionService.SelectedTaskInfo.LAYERS_QTY}
 Количество СИ, распознанное в слое: {validCountDMCells}
 Количество СИ, считанное в слое: {DMCells.Count}
-Количество СИ, ожидаемое в слое: {numberOfLayers}";
-                    canScan = true;
-                    canOpenTemplateSettings = true;
+Количество СИ, ожидаемое в слое: {numberOfLayers}
+""";
 
-                    if (CurrentLayer == _sessionService.SelectedTaskInfo.LAYERS_QTY)
-                    {
-                        if (validCountDMCells == DMCells.Count)
-                        {
-                            СanPrintBoxLabel = true;
-                            if (validCountDMCells == numberOfLayers)
-                            {
+            CanScan = true;
+            CanOpenTemplateSettings = true;
 
-                                canScan = false;
-                                canOpenTemplateSettings = false;
-                                сanPrintBoxLabel = true;//сделать 
-                                CurrentStepIndex = 1;
-                                if (CurrentBox == _sessionService.SelectedTaskInfo.IN_PALLET_BOX_QTY)
-                                {
-
-                                    if (CurrentPallet == _sessionService.SelectedTaskInfo.PALLET_QTY)
-                                    {
-                                        //нужно сохранить 
-                                        //!!!!!!!!!!!!!!!!!!!!!!!!!
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                // CurrentLayer++;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (validCountDMCells == numberOfLayers)
-                        {
-
-                        }
-                    }
-                }
-                else
-                {
-                    InfoMessage = $"Изображение из распознавания не получено";
-                    _notificationService.ShowMessage(InfoMessage);
-                }
-
-
-            }
-            else
+            if (CurrentLayer == _sessionService.SelectedTaskInfo.LAYERS_QTY &&
+                validCountDMCells == numberOfLayers)
             {
-                InfoMessage = $"Ошибка сканирования";
-                _notificationService.ShowMessage(InfoMessage);
+                CanScan = false;
+                CanOpenTemplateSettings = false;
+                СanPrintBoxLabel = true;
             }
         }
-
+        //Сохранение состояния агрегации
         private async Task SaveAggregationProgressAsync()
         {
             var progress = new AggregationProgressModel
@@ -643,16 +714,16 @@ namespace l2l_aggregator.ViewModels
                 CurrentBox = CurrentBox,
                 CurrentLayer = CurrentLayer,
                 CurrentPallet = CurrentPallet,
-                DmCells = DMCells.Select(c => new AggregationCellData
+                CurrentDmCells = DMCells.Select(c => new DmCellViewModel(this)
                 {
-                    DataMatrixData = c.DmCell?.Data,
+                    X = c.X,
+                    Y = c.Y,
+                    SizeHeight = c.SizeHeight,
+                    SizeWidth = c.SizeWidth,
+                    Angle = c.Angle,
                     IsValid = c.IsValid,
-                    Ocr = c.OcrCells.Select(o => new OcrCellData
-                    {
-                        Name = o.OcrName,
-                        Text = o.OcrText,
-                        IsValid = o.IsValid
-                    }).ToList()
+                    Dm_data = c.Dm_data,
+                    OcrCells = c.OcrCells
                 }).ToList()
             };
 
@@ -840,8 +911,8 @@ namespace l2l_aggregator.ViewModels
             int maxX = (int)dmrData.BOXs.Max(d => d.poseX + boxRadius);
             int maxY = (int)dmrData.BOXs.Max(d => d.poseY + boxRadius);
 
-            SelectedSquareImage = _imageProcessingService.CropImage(
-                ScannedImage,
+            var cropped = _imageProcessingService.CropImage(
+                _croppedImageRaw,
                 cell.X,
                 cell.Y,
                 cell.SizeWidth,
@@ -850,13 +921,15 @@ namespace l2l_aggregator.ViewModels
                 scaleYObrat,
                 (float)cell.Angle
             );
-
-            await Task.Delay(100);
+            await Dispatcher.UIThread.InvokeAsync(async () =>
+            {
+                SelectedSquareImage = _imageProcessingService.ConvertToAvaloniaBitmap(cropped);
+                await Task.Delay(100);
+            });
 
             var scaleXCell = ImageSizeCell.Width / SelectedSquareImage.PixelSize.Width;
             var scaleYCell = ImageSizeCell.Height / SelectedSquareImage.PixelSize.Height;
-            var shiftX = (ImageSizeGridCell.Width - ImageSizeCell.Width) / 2;
-            var shiftY = (ImageSizeGridCell.Height - ImageSizeCell.Height) / 2;
+
 
             var newOcrList = new ObservableCollection<SquareCellViewModel>();
 
@@ -867,34 +940,55 @@ namespace l2l_aggregator.ViewModels
 
                 newOcrList.Add(new SquareCellViewModel
                 {
-                    X = newX,
-                    Y = newY,
+                    X = ocr.X * scaleXCell,
+                    Y = ocr.Y * scaleYCell,
                     SizeWidth = ocr.SizeWidth * scaleXCell,
                     SizeHeight = ocr.SizeHeight * scaleYCell,
                     IsValid = ocr.IsValid,
-                    Angle = ocr.Angle
+                    Angle = ocr.Angle,
+                    OcrName = ocr.OcrName,
+                    OcrText = ocr.OcrText
+                });
+            }
+            // Добавим DM элемент (если есть)
+            if (cell.Dm_data.Data != null)
+            {
+                newOcrList.Add(new SquareCellViewModel
+                {
+                    X = cell.Dm_data.X * scaleXCell,
+                    Y = cell.Dm_data.Y * scaleYCell,
+                    SizeWidth = cell.Dm_data.SizeWidth * scaleYCell,
+                    SizeHeight = cell.Dm_data.SizeHeight * scaleYCell,
+                    IsValid = cell.Dm_data.IsValid,
+                    Angle = cell.Dm_data.Angle,
+                    OcrName = "DM",
+                    OcrText = cell.Dm_data.Data ?? "пусто"
                 });
             }
 
             cell.OcrCellsInPopUp.Clear();
             foreach (var newOcr in newOcrList)
                 cell.OcrCellsInPopUp.Add(newOcr);
-
+            //cell.Angle = 87;
             //foreach(var ocr in cell.)
             IsPopupOpen = true;
-            var gS1Parser = new GS1Parser();
-            GS1_data newGS = gS1Parser.ParseGTIN(cell.DmCell?.Data);
-            var GS1 = newGS.GS1isCorrect;
-            var GTIN = newGS.GTIN;
-            
+            var GS1 = false;
+            var GTIN = "";
+            if (cell.Dm_data?.Data != null)
+            {
+                var gS1Parser = new GS1Parser();
+                GS1_data newGS = gS1Parser.ParseGTIN(cell.Dm_data?.Data);
+                GS1 = newGS.GS1isCorrect;
+                GTIN = newGS.GTIN;
+            }
             // Обновление текста
             AggregationSummaryText = $"""
 GS1-код: {(GS1 ? "нет данных" : GS1)}
 GTIN-код: {(string.IsNullOrWhiteSpace(GTIN) ? "нет данных" : GTIN)}
-Валидность: {(cell.DmCell?.IsValid == true ? "Да" : "Нет")}
-Координаты: {(cell.DmCell is { } dm1 ? $"({dm1.X:0.##}, {dm1.Y:0.##})" : "нет данных")}
-Размер: {(cell.DmCell is { } dm ? $"({dm.SizeWidth:0.##} x {dm.SizeHeight:0.##})" : "нет данных")}
-Угол: {(cell.DmCell?.Angle is double a ? $"{a:0.##}°" : "нет данных")}
+Валидность: {(cell.Dm_data?.IsValid == true ? "Да" : "Нет")}
+Координаты: {(cell.Dm_data is { } dm1 ? $"({dm1.X:0.##}, {dm1.Y:0.##})" : "нет данных")}
+Размер: {(cell.Dm_data is { } dm ? $"({dm.SizeWidth:0.##} x {dm.SizeHeight:0.##})" : "нет данных")}
+Угол: {(cell.Dm_data?.Angle is double a ? $"{a:0.##}°" : "нет данных")}
 OCR:
 {(cell.OcrCells.Count > 0
 ? string.Join('\n', cell.OcrCells.Select(o =>

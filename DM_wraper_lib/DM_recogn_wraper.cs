@@ -10,8 +10,6 @@ namespace DM_wraper_NS
         public delegate void NewResultContainer(int countResult);
         //event with error message 
         public delegate void AlarmEventForUser(string textEvent, string typeEvent);
-        //event for Cameras search
-        public delegate void FindedCameras(string[] cameras);
 
         //__________ For Library _________________
         public event Action libUpdateParams = delegate { };
@@ -23,13 +21,6 @@ namespace DM_wraper_NS
         //__________ For Software _________________
         public event NewResultContainer swNewDMResult = delegate { };
         public event AlarmEventForUser alarmEvent = delegate { };
-        public event AlarmEventForUser logEvent = delegate { };
-        public event FindedCameras swFindedCamerasList = delegate { };
-        public event Action swPrintPaternOk = delegate { };
-        public event Action swParamsOk = delegate { };
-        public event Action swStartOk = delegate { };
-        public event Action swShotOk = delegate { };
-        public event Action swStopOk = delegate { };
 
         private ConcurrentQueue<result_data> _result = new ConcurrentQueue<result_data>();
         private recogn_params _params;
@@ -169,46 +160,6 @@ namespace DM_wraper_NS
             alarmEvent(text, typeEvent);
             return true;
         }
-        public bool Send_log_event(string text, string typeEvent)
-        {
-            logEvent(text, typeEvent);
-            return true;
-        }
-        public bool sendPrintPaternOk()
-        {
-            swPrintPaternOk();
-            Console.WriteLine("sendPrintPaternOk");
-            return true;
-        }
-        public bool sendParamsOk()
-        {
-            swParamsOk();
-            Console.WriteLine("sendParamsOk");
-            return true;
-        }
-        public bool sendStartOk()
-        {
-            swStartOk();
-            Console.WriteLine("sendStartOk");
-            return true;
-        }
-        public bool sendShotOk()
-        {
-            swShotOk();
-            Console.WriteLine("sendShotOk");
-            return true;
-        }
-        public bool sendStopOk()
-        {
-            swStopOk();
-            Console.WriteLine("sendStopOk");
-            return true;
-        }
-        public bool sendCamerasList(string[] cameras)
-        {
-            swFindedCamerasList(cameras);
-            return true;
-        }
     }
 
     public struct recogn_params
@@ -244,13 +195,6 @@ namespace DM_wraper_NS
                         name = "Basler";
                         pathCSV = "basler.csv";
                         swTriggerVal = "trig"; //TODO
-                        return;
-                    }
-                case "Hikrobot":
-                    {
-                        name = "Hikrobot";
-                        pathCSV = "Hikrobot.csv";
-                        swTriggerVal = "TriggerSoftware"; //TODO
                         return;
                     }
             }

@@ -31,7 +31,7 @@ namespace l2l_aggregator.ViewModels.VisualElements
 
 
         [ObservableProperty]
-        public DmSquareViewModel dmCell;
+        public DmSquareViewModel dm_data;
 
         // **Список OCR-квадратов**, связанных с этим DM-квадратом:
         public ObservableCollection<SquareCellViewModel> OcrCells { get; set; }
