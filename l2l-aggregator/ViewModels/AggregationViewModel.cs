@@ -357,138 +357,7 @@ namespace l2l_aggregator.ViewModels
             CanScan = TemplateFields.Count > 0;
 
         }
-        //        private void InitializeFromSavedState()
-        //        {
-        //            if (_sessionService.HasUnfinishedAggregation)
-        //            {
-        //                try
-        //                {
-        //                    var progress = JsonSerializer.Deserialize<AggregationProgressModel>(_sessionService.LoadedProgressJson!);
-        //                    if (progress != null)
-        //                    {
-        //                        if(_sessionService.LoadedTemplateJson != null)
-        //                            _lastUsedTemplateJson = _sessionService.LoadedTemplateJson;
-
-        //                        CurrentLayer = progress.CurrentLayer;
-        //                        CurrentBox = progress.CurrentBox;
-        //                        CurrentPallet = progress.CurrentPallet;
-        //                        DMCells.Clear();
-        //                        foreach (var cell in progress.DmCells)
-        //                        {
-        //                            var dmCell = new DmCellViewModel(this)
-        //                            {
-        //                                IsValid = cell.IsValid,
-        //                                DmCell = new DmSquareViewModel
-        //                                {
-        //                                    Data = cell.DataMatrixData,
-        //                                    IsValid = cell.IsValid
-        //                                    // можно также X, Y, SizeWidth, SizeHeight, Angle — если есть
-        //                                }
-        //                            };
-
-        //                            foreach (var ocr in cell.Ocr)
-        //                            {
-        //                                dmCell.OcrCells.Add(new SquareCellViewModel
-        //                                {
-        //                                    OcrName = ocr.Name,
-        //                                    OcrText = ocr.Text,
-        //                                    IsValid = ocr.IsValid
-        //                                });
-        //                            }
-
-        //                            DMCells.Add(dmCell);
-        //                        }
-        //                        int validCountDMCells = DMCells.Count(c => c.IsValid);
-        //                        AggregationSummaryText = $@"
-        //Агрегируемая серия: {_sessionService.SelectedTaskInfo.RESOURCEID}
-        //Количество собранных коробов: {CurrentBox - 1}
-        //Номер собираемого короба: {CurrentBox}
-        //Номер слоя: {CurrentLayer}
-        //Количество слоев в коробе: {_sessionService.SelectedTaskInfo.LAYERS_QTY}
-        //Количество СИ, распознанное в слое: {validCountDMCells}
-        //Количество СИ, считанное в слое: {DMCells.Count}
-        //Количество СИ, ожидаемое в слое: {numberOfLayers}";
-        //                        //AggregationSummaryText = $"Загружено сохранённое состояние. Короб {CurrentBox}, Слой {CurrentLayer}, Паллет {CurrentPallet}.";
-        //                    }
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    _notificationService.ShowMessage($"Ошибка восстановления прогресса: {ex.Message}", NotificationType.Warn);
-        //                }
-        //            }
-        //        }
-
-        //        private async void InitializeAsync()
-        //        {
-        //            await _sessionService.InitializeAsync(_databaseService);
-        //            //переделать на сервис
-        //            var savedScanner = await _databaseService.Config.GetConfigValueAsync("ScannerCOMPort");
-        //            if (savedScanner is not null)
-        //            {
-        //                var modelScanner = await _databaseService.Config.GetConfigValueAsync("ScannerModel");
-
-        //                if (modelScanner == "Honeywell")
-        //                {
-        //                    _scannerWorker = new ScannerWorker(savedScanner);
-        //                    _scannerWorker.BarcodeScanned += HandleScannedBarcode;
-        //                    _scannerWorker.RunWorkerAsync();
-        //                }
-        //                else
-        //                {
-        //                    InfoMessage = $"Модель сканера '{modelScanner}' пока не поддерживается.";
-        //                    _notificationService.ShowMessage(InfoMessage);
-        //                }
-        //            }
-        //            InitializeSsccAsync();
-        //            if (_sessionService.SelectedTaskInfo != null)
-        //            {
-        //                numberOfLayers = _sessionService.SelectedTaskInfo.IN_BOX_QTY / _sessionService.SelectedTaskInfo.LAYERS_QTY;
-        //            }
-        //            else
-        //            {
-        //                InfoMessage = "Ошибка: отсутствует информация о задании.";
-        //                _notificationService.ShowMessage(InfoMessage);
-        //                return;
-        //            }
-        //            //шаблон коробки
-        //            frxBoxBytes = Convert.FromBase64String(_sessionService.SelectedTaskInfo.BOX_TEMPLATE);
-        //            //шаблон паллеты
-        //            frxPalletBytes = Convert.FromBase64String(_sessionService.SelectedTaskInfo.PALLETE_TEMPLATE);
-
-
-        //            LoadTemplateFromSession(); //заполнение из шаблона в модальное окно для выбора элементов для сканирования
-
-        //            InitializeFromSavedState();
-        //        }
-        //        private void LoadTemplateFromSession()
-        //        {
-
-        //            TemplateFields.Clear();
-        //            var loadedFields = _templateService.LoadTemplate(_sessionService.SelectedTaskInfo.UN_TEMPLATE_FR);
-        //            foreach (var f in loadedFields)
-        //                TemplateFields.Add(f);
-
-        //            IsTemplateLoaded = TemplateFields.Count > 0;
-
-        //        }
-
-        //        private async void InitializeSsccAsync()
-        //        {
-        //            if (_sessionService.SelectedTaskInfo == null)
-        //            {
-        //                InfoMessage = "Не выбрано задание. Невозможно загрузить SSCC.";
-        //                _notificationService.ShowMessage(InfoMessage);
-        //                return;
-        //            }
-        //            responseSscc = await _dataApiService.LoadSsccAsync(_sessionService.SelectedTaskInfo.DOCID);
-        //            if (responseSscc == null)
-        //            {
-        //                InfoMessage = "Ошибка загрузки SSCC данных.";
-        //                _notificationService.ShowMessage(InfoMessage);
-        //                return;
-        //            }
-        //            _sessionService.SelectedTaskSscc = responseSscc.RECORDSET.FirstOrDefault();
-        //        }
+      
         ~AggregationViewModel()
         {
             _scannerWorker?.Dispose();
@@ -634,7 +503,7 @@ namespace l2l_aggregator.ViewModels
             _croppedImageRaw = _imageProcessingService.GetCroppedImage(dmrData, minX, minY, maxX, maxY);
 
             // Освобождаем старое изображение перед новым
-            ScannedImage?.Dispose(); // Освобождаем старое
+            ScannedImage?.Dispose(); 
             ScannedImage = _imageProcessingService.ConvertToAvaloniaBitmap(_croppedImageRaw);
 
             await Task.Delay(100); //исправить
@@ -735,11 +604,6 @@ namespace l2l_aggregator.ViewModels
                 ProgressJson = JsonSerializer.Serialize(progress),
                 LastUpdated = DateTime.Now
             });
-        }
-
-        private void UpdateLayerInfo(int validCount, int expectedPerLayer)
-        {
-            InfoLayerText = $"Слой {CurrentLayer} из {_sessionService.SelectedTaskInfo.LAYERS_QTY}. Распознано {validCount} из {expectedPerLayer}";
         }
 
         //Печать этикетки коробки
@@ -854,7 +718,7 @@ namespace l2l_aggregator.ViewModels
                         if (CurrentBox == _sessionService.SelectedTaskInfo.IN_PALLET_BOX_QTY)
                         {
                             сanPrintBoxLabel = false;
-                            сanPrintPalletLabel = true;
+                            //сanPrintPalletLabel = true;
                         }
                         CurrentBox++;
                         CurrentLayer = 1;
@@ -974,18 +838,32 @@ namespace l2l_aggregator.ViewModels
             IsPopupOpen = true;
             var GS1 = false;
             var GTIN = "";
+            var DMData = "";
+            var SerialNumber = "";
             if (cell.Dm_data?.Data != null)
             {
                 var gS1Parser = new GS1Parser();
                 GS1_data newGS = gS1Parser.ParseGTIN(cell.Dm_data?.Data);
                 GS1 = newGS.GS1isCorrect;
                 GTIN = newGS.GTIN;
+                DMData = newGS.DMData;
+                SerialNumber = newGS.SerialNumber;
+            }
+            bool isDuplicate = false;
+            if (!string.IsNullOrWhiteSpace(cell.Dm_data?.Data))
+            {
+                var thisData = cell.Dm_data.Data;
+                isDuplicate = DMCells
+                    .Where(c => c != cell)
+                    .Any(c => string.Equals(c.Dm_data?.Data, thisData, StringComparison.OrdinalIgnoreCase));
             }
             // Обновление текста
             AggregationSummaryText = $"""
 GS1-код: {(GS1 ? "нет данных" : GS1)}
 GTIN-код: {(string.IsNullOrWhiteSpace(GTIN) ? "нет данных" : GTIN)}
+SerialNumber-код: {(string.IsNullOrWhiteSpace(SerialNumber) ? "нет данных" : SerialNumber)}
 Валидность: {(cell.Dm_data?.IsValid == true ? "Да" : "Нет")}
+Дубликат: {(isDuplicate ? "Да" : "Нет")}
 Координаты: {(cell.Dm_data is { } dm1 ? $"({dm1.X:0.##}, {dm1.Y:0.##})" : "нет данных")}
 Размер: {(cell.Dm_data is { } dm ? $"({dm.SizeWidth:0.##} x {dm.SizeHeight:0.##})" : "нет данных")}
 Угол: {(cell.Dm_data?.Angle is double a ? $"{a:0.##}°" : "нет данных")}
@@ -995,13 +873,6 @@ OCR:
     $"- {(string.IsNullOrWhiteSpace(o.OcrName) ? "нет данных" : o.OcrName)}: {(string.IsNullOrWhiteSpace(o.OcrText) ? "нет данных" : o.OcrText)} ({(o.IsValid ? "валид" : "не валид")})"))
 : "- нет данных")}
 """;
-
-            Console.WriteLine($"SelectedDmCell == : {SelectedDmCell}");
-            Console.WriteLine($"OcrCellsInPopUp.Count: {cell.OcrCellsInPopUp.Count}");
-            foreach (var ocr in cell.OcrCellsInPopUp)
-            {
-                Console.WriteLine($"OCR: X={ocr.X}, Y={ocr.Y}, W={ocr.SizeWidth}, H={ocr.SizeHeight}, Angle={ocr.Angle}");
-            }
         }
         partial void OnIsPopupOpenChanged(bool value)
         {

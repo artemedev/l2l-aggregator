@@ -2,20 +2,17 @@
 using DM_wraper_NS;
 using l2l_aggregator.Models;
 using l2l_aggregator.Services;
+using l2l_aggregator.Services.GS1ParserService;
 using l2l_aggregator.ViewModels;
 using l2l_aggregator.ViewModels.VisualElements;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Numerics;
-using System.Text.Json;
 
 namespace l2l_aggregator.Helpers.AggregationHelpers
 {
@@ -107,96 +104,178 @@ namespace l2l_aggregator.Helpers.AggregationHelpers
 
             return tempImage.Clone(ctx => ctx.Crop(cropRect));
         }
-        //public Image<Rgba32> CropImage(Image<Rgba32> source, double xCell, double yCell, double sizeWidth, double sizeHeight, double scaleXObrat, double scaleYObrat, float angleDegrees)
+
+        //public ObservableCollection<DmCellViewModel> BuildCellViewModels(
+        //  in result_data dmrData,
+        //  double scaleX, double scaleY,
+        //  SessionService sessionService,
+        //  ObservableCollection<TemplateField> fields,
+        //  ArmJobSgtinResponse response,
+        //  AggregationViewModel thisModel, int minX, int minY)
         //{
-        //    float x = (float)(xCell * scaleXObrat);
-        //    float y = (float)(yCell * scaleYObrat);
-        //    float width = (float)(sizeWidth * scaleXObrat);
-        //    float height = (float)(sizeHeight * scaleYObrat);
-
-        //    float centerX = x + width / 2f;
-        //    float centerY = y + height / 2f;
-
-        //    float radians = -angleDegrees * (float)Math.PI / 180f;
-        //    var rotateMatrix =
-        //        Matrix3x2.CreateTranslation(-centerX, -centerY) *
-        //        Matrix3x2.CreateRotation(radians) *
-        //        Matrix3x2.CreateTranslation(centerX, centerY);
-
-        //    var result = source.Clone(ctx =>
+        //    var cells = new ObservableCollection<DmCellViewModel>();
+        //    //string json = BuildResultJson(dmrData);
+        //    foreach (var dmd in dmrData.BOXs)
         //    {
-        //        ctx.Transform(new AffineTransformBuilder().AppendMatrix(rotateMatrix));
-        //        ctx.Crop(new Rectangle(
-        //            (int)(centerX - width / 2f),
-        //            (int)(centerY - height / 2f),
-        //            (int)Math.Ceiling(width),
-        //            (int)Math.Ceiling(height)
-        //        ));
-        //    });
+        //        var dmVm = new DmCellViewModel(thisModel)
+        //        {
+        //            X = (dmd.poseX - (dmd.width / 2) - minX) * scaleX,
+        //            Y = ((dmd.poseY - (dmd.height / 2) - minY) * scaleY),
+        //            SizeWidth = dmd.width * scaleX,
+        //            SizeHeight = dmd.height * scaleY,
+        //            Angle = -(dmd.alpha),
+        //            Dm_data = new DmSquareViewModel
+        //            {
+        //                X = (dmd.DM.poseX - (dmd.DM.width / 2)),
+        //                Y = (dmd.DM.poseY - (dmd.DM.height / 2)),
+        //                SizeWidth = dmd.DM.width,
+        //                SizeHeight = dmd.DM.height,
+        //                Angle = -dmd.DM.alpha,
+        //                IsValid = !dmd.DM.isError,
+        //                Data = dmd.DM.data
+        //            }
+        //        };
 
-        //    return result;
+        //        bool allValid = false;
+
+        //        foreach (var ocr in dmd.OCR)
+        //        {
+        //            var validBarcodes = new HashSet<string>();
+
+        //            var propSgtin = typeof(ArmJobSgtinRecord).GetProperty(ocr.Name);
+        //            if (propSgtin != null)
+        //            {
+        //                foreach (var r in response.RECORDSET)
+        //                {
+        //                    var value = propSgtin.GetValue(r);
+        //                    if (value is string str)
+        //                        validBarcodes.Add(str);
+        //                }
+        //            }
+
+        //            if (propSgtin == null)
+        //            {
+        //                var propInfo = typeof(ArmJobInfoRecord).GetProperty(ocr.Name);
+        //                if (propInfo != null)
+        //                {
+        //                    var val = propInfo.GetValue(sessionService.SelectedTaskInfo);
+        //                    if (val != null)
+        //                        validBarcodes.Add(val.ToString());
+        //                }
+        //            }
+
+        //            bool isValid = validBarcodes.Contains(ocr.Text);
+
+        //            dmVm.OcrCells.Add(new SquareCellViewModel
+        //            {
+        //                X = (ocr.poseX - (ocr.width / 2)),
+        //                Y = (ocr.poseY - (ocr.height / 2)),
+        //                SizeWidth = ocr.width,
+        //                SizeHeight = ocr.height,
+        //                Angle = ocr.alpha,
+        //                IsValid = isValid,
+        //                OcrName = ocr.Name,
+        //                OcrText = ocr.Text
+        //            });
+        //            //thisModel.OnCellClicked(dmVm);
+
+        //            if (!isValid)
+        //                allValid = false;
+        //        }
+
+        //        if (dmd.OCR.Count != fields.Count)
+        //        {
+        //            allValid = false;
+        //        }
+        //        if (dmd.DM.isError)
+        //            allValid = false;
+
+        //        dmVm.IsValid = allValid;
+        //        cells.Add(dmVm);
+        //    }
+
+        //    return cells;
         //}
 
-        private SKPoint RotatePoint(float cx, float cy, float dx, float dy, float cos, float sin)
-        {
-            // Поворачиваем точку (dx, dy) относительно центра (cx, cy)
-            return new SKPoint(
-                cx + dx * cos - dy * sin,
-                cy + dx * sin + dy * cos
-            );
-        }
-
-
-        public Bitmap ConvertSKBitmapToAvaloniaBitmap(SKBitmap skBitmap)
-        {
-            using var image = SKImage.FromPixels(skBitmap.PeekPixels());
-            using var data = image.Encode();
-            var bytes = data.ToArray();
-
-            using var ms = new MemoryStream(bytes);
-            return new Bitmap(ms);
-        }
-
-        public SKBitmap ConvertAvaloniaBitmapToSKBitmap(Bitmap avaloniaBitmap)
-        {
-            using var ms = new MemoryStream();
-            avaloniaBitmap.Save(ms);
-            ms.Position = 0;
-            return SKBitmap.Decode(ms);
-        }
-
         public ObservableCollection<DmCellViewModel> BuildCellViewModels(
-          in result_data dmrData,
-          double scaleX, double scaleY,
-          SessionService sessionService,
-          ObservableCollection<TemplateField> fields,
-          ArmJobSgtinResponse response,
-          AggregationViewModel thisModel, int minX, int minY)
+    in result_data dmrData,
+    double scaleX, double scaleY,
+    SessionService sessionService,
+    ObservableCollection<TemplateField> fields,
+    ArmJobSgtinResponse response,
+    AggregationViewModel thisModel, int minX, int minY)
         {
             var cells = new ObservableCollection<DmCellViewModel>();
-            //string json = BuildResultJson(dmrData);
+            var gs1Parser = new GS1Parser(); // инициализация парсера
+            var seenDmValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase); // отслеживание дублей
+
             foreach (var dmd in dmrData.BOXs)
             {
+                string? dmValue = dmd.DM.data;
+
+                var dm_data = new DmSquareViewModel
+                {
+                    X = dmd.DM.poseX - (dmd.DM.width / 2),
+                    Y = dmd.DM.poseY - (dmd.DM.height / 2),
+                    SizeWidth = dmd.DM.width,
+                    SizeHeight = dmd.DM.height,
+                    Angle = -dmd.DM.alpha,
+                    IsValid = !dmd.DM.isError,
+                    Data = dmd.DM.data
+                };
+
+                // Проверка валидности через GS1Parser
+                bool isGS1Valid = false;
+                if (!string.IsNullOrWhiteSpace(dm_data.Data))
+                {
+                    try
+                    {
+                        var parsed = gs1Parser.ParseGTIN(dm_data.Data);
+
+                        var expectedGtin = sessionService.SelectedTaskInfo?.GTIN;
+                        var expectedSerials = response.RECORDSET
+                            .Select(r => r.UN_CODE)
+                            .Where(code => !string.IsNullOrWhiteSpace(code))
+                            .ToHashSet();
+
+                        // Проверка валидности по содержимому
+                        isGS1Valid =
+                            parsed.GS1isCorrect &&
+                            !string.IsNullOrWhiteSpace(parsed.GTIN) &&
+                            !string.IsNullOrWhiteSpace(parsed.SerialNumber) &&
+                            parsed.GTIN == expectedGtin &&
+                            expectedSerials.Contains(parsed.SerialNumber);
+
+                        // Проверка на дубликат
+                        if (isGS1Valid)
+                        {
+                            if (!seenDmValues.Add(dmValue))
+                            {
+                                // дубликат найден
+                                isGS1Valid = false;
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        isGS1Valid = false;
+                    }
+                }
+
+                // Учитываем валидность GS1
+                dm_data.IsValid = dm_data.IsValid && isGS1Valid;
+
                 var dmVm = new DmCellViewModel(thisModel)
                 {
                     X = (dmd.poseX - (dmd.width / 2) - minX) * scaleX,
-                    Y = ((dmd.poseY - (dmd.height / 2) - minY) * scaleY),
+                    Y = (dmd.poseY - (dmd.height / 2) - minY) * scaleY,
                     SizeWidth = dmd.width * scaleX,
                     SizeHeight = dmd.height * scaleY,
-                    Angle = -(dmd.alpha),
-                    Dm_data = new DmSquareViewModel
-                    {
-                        X = (dmd.DM.poseX - (dmd.DM.width / 2)),
-                        Y = (dmd.DM.poseY - (dmd.DM.height / 2)),
-                        SizeWidth = dmd.DM.width,
-                        SizeHeight = dmd.DM.height,
-                        Angle = -dmd.DM.alpha,
-                        IsValid = !dmd.DM.isError,
-                        Data = dmd.DM.data
-                    }
+                    Angle = -dmd.alpha,
+                    Dm_data = dm_data
                 };
 
-                bool allValid = false;
+                bool allValid = dm_data.IsValid;
 
                 foreach (var ocr in dmd.OCR)
                 {
@@ -212,8 +291,7 @@ namespace l2l_aggregator.Helpers.AggregationHelpers
                                 validBarcodes.Add(str);
                         }
                     }
-
-                    if (propSgtin == null)
+                    else
                     {
                         var propInfo = typeof(ArmJobInfoRecord).GetProperty(ocr.Name);
                         if (propInfo != null)
@@ -228,8 +306,8 @@ namespace l2l_aggregator.Helpers.AggregationHelpers
 
                     dmVm.OcrCells.Add(new SquareCellViewModel
                     {
-                        X = (ocr.poseX - (ocr.width / 2)),
-                        Y = (ocr.poseY - (ocr.height / 2)),
+                        X = ocr.poseX - (ocr.width / 2),
+                        Y = ocr.poseY - (ocr.height / 2),
                         SizeWidth = ocr.width,
                         SizeHeight = ocr.height,
                         Angle = ocr.alpha,
@@ -237,40 +315,22 @@ namespace l2l_aggregator.Helpers.AggregationHelpers
                         OcrName = ocr.Name,
                         OcrText = ocr.Text
                     });
-                    //thisModel.OnCellClicked(dmVm);
 
                     if (!isValid)
                         allValid = false;
                 }
 
-                if (dmd.OCR.Count != fields.Count)
-                {
-                    allValid = false;
-                }
-                if (dmd.DM.isError)
-                    allValid = false;
-                //if (dmd.DM.data != null)
+                //if (dmd.OCR.Count != fields.Count)
                 //{
-                //    dmVm.Dm_data = new DmSquareViewModel
-                //    {
-                //        X = dmd.DM.poseX,
-                //        Y = dmd.DM.poseY,
-                //        SizeWidth = dmd.DM.width,
-                //        SizeHeight = dmd.DM.height,
-                //        Angle = -dmd.DM.alpha,
-                //        IsValid = !dmd.DM.isError,
-                //        Data = dmd.DM.data
-                //    };
-                //    if (dmd.DM.isError)
-                //        allValid = false;
+                //    allValid = false;
                 //}
-                dmVm.IsValid = allValid;
+
+                dmVm.IsValid = allValid && dm_data.IsValid;
                 cells.Add(dmVm);
             }
 
             return cells;
         }
-
 
         public Image<Rgba32> GetCroppedImage(result_data dmrData, int minX, int minY, int maxX, int maxY)
         {
@@ -296,77 +356,6 @@ namespace l2l_aggregator.Helpers.AggregationHelpers
             }
         }
 
-        public void SaveRawImageAsJpeg(result_data dmrData, string outputPath, int quality = 90)
-        {
-            if (dmrData.rawImage == null)
-                throw new InvalidOperationException("Изображение не загружено или результат сканирования отсутствует.");
-
-            if (dmrData.rawImage is SixLabors.ImageSharp.Image<Rgba32> image)
-            {
-                var encoder = new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder
-                {
-                    Quality = quality
-                };
-
-                var dir = Path.GetDirectoryName(outputPath);
-                if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
-                    Directory.CreateDirectory(dir);
-
-                image.Save(outputPath, encoder);
-            }
-            else
-            {
-                throw new InvalidCastException("rawImage не является Image<Rgba32> и не может быть сохранено в JPG.");
-            }
-        }
-        public string BuildResultJson(result_data dmrData)
-        {
-            var result = new List<CellData>();
-            int idCounter = 1;
-
-            foreach (var cell in dmrData.BOXs)
-            {
-                var cellData = new CellData
-                {
-                    cell_id = idCounter++,
-                    poseX = cell.poseX,
-                    poseY = cell.poseY,
-                    width = cell.width,
-                    height = cell.height,
-                    angle = cell.alpha,
-                    cell_dm = new DM_data
-                    {
-                        data = cell.DM.data,
-                        poseX = cell.DM.poseX,
-                        poseY = cell.DM.poseY,
-                        width = cell.DM.width,
-                        height = cell.DM.height,
-                        alpha = cell.DM.alpha,
-                        isError = cell.DM.isError
-                    },
-                    cell_ocr = cell.OCR.Select(o => new OcrField
-                    {
-                        data = o.Text,
-                        name = o.Name,
-                        poseX = o.poseX,
-                        poseY = o.poseY,
-                        width = o.width,
-                        height = o.height,
-                        angle = o.alpha
-                    }).ToList()
-                };
-
-                result.Add(cellData);
-            }
-
-            var json = JsonSerializer.Serialize(new { cells = result }, new JsonSerializerOptions
-            {
-                WriteIndented = true
-            });
-
-            return json;
-        }
-
         public Bitmap ConvertToAvaloniaBitmap(Image<Rgba32> image)
         {
             using var ms = new MemoryStream();
@@ -375,40 +364,6 @@ namespace l2l_aggregator.Helpers.AggregationHelpers
             return new Bitmap(ms);
         }
 
-        public Image<Rgba32> ConvertFromImageSharpImage(SixLabors.ImageSharp.Image source)
-        {
-            return source.CloneAs<Rgba32>();
-        }
-        public class OcrField
-        {
-            public string data { get; set; }
-            public string name { get; set; }
-            public int poseX { get; set; }
-            public int poseY { get; set; }
-            public int width { get; set; }
-            public int height { get; set; }
-            public int angle { get; set; }
-        }
-        public class DM_data
-        {
-            public string data { get; set; }
-            public int poseX { get; set; }
-            public int poseY { get; set; }
-            public int height { get; set; }
-            public int width { get; set; }
-            public int alpha { get; set; }
-            public bool isError { get; set; }
-        }
-        public class CellData
-        {
-            public int cell_id { get; set; }
-            public int poseX { get; set; }
-            public int poseY { get; set; }
-            public int width { get; set; }
-            public int height { get; set; }
-            public int angle { get; set; }
-            public DM_data cell_dm { get; set; }
-            public List<OcrField> cell_ocr { get; set; }
-        }
+
     }
 }
