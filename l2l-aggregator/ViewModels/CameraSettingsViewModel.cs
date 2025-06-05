@@ -34,7 +34,11 @@ namespace l2l_aggregator.ViewModels
         [RelayCommand]
         public async Task Scan()
         {
-            _dmScanService.getScan();
+            //старое
+            //_dmScanService.getScan();
+            //новое
+            //await _dmScanService.WaitForStartOkAsync();
+            //_dmScanService.startShot();
             dmrData = await _dmScanService.WaitForResultAsync();
             using (var ms = new MemoryStream())
             {

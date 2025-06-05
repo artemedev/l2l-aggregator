@@ -80,16 +80,16 @@ namespace DM_process_lib
 
             foreach (Cell_OCR entry in cell.cell_ocr)
             {
-                var nameLower = entry.name?.ToLowerInvariant();
-                var dataLower = entry.data?.ToLowerInvariant();
+                //var nameLower = entry.name?.ToLowerInvariant();
+                //var dataLower = entry.data?.ToLowerInvariant();
 
-                bool shouldAdd = dataModel.Any(kvp =>
-                    (kvp.Value && kvp.Key.ToLowerInvariant() == nameLower) ||
-                    (!kvp.Value && kvp.Key.ToLowerInvariant() == dataLower)
-                );
+                //bool shouldAdd = dataModel.Any(kvp =>
+                //    (kvp.Value && kvp.Key.ToLowerInvariant() == nameLower) ||
+                //    (!kvp.Value && kvp.Key.ToLowerInvariant() == dataLower)
+                //);
 
-                if (shouldAdd)
-                {
+                //if (shouldAdd)
+                //{
                     dataCell.OCR.Add(new OCR_data
                     {
                         Text = entry.data,
@@ -101,7 +101,7 @@ namespace DM_process_lib
                         alpha = entry.angle,
 
                     });
-                }
+                //}
 
             }
             return dataCell;

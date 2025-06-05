@@ -2,5005 +2,1890 @@
   "cells": [
     {
       "cell_id": 1,
-      "poseX": 1915,
-      "poseY": 671,
+      "poseX": 1660,
+      "poseY": 530,
       "width": 326,
-      "height": 247,
-      "angle": 88,
+      "height": 326,
+      "angle": 0,
       "cell_dm": {
-        "data": "0104603671003439215691362902879\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 78,
-        "poseY": 80,
-        "height": 104,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
+        "data": "0104603905002474214312272633197\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "poseX": 170,
+        "poseY": 227,
+        "width": 132,
+        "height": 130,
+        "angle": 0
       },
       "cell_ocr": [
         {
-          "data": "04110171013439",
+          "data": "",
           "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 88
-        },
-        {
-          "data": "5691362902879",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 88
+          "poseX": 66,
+          "poseY": 206,
+          "width": 84,
+          "height": 27,
+          "angle": 1
         },
         {
           "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 88
+          "name": "SN",
+          "poseX": 60,
+          "poseY": 242,
+          "width": 72,
+          "height": 27,
+          "angle": 1
         },
         {
-          "data": "40426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 88
+          "data": "",
+          "name": "\u0421\u0435\u0440\u0438\u044F",
+          "poseX": 72,
+          "poseY": 279,
+          "width": 96,
+          "height": 27,
+          "angle": 1
+        },
+        {
+          "data": "TIND1",
+          "name": "\u0413\u043E\u0434\u0435\u043D \u0434\u043E",
+          "poseX": 84,
+          "poseY": 315,
+          "width": 121,
+          "height": 27,
+          "angle": 1
+        },
+        {
+          "data": "I51I44W0",
+          "name": "Gtin",
+          "poseX": 235,
+          "poseY": 206,
+          "width": 205,
+          "height": 27,
+          "angle": 1
+        },
+        {
+          "data": "9RNI1",
+          "name": "SerialNumber",
+          "poseX": 235,
+          "poseY": 242,
+          "width": 205,
+          "height": 27,
+          "angle": 1
+        },
+        {
+          "data": "",
+          "name": "SeriesName",
+          "poseX": 235,
+          "poseY": 279,
+          "width": 205,
+          "height": 27,
+          "angle": 1
+        },
+        {
+          "data": "K139I15C02474",
+          "name": "ExpireDate",
+          "poseX": 247,
+          "poseY": 315,
+          "width": 181,
+          "height": 27,
+          "angle": 1
         }
       ]
     },
     {
       "cell_id": 2,
-      "poseX": 2291,
-      "poseY": 1132,
+      "poseX": 1555,
+      "poseY": 2193,
       "width": 326,
-      "height": 247,
-      "angle": 90,
+      "height": 326,
+      "angle": 91,
       "cell_dm": {
-        "data": "0104603671003439210589873179527\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 78,
-        "poseY": 80,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
+        "data": "0104603905002474212550766777677\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "poseX": 171,
+        "poseY": 226,
+        "width": 134,
+        "height": 130,
+        "angle": 0
       },
       "cell_ocr": [
         {
-          "data": "047103671001410",
+          "data": "",
           "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "0589873179527",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
+          "poseX": 66,
+          "poseY": 206,
+          "width": 84,
+          "height": 27,
+          "angle": 91
         },
         {
           "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
+          "name": "SN",
+          "poseX": 60,
+          "poseY": 242,
+          "width": 72,
+          "height": 27,
+          "angle": 91
         },
         {
-          "data": "40426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
+          "data": "",
+          "name": "\u0421\u0435\u0440\u0438\u044F",
+          "poseX": 72,
+          "poseY": 279,
+          "width": 96,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "TIND",
+          "name": "\u0413\u043E\u0434\u0435\u043D \u0434\u043E",
+          "poseX": 84,
+          "poseY": 315,
+          "width": 121,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "",
+          "name": "Gtin",
+          "poseX": 235,
+          "poseY": 206,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "TY1121",
+          "name": "SerialNumber",
+          "poseX": 235,
+          "poseY": 242,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "",
+          "name": "SeriesName",
+          "poseX": 235,
+          "poseY": 279,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "O3905002474",
+          "name": "ExpireDate",
+          "poseX": 247,
+          "poseY": 315,
+          "width": 181,
+          "height": 27,
+          "angle": 91
         }
       ]
     },
     {
       "cell_id": 3,
-      "poseX": 2955,
-      "poseY": 1530,
+      "poseX": 1526,
+      "poseY": 2971,
       "width": 326,
-      "height": 247,
-      "angle": 87,
+      "height": 326,
+      "angle": 91,
       "cell_dm": {
-        "data": "0104603671003439210726254125726\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 78,
-        "poseY": 80,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
+        "data": "0104603905002474211187844835078\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "poseX": 170,
+        "poseY": 226,
+        "width": 134,
+        "height": 130,
+        "angle": 0
       },
       "cell_ocr": [
         {
-          "data": "04603671003439",
+          "data": "",
           "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 87
-        },
-        {
-          "data": "0726254125726",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 87
+          "poseX": 66,
+          "poseY": 206,
+          "width": 84,
+          "height": 27,
+          "angle": 91
         },
         {
           "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 87
+          "name": "SN",
+          "poseX": 60,
+          "poseY": 242,
+          "width": 72,
+          "height": 27,
+          "angle": 91
         },
         {
-          "data": "5590426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 87
+          "data": "",
+          "name": "\u0421\u0435\u0440\u0438\u044F",
+          "poseX": 72,
+          "poseY": 279,
+          "width": 96,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "TIN02",
+          "name": "\u0413\u043E\u0434\u0435\u043D \u0434\u043E",
+          "poseX": 84,
+          "poseY": 315,
+          "width": 121,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "",
+          "name": "Gtin",
+          "poseX": 235,
+          "poseY": 206,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "4KI",
+          "name": "SerialNumber",
+          "poseX": 235,
+          "poseY": 242,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "",
+          "name": "SeriesName",
+          "poseX": 235,
+          "poseY": 279,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "O39O5D02474",
+          "name": "ExpireDate",
+          "poseX": 247,
+          "poseY": 315,
+          "width": 181,
+          "height": 27,
+          "angle": 91
         }
       ]
     },
     {
       "cell_id": 4,
-      "poseX": 1581,
-      "poseY": 687,
+      "poseX": 1902,
+      "poseY": 2566,
       "width": 326,
-      "height": 247,
-      "angle": 89,
+      "height": 326,
+      "angle": 91,
       "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
+        "data": "0104603905002474216646271484853\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "poseX": 170,
+        "poseY": 226,
+        "width": 132,
+        "height": 132,
+        "angle": 0
       },
       "cell_ocr": [
         {
-          "data": "4613367103430",
+          "data": "",
           "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 89
+          "poseX": 66,
+          "poseY": 206,
+          "width": 84,
+          "height": 27,
+          "angle": 91
         },
         {
-          "data": "419867308908193",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 89
+          "data": "",
+          "name": "SN",
+          "poseX": 60,
+          "poseY": 242,
+          "width": 72,
+          "height": 27,
+          "angle": 91
         },
         {
-          "data": "415072",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 89
+          "data": "",
+          "name": "\u0421\u0435\u0440\u0438\u044F",
+          "poseX": 72,
+          "poseY": 279,
+          "width": 96,
+          "height": 27,
+          "angle": 91
         },
         {
-          "data": "40426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 89
+          "data": "TIN02",
+          "name": "\u0413\u043E\u0434\u0435\u043D \u0434\u043E",
+          "poseX": 84,
+          "poseY": 315,
+          "width": 121,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "",
+          "name": "Gtin",
+          "poseX": 235,
+          "poseY": 206,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "1W144I",
+          "name": "SerialNumber",
+          "poseX": 235,
+          "poseY": 242,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "",
+          "name": "SeriesName",
+          "poseX": 235,
+          "poseY": 279,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "V199050C12474",
+          "name": "ExpireDate",
+          "poseX": 247,
+          "poseY": 315,
+          "width": 181,
+          "height": 27,
+          "angle": 91
         }
       ]
     },
     {
       "cell_id": 5,
-      "poseX": 1614,
-      "poseY": 1118,
+      "poseX": 755,
+      "poseY": 2986,
       "width": 326,
-      "height": 247,
-      "angle": 90,
+      "height": 326,
+      "angle": 93,
       "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
+        "data": "0104603905002474218508332148733\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "poseX": 171,
+        "poseY": 228,
+        "width": 134,
+        "height": 128,
+        "angle": 0
       },
       "cell_ocr": [
         {
-          "data": "047130371710034019",
+          "data": "",
           "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
+          "poseX": 66,
+          "poseY": 206,
+          "width": 84,
+          "height": 27,
+          "angle": 93
         },
         {
-          "data": "73440539301638",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
+          "data": "5J1F7L2",
+          "name": "SN",
+          "poseX": 60,
+          "poseY": 242,
+          "width": 72,
+          "height": 27,
+          "angle": 93
         },
         {
           "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
+          "name": "\u0421\u0435\u0440\u0438\u044F",
+          "poseX": 72,
+          "poseY": 279,
+          "width": 96,
+          "height": 27,
+          "angle": 93
         },
         {
-          "data": "3190426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
+          "data": "TIN04",
+          "name": "\u0413\u043E\u0434\u0435\u043D \u0434\u043E",
+          "poseX": 84,
+          "poseY": 315,
+          "width": 121,
+          "height": 27,
+          "angle": 93
+        },
+        {
+          "data": "",
+          "name": "Gtin",
+          "poseX": 235,
+          "poseY": 206,
+          "width": 205,
+          "height": 27,
+          "angle": 93
+        },
+        {
+          "data": "4F2464",
+          "name": "SerialNumber",
+          "poseX": 235,
+          "poseY": 242,
+          "width": 205,
+          "height": 27,
+          "angle": 93
+        },
+        {
+          "data": "",
+          "name": "SeriesName",
+          "poseX": 235,
+          "poseY": 279,
+          "width": 205,
+          "height": 27,
+          "angle": 93
+        },
+        {
+          "data": "D039O5002474",
+          "name": "ExpireDate",
+          "poseX": 247,
+          "poseY": 315,
+          "width": 181,
+          "height": 27,
+          "angle": 93
         }
       ]
     },
     {
       "cell_id": 6,
-      "poseX": 3315,
-      "poseY": 1917,
+      "poseX": 807,
+      "poseY": 1803,
       "width": 326,
-      "height": 247,
-      "angle": 90,
+      "height": 326,
+      "angle": 91,
       "cell_dm": {
-        "data": "0104603671003439215695256510607\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 77,
-        "poseY": 80,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
+        "data": "0104603905002474217149757791044\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "poseX": 171,
+        "poseY": 227,
+        "width": 134,
+        "height": 128,
+        "angle": 0
       },
       "cell_ocr": [
         {
-          "data": "045103671003439",
+          "data": "",
           "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "5695256510607",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
+          "poseX": 66,
+          "poseY": 206,
+          "width": 84,
+          "height": 27,
+          "angle": 91
         },
         {
           "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
+          "name": "SN",
+          "poseX": 60,
+          "poseY": 242,
+          "width": 72,
+          "height": 27,
+          "angle": 91
         },
         {
-          "data": "10426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
+          "data": "",
+          "name": "\u0421\u0435\u0440\u0438\u044F",
+          "poseX": 72,
+          "poseY": 279,
+          "width": 96,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "JTINJ",
+          "name": "\u0413\u043E\u0434\u0435\u043D \u0434\u043E",
+          "poseX": 84,
+          "poseY": 315,
+          "width": 121,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "",
+          "name": "Gtin",
+          "poseX": 235,
+          "poseY": 206,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "718154",
+          "name": "SerialNumber",
+          "poseX": 235,
+          "poseY": 242,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "",
+          "name": "SeriesName",
+          "poseX": 235,
+          "poseY": 279,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "I139I15IX19474",
+          "name": "ExpireDate",
+          "poseX": 247,
+          "poseY": 315,
+          "width": 181,
+          "height": 27,
+          "angle": 91
         }
       ]
     },
     {
       "cell_id": 7,
-      "poseX": 3637,
-      "poseY": 1511,
+      "poseX": 770,
+      "poseY": 2611,
       "width": 326,
-      "height": 247,
-      "angle": 90,
+      "height": 326,
+      "angle": 93,
       "cell_dm": {
-        "data": "0104603671003439213990606386839\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 77,
-        "poseY": 81,
-        "height": 104,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
+        "data": "0104603905002474217589656344136\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "poseX": 171,
+        "poseY": 227,
+        "width": 132,
+        "height": 128,
+        "angle": 0
       },
       "cell_ocr": [
         {
-          "data": "10401103671003439",
+          "data": "",
           "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
+          "poseX": 66,
+          "poseY": 206,
+          "width": 84,
+          "height": 27,
+          "angle": 93
         },
         {
-          "data": "3990606386839",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
+          "data": "",
+          "name": "SN",
+          "poseX": 60,
+          "poseY": 242,
+          "width": 72,
+          "height": 27,
+          "angle": 93
         },
         {
-          "data": "49475012",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
+          "data": "",
+          "name": "\u0421\u0435\u0440\u0438\u044F",
+          "poseX": 72,
+          "poseY": 279,
+          "width": 96,
+          "height": 27,
+          "angle": 93
         },
         {
-          "data": "10426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
+          "data": "TIN04",
+          "name": "\u0413\u043E\u0434\u0435\u043D \u0434\u043E",
+          "poseX": 84,
+          "poseY": 315,
+          "width": 121,
+          "height": 27,
+          "angle": 93
+        },
+        {
+          "data": "YI1474",
+          "name": "Gtin",
+          "poseX": 235,
+          "poseY": 206,
+          "width": 205,
+          "height": 27,
+          "angle": 93
+        },
+        {
+          "data": "",
+          "name": "SerialNumber",
+          "poseX": 235,
+          "poseY": 242,
+          "width": 205,
+          "height": 27,
+          "angle": 93
+        },
+        {
+          "data": "",
+          "name": "SeriesName",
+          "poseX": 235,
+          "poseY": 279,
+          "width": 205,
+          "height": 27,
+          "angle": 93
+        },
+        {
+          "data": "1039IJ5002474",
+          "name": "ExpireDate",
+          "poseX": 247,
+          "poseY": 315,
+          "width": 181,
+          "height": 27,
+          "angle": 93
         }
       ]
     },
     {
       "cell_id": 8,
-      "poseX": 3649,
-      "poseY": 1939,
+      "poseX": 424,
+      "poseY": 1808,
       "width": 326,
-      "height": 247,
-      "angle": 89,
+      "height": 326,
+      "angle": 91,
       "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
+        "data": "0104603905002474213900789089196\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "poseX": 170,
+        "poseY": 227,
+        "width": 134,
+        "height": 126,
+        "angle": 0
       },
       "cell_ocr": [
         {
-          "data": "0460351710034396",
+          "data": "",
           "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 89
+          "poseX": 66,
+          "poseY": 206,
+          "width": 84,
+          "height": 27,
+          "angle": 91
         },
         {
-          "data": "0454098319598",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 89
+          "data": "W2330",
+          "name": "SN",
+          "poseX": 60,
+          "poseY": 242,
+          "width": 72,
+          "height": 27,
+          "angle": 91
         },
         {
           "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 89
+          "name": "\u0421\u0435\u0440\u0438\u044F",
+          "poseX": 72,
+          "poseY": 279,
+          "width": 96,
+          "height": 27,
+          "angle": 91
         },
         {
-          "data": "10426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 89
+          "data": "JTINCN4",
+          "name": "\u0413\u043E\u0434\u0435\u043D \u0434\u043E",
+          "poseX": 84,
+          "poseY": 315,
+          "width": 121,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "",
+          "name": "Gtin",
+          "poseX": 235,
+          "poseY": 206,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "",
+          "name": "SerialNumber",
+          "poseX": 235,
+          "poseY": 242,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "OC1P11I458I6",
+          "name": "SeriesName",
+          "poseX": 235,
+          "poseY": 279,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "O39O50O2474",
+          "name": "ExpireDate",
+          "poseX": 247,
+          "poseY": 315,
+          "width": 181,
+          "height": 27,
+          "angle": 91
         }
       ]
     },
     {
       "cell_id": 9,
-      "poseX": 2303,
-      "poseY": 2797,
+      "poseX": 1939,
+      "poseY": 2177,
       "width": 326,
-      "height": 247,
+      "height": 326,
       "angle": 91,
       "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
+        "data": "0104603905002474213048414413313\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "poseX": 170,
+        "poseY": 226,
+        "width": 134,
+        "height": 132,
+        "angle": 0
       },
       "cell_ocr": [
         {
-          "data": "171010",
+          "data": "",
           "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
+          "poseX": 66,
+          "poseY": 206,
+          "width": 84,
+          "height": 27,
           "angle": 91
         },
         {
-          "data": "9138259545786",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
+          "data": "",
+          "name": "SN",
+          "poseX": 60,
+          "poseY": 242,
+          "width": 72,
+          "height": 27,
           "angle": 91
         },
         {
-          "data": "475072",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
+          "data": "",
+          "name": "\u0421\u0435\u0440\u0438\u044F",
+          "poseX": 72,
+          "poseY": 279,
+          "width": 96,
+          "height": 27,
           "angle": 91
         },
         {
-          "data": "40426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
+          "data": "TIN02",
+          "name": "\u0413\u043E\u0434\u0435\u043D \u0434\u043E",
+          "poseX": 84,
+          "poseY": 315,
+          "width": 121,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "K71L564",
+          "name": "Gtin",
+          "poseX": 235,
+          "poseY": 206,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "9RW7AS",
+          "name": "SerialNumber",
+          "poseX": 235,
+          "poseY": 242,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "",
+          "name": "SeriesName",
+          "poseX": 235,
+          "poseY": 279,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "039CJ5O02474",
+          "name": "ExpireDate",
+          "poseX": 247,
+          "poseY": 315,
+          "width": 181,
+          "height": 27,
           "angle": 91
         }
       ]
     },
     {
       "cell_id": 10,
-      "poseX": 2287,
-      "poseY": 3206,
+      "poseX": 1187,
+      "poseY": 1802,
       "width": 326,
-      "height": 247,
-      "angle": 91,
+      "height": 326,
+      "angle": 92,
       "cell_dm": {
-        "data": "0104603671003439210741951688377\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 77,
-        "poseY": 81,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
+        "data": "0104603905002474211371201263545\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "poseX": 170,
+        "poseY": 226,
+        "width": 132,
+        "height": 130,
+        "angle": 0
       },
       "cell_ocr": [
         {
-          "data": "7110",
+          "data": "",
           "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "0741951688377",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "76072",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 91
+          "poseX": 66,
+          "poseY": 206,
+          "width": 84,
+          "height": 27,
+          "angle": 92
         },
         {
           "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 91
+          "name": "SN",
+          "poseX": 60,
+          "poseY": 242,
+          "width": 72,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "",
+          "name": "\u0421\u0435\u0440\u0438\u044F",
+          "poseX": 72,
+          "poseY": 279,
+          "width": 96,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "1TINIL",
+          "name": "\u0413\u043E\u0434\u0435\u043D \u0434\u043E",
+          "poseX": 84,
+          "poseY": 315,
+          "width": 121,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "K144312",
+          "name": "Gtin",
+          "poseX": 235,
+          "poseY": 206,
+          "width": 205,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "",
+          "name": "SerialNumber",
+          "poseX": 235,
+          "poseY": 242,
+          "width": 205,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "",
+          "name": "SeriesName",
+          "poseX": 235,
+          "poseY": 279,
+          "width": 205,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "IL141F4Y1AIX10474",
+          "name": "ExpireDate",
+          "poseX": 247,
+          "poseY": 315,
+          "width": 181,
+          "height": 27,
+          "angle": 92
         }
       ]
     },
     {
       "cell_id": 11,
-      "poseX": 566,
-      "poseY": 714,
+      "poseX": 2294,
+      "poseY": 2976,
       "width": 326,
-      "height": 247,
-      "angle": 89,
+      "height": 326,
+      "angle": 92,
       "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
+        "data": "0104603905002474214585488176486\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "poseX": 170,
+        "poseY": 225,
+        "width": 132,
+        "height": 132,
+        "angle": 0
       },
       "cell_ocr": [
         {
-          "data": "4171671144",
+          "data": "",
           "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "5780",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 89
+          "poseX": 66,
+          "poseY": 206,
+          "width": 84,
+          "height": 27,
+          "angle": 92
         },
         {
           "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 89
+          "name": "SN",
+          "poseX": 60,
+          "poseY": 242,
+          "width": 72,
+          "height": 27,
+          "angle": 92
         },
         {
           "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 89
+          "name": "\u0421\u0435\u0440\u0438\u044F",
+          "poseX": 72,
+          "poseY": 279,
+          "width": 96,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "TINJ",
+          "name": "\u0413\u043E\u0434\u0435\u043D \u0434\u043E",
+          "poseX": 84,
+          "poseY": 315,
+          "width": 121,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "",
+          "name": "Gtin",
+          "poseX": 235,
+          "poseY": 206,
+          "width": 205,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "9F2131",
+          "name": "SerialNumber",
+          "poseX": 235,
+          "poseY": 242,
+          "width": 205,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "",
+          "name": "SeriesName",
+          "poseX": 235,
+          "poseY": 279,
+          "width": 205,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "K139C15OC17474",
+          "name": "ExpireDate",
+          "poseX": 247,
+          "poseY": 315,
+          "width": 181,
+          "height": 27,
+          "angle": 92
         }
       ]
     },
     {
       "cell_id": 12,
-      "poseX": 3616,
-      "poseY": 3198,
+      "poseX": 810,
+      "poseY": 1437,
       "width": 326,
-      "height": 247,
-      "angle": 87,
+      "height": 326,
+      "angle": 93,
       "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
+        "data": "0104603905002474214096902951495\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "poseX": 170,
+        "poseY": 227,
+        "width": 134,
+        "height": 128,
+        "angle": 0
       },
       "cell_ocr": [
         {
           "data": "",
           "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 87
+          "poseX": 66,
+          "poseY": 206,
+          "width": 84,
+          "height": 27,
+          "angle": 93
         },
         {
           "data": "",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 87
-        },
-        {
-          "data": "76072",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 87
+          "name": "SN",
+          "poseX": 60,
+          "poseY": 242,
+          "width": 72,
+          "height": 27,
+          "angle": 93
         },
         {
           "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 87
+          "name": "\u0421\u0435\u0440\u0438\u044F",
+          "poseX": 72,
+          "poseY": 279,
+          "width": 96,
+          "height": 27,
+          "angle": 93
+        },
+        {
+          "data": "1TINC",
+          "name": "\u0413\u043E\u0434\u0435\u043D \u0434\u043E",
+          "poseX": 84,
+          "poseY": 315,
+          "width": 121,
+          "height": 27,
+          "angle": 93
+        },
+        {
+          "data": "51I61",
+          "name": "Gtin",
+          "poseX": 235,
+          "poseY": 206,
+          "width": 205,
+          "height": 27,
+          "angle": 93
+        },
+        {
+          "data": "",
+          "name": "SerialNumber",
+          "poseX": 235,
+          "poseY": 242,
+          "width": 205,
+          "height": 27,
+          "angle": 93
+        },
+        {
+          "data": "01WWMI17",
+          "name": "SeriesName",
+          "poseX": 235,
+          "poseY": 279,
+          "width": 205,
+          "height": 27,
+          "angle": 93
+        },
+        {
+          "data": "TW19474",
+          "name": "ExpireDate",
+          "poseX": 247,
+          "poseY": 315,
+          "width": 181,
+          "height": 27,
+          "angle": 93
         }
       ]
     },
     {
       "cell_id": 13,
-      "poseX": 1600,
-      "poseY": 2782,
+      "poseX": 2049,
+      "poseY": 3054,
       "width": 326,
-      "height": 247,
-      "angle": 89,
+      "height": 326,
+      "angle": 183,
       "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
+        "data": "0104603905002474210702726198248\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "poseX": 171,
+        "poseY": 226,
+        "width": 134,
+        "height": 132,
+        "angle": 0
       },
       "cell_ocr": [
         {
-          "data": "71710044",
+          "data": "",
           "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "211417327764",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 89
+          "poseX": 66,
+          "poseY": 206,
+          "width": 84,
+          "height": 27,
+          "angle": 183
         },
         {
           "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 89
+          "name": "SN",
+          "poseX": 60,
+          "poseY": 242,
+          "width": 72,
+          "height": 27,
+          "angle": 183
         },
         {
-          "data": "90426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 89
+          "data": "",
+          "name": "\u0421\u0435\u0440\u0438\u044F",
+          "poseX": 72,
+          "poseY": 279,
+          "width": 96,
+          "height": 27,
+          "angle": 183
+        },
+        {
+          "data": "TINC12",
+          "name": "\u0413\u043E\u0434\u0435\u043D \u0434\u043E",
+          "poseX": 84,
+          "poseY": 315,
+          "width": 121,
+          "height": 27,
+          "angle": 183
+        },
+        {
+          "data": "",
+          "name": "Gtin",
+          "poseX": 235,
+          "poseY": 206,
+          "width": 205,
+          "height": 27,
+          "angle": 183
+        },
+        {
+          "data": "",
+          "name": "SerialNumber",
+          "poseX": 235,
+          "poseY": 242,
+          "width": 205,
+          "height": 27,
+          "angle": 183
+        },
+        {
+          "data": "",
+          "name": "SeriesName",
+          "poseX": 235,
+          "poseY": 279,
+          "width": 205,
+          "height": 27,
+          "angle": 183
+        },
+        {
+          "data": "",
+          "name": "ExpireDate",
+          "poseX": 247,
+          "poseY": 315,
+          "width": 181,
+          "height": 27,
+          "angle": 183
         }
       ]
     },
     {
       "cell_id": 14,
-      "poseX": 4626,
-      "poseY": 1125,
+      "poseX": 1129,
+      "poseY": 2983,
       "width": 326,
-      "height": 247,
-      "angle": 90,
+      "height": 326,
+      "angle": 91,
       "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
+        "data": "0104603905002474219908233976632\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "poseX": 170,
+        "poseY": 227,
+        "width": 134,
+        "height": 128,
+        "angle": 0
       },
       "cell_ocr": [
         {
-          "data": "41171003449",
+          "data": "",
           "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "676324619119",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
+          "poseX": 66,
+          "poseY": 206,
+          "width": 84,
+          "height": 27,
+          "angle": 91
         },
         {
           "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
+          "name": "SN",
+          "poseX": 60,
+          "poseY": 242,
+          "width": 72,
+          "height": 27,
+          "angle": 91
         },
         {
-          "data": "0426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
+          "data": "",
+          "name": "\u0421\u0435\u0440\u0438\u044F",
+          "poseX": 72,
+          "poseY": 279,
+          "width": 96,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "TIN0",
+          "name": "\u0413\u043E\u0434\u0435\u043D \u0434\u043E",
+          "poseX": 84,
+          "poseY": 315,
+          "width": 121,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "41116IINSD",
+          "name": "Gtin",
+          "poseX": 235,
+          "poseY": 206,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "7144",
+          "name": "SerialNumber",
+          "poseX": 235,
+          "poseY": 242,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "",
+          "name": "SeriesName",
+          "poseX": 235,
+          "poseY": 279,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "1O3905002474",
+          "name": "ExpireDate",
+          "poseX": 247,
+          "poseY": 315,
+          "width": 181,
+          "height": 27,
+          "angle": 91
         }
       ]
     },
     {
       "cell_id": 15,
-      "poseX": 2643,
-      "poseY": 1945,
+      "poseX": 4033,
+      "poseY": 2567,
       "width": 326,
-      "height": 247,
-      "angle": 90,
+      "height": 326,
+      "angle": 270,
       "cell_dm": {
-        "data": "0104603671003439214790483503068\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 77,
-        "poseY": 80,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
+        "data": "0104603905002474210975345655679\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "poseX": 170,
+        "poseY": 227,
+        "width": 134,
+        "height": 128,
+        "angle": 0
       },
       "cell_ocr": [
         {
-          "data": "0460967119410",
+          "data": "",
           "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "4790483503068",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
+          "poseX": 66,
+          "poseY": 206,
+          "width": 84,
+          "height": 27,
+          "angle": 270
         },
         {
           "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
+          "name": "SN",
+          "poseX": 60,
+          "poseY": 242,
+          "width": 72,
+          "height": 27,
+          "angle": 270
         },
         {
-          "data": "40426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
+          "data": "",
+          "name": "\u0421\u0435\u0440\u0438\u044F",
+          "poseX": 72,
+          "poseY": 279,
+          "width": 96,
+          "height": 27,
+          "angle": 270
+        },
+        {
+          "data": "TINO2",
+          "name": "\u0413\u043E\u0434\u0435\u043D \u0434\u043E",
+          "poseX": 84,
+          "poseY": 315,
+          "width": 121,
+          "height": 27,
+          "angle": 270
+        },
+        {
+          "data": "",
+          "name": "Gtin",
+          "poseX": 235,
+          "poseY": 206,
+          "width": 205,
+          "height": 27,
+          "angle": 270
+        },
+        {
+          "data": "",
+          "name": "SerialNumber",
+          "poseX": 235,
+          "poseY": 242,
+          "width": 205,
+          "height": 27,
+          "angle": 270
+        },
+        {
+          "data": "",
+          "name": "SeriesName",
+          "poseX": 235,
+          "poseY": 279,
+          "width": 205,
+          "height": 27,
+          "angle": 270
+        },
+        {
+          "data": "W3905OC19474",
+          "name": "ExpireDate",
+          "poseX": 247,
+          "poseY": 315,
+          "width": 181,
+          "height": 27,
+          "angle": 270
         }
       ]
     },
     {
       "cell_id": 16,
-      "poseX": 1959,
-      "poseY": 2805,
+      "poseX": 4539,
+      "poseY": 2565,
       "width": 326,
-      "height": 247,
-      "angle": 90,
+      "height": 326,
+      "angle": 87,
       "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
+        "data": "0104603905002474216226379815943\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "poseX": 169,
+        "poseY": 225,
+        "width": 134,
+        "height": 130,
+        "angle": 0
       },
       "cell_ocr": [
         {
-          "data": "7167167190",
+          "data": "",
           "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "71512773413296",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
+          "poseX": 66,
+          "poseY": 206,
+          "width": 84,
+          "height": 27,
+          "angle": 87
         },
         {
           "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
+          "name": "SN",
+          "poseX": 60,
+          "poseY": 242,
+          "width": 72,
+          "height": 27,
+          "angle": 87
         },
         {
-          "data": "10426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
+          "data": "",
+          "name": "\u0421\u0435\u0440\u0438\u044F",
+          "poseX": 72,
+          "poseY": 279,
+          "width": 96,
+          "height": 27,
+          "angle": 87
+        },
+        {
+          "data": "TIN04",
+          "name": "\u0413\u043E\u0434\u0435\u043D \u0434\u043E",
+          "poseX": 84,
+          "poseY": 315,
+          "width": 121,
+          "height": 27,
+          "angle": 87
+        },
+        {
+          "data": "",
+          "name": "Gtin",
+          "poseX": 235,
+          "poseY": 206,
+          "width": 205,
+          "height": 27,
+          "angle": 87
+        },
+        {
+          "data": "",
+          "name": "SerialNumber",
+          "poseX": 235,
+          "poseY": 242,
+          "width": 205,
+          "height": 27,
+          "angle": 87
+        },
+        {
+          "data": "",
+          "name": "SeriesName",
+          "poseX": 235,
+          "poseY": 279,
+          "width": 205,
+          "height": 27,
+          "angle": 87
+        },
+        {
+          "data": "I13905002474",
+          "name": "ExpireDate",
+          "poseX": 247,
+          "poseY": 315,
+          "width": 181,
+          "height": 27,
+          "angle": 87
         }
       ]
     },
     {
       "cell_id": 17,
-      "poseX": 2258,
-      "poseY": 690,
+      "poseX": 1514,
+      "poseY": 2578,
       "width": 326,
-      "height": 247,
-      "angle": 90,
+      "height": 326,
+      "angle": 92,
       "cell_dm": {
-        "data": "0104603671003439218426503165099\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 76,
-        "poseY": 80,
-        "height": 108,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
+        "data": "0104603905002474210973704324897\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "poseX": 170,
+        "poseY": 226,
+        "width": 132,
+        "height": 130,
+        "angle": 0
       },
       "cell_ocr": [
         {
-          "data": "46036710034019",
+          "data": "",
           "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "8426503165099",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
+          "poseX": 66,
+          "poseY": 206,
+          "width": 84,
+          "height": 27,
+          "angle": 92
         },
         {
           "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
+          "name": "SN",
+          "poseX": 60,
+          "poseY": 242,
+          "width": 72,
+          "height": 27,
+          "angle": 92
         },
         {
           "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
+          "name": "\u0421\u0435\u0440\u0438\u044F",
+          "poseX": 72,
+          "poseY": 279,
+          "width": 96,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "TIN04",
+          "name": "\u0413\u043E\u0434\u0435\u043D \u0434\u043E",
+          "poseX": 84,
+          "poseY": 315,
+          "width": 121,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "VIW",
+          "name": "Gtin",
+          "poseX": 235,
+          "poseY": 206,
+          "width": 205,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "9F2CA4",
+          "name": "SerialNumber",
+          "poseX": 235,
+          "poseY": 242,
+          "width": 205,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "",
+          "name": "SeriesName",
+          "poseX": 235,
+          "poseY": 279,
+          "width": 205,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "O39C5002474",
+          "name": "ExpireDate",
+          "poseX": 247,
+          "poseY": 315,
+          "width": 181,
+          "height": 27,
+          "angle": 92
         }
       ]
     },
     {
       "cell_id": 18,
-      "poseX": 2975,
-      "poseY": 1949,
+      "poseX": 3822,
+      "poseY": 1057,
       "width": 326,
-      "height": 247,
-      "angle": 90,
+      "height": 326,
+      "angle": 91,
       "cell_dm": {
-        "data": "0104603671003439216186357200386\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 77,
-        "poseY": 81,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
+        "data": "0104603905002474216574931125498\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "poseX": 169,
+        "poseY": 225,
+        "width": 134,
+        "height": 132,
+        "angle": 0
       },
       "cell_ocr": [
         {
-          "data": "060771009430",
+          "data": "",
           "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
+          "poseX": 66,
+          "poseY": 206,
+          "width": 84,
+          "height": 27,
+          "angle": 91
         },
         {
-          "data": "6186357200386",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
+          "data": "",
+          "name": "SN",
+          "poseX": 60,
+          "poseY": 242,
+          "width": 72,
+          "height": 27,
+          "angle": 91
         },
         {
-          "data": "19976072",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
+          "data": "",
+          "name": "\u0421\u0435\u0440\u0438\u044F",
+          "poseX": 72,
+          "poseY": 279,
+          "width": 96,
+          "height": 27,
+          "angle": 91
         },
         {
-          "data": "40426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
+          "data": "1TIND2",
+          "name": "\u0413\u043E\u0434\u0435\u043D \u0434\u043E",
+          "poseX": 84,
+          "poseY": 315,
+          "width": 121,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "",
+          "name": "Gtin",
+          "poseX": 235,
+          "poseY": 206,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "",
+          "name": "SerialNumber",
+          "poseX": 235,
+          "poseY": 242,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "",
+          "name": "SeriesName",
+          "poseX": 235,
+          "poseY": 279,
+          "width": 205,
+          "height": 27,
+          "angle": 91
+        },
+        {
+          "data": "O3905002474",
+          "name": "ExpireDate",
+          "poseX": 247,
+          "poseY": 315,
+          "width": 181,
+          "height": 27,
+          "angle": 91
         }
       ]
     },
     {
       "cell_id": 19,
-      "poseX": 2965,
-      "poseY": 3207,
+      "poseX": 1177,
+      "poseY": 2178,
       "width": 326,
-      "height": 247,
-      "angle": 90,
+      "height": 326,
+      "angle": 92,
       "cell_dm": {
-        "data": "0104603671003439219962734088750\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 77,
-        "poseY": 80,
-        "height": 104,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
+        "data": "0104603905002474214731285964675\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "poseX": 170,
+        "poseY": 226,
+        "width": 136,
+        "height": 130,
+        "angle": 0
       },
       "cell_ocr": [
         {
           "data": "",
           "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "438750",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
+          "poseX": 66,
+          "poseY": 206,
+          "width": 84,
+          "height": 27,
+          "angle": 92
         },
         {
           "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
+          "name": "SN",
+          "poseX": 60,
+          "poseY": 242,
+          "width": 72,
+          "height": 27,
+          "angle": 92
         },
         {
           "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
+          "name": "\u0421\u0435\u0440\u0438\u044F",
+          "poseX": 72,
+          "poseY": 279,
+          "width": 96,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "TIN04",
+          "name": "\u0413\u043E\u0434\u0435\u043D \u0434\u043E",
+          "poseX": 84,
+          "poseY": 315,
+          "width": 121,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "",
+          "name": "Gtin",
+          "poseX": 235,
+          "poseY": 206,
+          "width": 205,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "",
+          "name": "SerialNumber",
+          "poseX": 235,
+          "poseY": 242,
+          "width": 205,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "",
+          "name": "SeriesName",
+          "poseX": 235,
+          "poseY": 279,
+          "width": 205,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "1O39ID5012474",
+          "name": "ExpireDate",
+          "poseX": 247,
+          "poseY": 315,
+          "width": 181,
+          "height": 27,
+          "angle": 92
         }
       ]
     },
     {
       "cell_id": 20,
-      "poseX": 570,
-      "poseY": 2778,
+      "poseX": 1142,
+      "poseY": 2588,
       "width": 326,
-      "height": 247,
-      "angle": 90,
+      "height": 326,
+      "angle": 92,
       "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
+        "data": "0104603905002474211583967739143\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "poseX": 171,
+        "poseY": 227,
+        "width": 134,
+        "height": 128,
+        "angle": 0
       },
       "cell_ocr": [
         {
           "data": "",
           "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
+          "poseX": 66,
+          "poseY": 206,
+          "width": 84,
+          "height": 27,
+          "angle": 92
         },
         {
           "data": "",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
+          "name": "SN",
+          "poseX": 60,
+          "poseY": 242,
+          "width": 72,
+          "height": 27,
+          "angle": 92
         },
         {
           "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
+          "name": "\u0421\u0435\u0440\u0438\u044F",
+          "poseX": 72,
+          "poseY": 279,
+          "width": 96,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "1TINJ",
+          "name": "\u0413\u043E\u0434\u0435\u043D \u0434\u043E",
+          "poseX": 84,
+          "poseY": 315,
+          "width": 121,
+          "height": 27,
+          "angle": 92
         },
         {
           "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
+          "name": "Gtin",
+          "poseX": 235,
+          "poseY": 206,
+          "width": 205,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "",
+          "name": "SerialNumber",
+          "poseX": 235,
+          "poseY": 242,
+          "width": 205,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "4L43I4W",
+          "name": "SeriesName",
+          "poseX": 235,
+          "poseY": 279,
+          "width": 205,
+          "height": 27,
+          "angle": 92
+        },
+        {
+          "data": "1O39C5OO2474",
+          "name": "ExpireDate",
+          "poseX": 247,
+          "poseY": 315,
+          "width": 181,
+          "height": 27,
+          "angle": 92
         }
       ]
     },
     {
       "cell_id": 21,
-      "poseX": 3960,
-      "poseY": 3191,
+      "poseX": 3430,
+      "poseY": 685,
       "width": 326,
-      "height": 247,
-      "angle": 89,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 89
-        }
-      ]
-    },
-    {
-      "cell_id": 22,
-      "poseX": 2300,
-      "poseY": 1924,
-      "width": 326,
-      "height": 247,
+      "height": 326,
       "angle": 90,
       "cell_dm": {
-        "data": "0104603671003439214762033600215\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 76,
-        "poseY": 81,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
+        "data": "0104603905002474213392161158768\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "poseX": 170,
+        "poseY": 225,
+        "width": 134,
+        "height": 130,
+        "angle": 0
       },
       "cell_ocr": [
         {
-          "data": "4711096710094110",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "4762033600215",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "40426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 23,
-      "poseX": 3321,
-      "poseY": 2757,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439212417731775518\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 76,
-        "poseY": 81,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "4717100439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "2417731775518",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "75012",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "90426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 24,
-      "poseX": 2938,
-      "poseY": 692,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "0445103671003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "7279318552477",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "10426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 25,
-      "poseX": 2593,
-      "poseY": 692,
-      "width": 326,
-      "height": 247,
-      "angle": 88,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "041103671003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 88
-        },
-        {
-          "data": "7739379532059",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 88
-        },
-        {
-          "data": "75072",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 88
-        },
-        {
-          "data": "10426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 88
-        }
-      ]
-    },
-    {
-      "cell_id": 26,
-      "poseX": 920,
-      "poseY": 1546,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439215068281628260\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 76,
-        "poseY": 80,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "046016710094490",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "5068281628260",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "44416672",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "0426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 27,
-      "poseX": 3968,
-      "poseY": 1512,
-      "width": 326,
-      "height": 247,
-      "angle": 92,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "0441303671003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 92
-        },
-        {
-          "data": "7892057026004",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 92
-        },
-        {
-          "data": "176072",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 92
-        },
-        {
-          "data": "440426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 92
-        }
-      ]
-    },
-    {
-      "cell_id": 28,
-      "poseX": 3268,
-      "poseY": 683,
-      "width": 326,
-      "height": 247,
-      "angle": 91,
-      "cell_dm": {
-        "data": "0104603671003439219847359344902\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 78,
-        "poseY": 81,
-        "height": 104,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "0460411671009439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "984759344902",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "40426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 91
-        }
-      ]
-    },
-    {
-      "cell_id": 29,
-      "poseX": 3628,
-      "poseY": 1135,
-      "width": 326,
-      "height": 247,
-      "angle": 89,
-      "cell_dm": {
-        "data": "0104603671003439216140311918512\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 77,
-        "poseY": 81,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "046103671003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "6140311918512",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "90426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 89
-        }
-      ]
-    },
-    {
-      "cell_id": 30,
-      "poseX": 597,
-      "poseY": 1930,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "171146",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "0401332",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "0426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 31,
-      "poseX": 3994,
-      "poseY": 2769,
-      "width": 326,
-      "height": 247,
-      "angle": 89,
-      "cell_dm": {
-        "data": "0104603671003439211400715251824\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 76,
-        "poseY": 80,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "466710015419",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "140715251824",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 89
-        }
-      ]
-    },
-    {
-      "cell_id": 32,
-      "poseX": 3653,
-      "poseY": 2359,
-      "width": 326,
-      "height": 247,
-      "angle": 91,
-      "cell_dm": {
-        "data": "0104603671003439214049939356110\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 76,
-        "poseY": 81,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "0471030171003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "4049939356110",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 91
-        }
-      ]
-    },
-    {
-      "cell_id": 33,
-      "poseX": 3304,
-      "poseY": 3208,
-      "width": 326,
-      "height": 247,
-      "angle": 91,
-      "cell_dm": {
-        "data": "0104603671003439215436899221022\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 76,
-        "poseY": 80,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "710",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 91
-        }
-      ]
-    },
-    {
-      "cell_id": 34,
-      "poseX": 3983,
-      "poseY": 2355,
-      "width": 326,
-      "height": 247,
-      "angle": 89,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "46051116113439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "5551074754591",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "72072",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "10426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 89
-        }
-      ]
-    },
-    {
-      "cell_id": 35,
-      "poseX": 3609,
-      "poseY": 698,
-      "width": 326,
-      "height": 247,
-      "angle": 91,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "04603671003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "0171117088605",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 91
-        }
-      ]
-    },
-    {
-      "cell_id": 36,
-      "poseX": 3935,
-      "poseY": 695,
-      "width": 326,
-      "height": 247,
-      "angle": 91,
-      "cell_dm": {
-        "data": "0104603671003439219967271012792\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 77,
-        "poseY": 82,
-        "height": 104,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "04603671003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "9967271012792",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "1172012",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "10426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 91
-        }
-      ]
-    },
-    {
-      "cell_id": 37,
-      "poseX": 944,
-      "poseY": 1965,
-      "width": 326,
-      "height": 247,
-      "angle": 91,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "0460167101410",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "7576653336590",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "472072",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "0426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 91
-        }
-      ]
-    },
-    {
-      "cell_id": 38,
-      "poseX": 574,
-      "poseY": 3196,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 39,
-      "poseX": 921,
-      "poseY": 2378,
-      "width": 326,
-      "height": 247,
-      "angle": 91,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "413371003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "994159395442",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "0426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 91
-        }
-      ]
-    },
-    {
-      "cell_id": 40,
-      "poseX": 3989,
-      "poseY": 1929,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "04603671003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "6425311501723",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "0426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 41,
-      "poseX": 3315,
-      "poseY": 2340,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "04110371171003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "9773349686718",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "72072",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "40426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 42,
-      "poseX": 1620,
-      "poseY": 1956,
-      "width": 326,
-      "height": 247,
-      "angle": 89,
-      "cell_dm": {
-        "data": "0104603671003439211978869742490\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 76,
-        "poseY": 80,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "04603671003419",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "1978869742490",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "40426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 89
-        }
-      ]
-    },
-    {
-      "cell_id": 43,
-      "poseX": 905,
-      "poseY": 713,
-      "width": 326,
-      "height": 247,
-      "angle": 92,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "040110771071939",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 92
-        },
-        {
-          "data": "0064611719589",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 92
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 92
-        },
-        {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 92
-        }
-      ]
-    },
-    {
-      "cell_id": 44,
-      "poseX": 1935,
-      "poseY": 1098,
-      "width": 326,
-      "height": 247,
-      "angle": 89,
-      "cell_dm": {
-        "data": "0104603671003439213647640772569\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 76,
-        "poseY": 80,
-        "height": 108,
-        "width": 110,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "047400671001439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "3647640772569",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "476072",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "40426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 89
-        }
-      ]
-    },
-    {
-      "cell_id": 45,
-      "poseX": 1271,
-      "poseY": 1122,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439217249242848690\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 76,
-        "poseY": 80,
-        "height": 108,
-        "width": 110,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "04603671003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "72492429848743",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "04426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 46,
-      "poseX": 2631,
-      "poseY": 1108,
-      "width": 326,
-      "height": 247,
-      "angle": 89,
-      "cell_dm": {
-        "data": "0104603671003439214018729540600\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 76,
-        "poseY": 81,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "041471036711004419",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "4018729540600",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "3048",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 89
-        }
-      ]
-    },
-    {
-      "cell_id": 47,
-      "poseX": 1257,
-      "poseY": 2364,
-      "width": 326,
-      "height": 247,
-      "angle": 91,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "04603671003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "1906855965994",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "72072",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "0426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 91
-        }
-      ]
-    },
-    {
-      "cell_id": 48,
-      "poseX": 4302,
-      "poseY": 3180,
-      "width": 326,
-      "height": 247,
-      "angle": 89,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 89
-        }
-      ]
-    },
-    {
-      "cell_id": 49,
-      "poseX": 1957,
-      "poseY": 1949,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439211541150508056\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 76,
-        "poseY": 81,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "7104671009490",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "15411505080561",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "4049",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 50,
-      "poseX": 2626,
-      "poseY": 3200,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439214273128604049\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 75,
-        "poseY": 81,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "427312861",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 51,
-      "poseX": 1229,
-      "poseY": 670,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439211396134813227\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 77,
-        "poseY": 80,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "046010671003430",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "13961314813227",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "40426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 52,
-      "poseX": 3311,
-      "poseY": 1129,
-      "width": 326,
-      "height": 247,
-      "angle": 89,
-      "cell_dm": {
-        "data": "0104603671003439216795120750991\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 76,
-        "poseY": 81,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "04603671003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "6795120750991",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "40426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 89
-        }
-      ]
-    },
-    {
-      "cell_id": 53,
-      "poseX": 4334,
-      "poseY": 2356,
-      "width": 326,
-      "height": 247,
-      "angle": 89,
-      "cell_dm": {
-        "data": "0104603671003439213131352398524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 77,
-        "poseY": 81,
-        "height": 104,
-        "width": 106,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "34603671003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "313135230",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "4045",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 89
-        }
-      ]
-    },
-    {
-      "cell_id": 54,
-      "poseX": 1956,
-      "poseY": 2374,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "04510667119490",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "483302040135",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "76072",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "0426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 55,
-      "poseX": 4332,
-      "poseY": 1922,
-      "width": 326,
-      "height": 247,
-      "angle": 91,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "04603671003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "449616791",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "40426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 91
-        }
-      ]
-    },
-    {
-      "cell_id": 56,
-      "poseX": 578,
-      "poseY": 2350,
-      "width": 326,
-      "height": 247,
-      "angle": 89,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "8417103439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "453118560",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "72072",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 89
-        }
-      ]
-    },
-    {
-      "cell_id": 57,
-      "poseX": 586,
-      "poseY": 1526,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "711710430",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "3071636098330",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "75072",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 58,
-      "poseX": 4306,
-      "poseY": 1514,
-      "width": 326,
-      "height": 247,
-      "angle": 89,
-      "cell_dm": {
-        "data": "0104603671003439219048010859910\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 77,
-        "poseY": 81,
-        "height": 106,
-        "width": 106,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "04603671003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "9048010859910",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "40426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 89
-        }
-      ]
-    },
-    {
-      "cell_id": 59,
-      "poseX": 1286,
-      "poseY": 1950,
-      "width": 326,
-      "height": 247,
-      "angle": 88,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "0466167100330",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 88
-        },
-        {
-          "data": "7839829679198",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 88
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 88
-        },
-        {
-          "data": "90426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 88
-        }
-      ]
-    },
-    {
-      "cell_id": 60,
-      "poseX": 3961,
-      "poseY": 1121,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439215906152681655\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 77,
-        "poseY": 82,
-        "height": 104,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "04603671003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "5906152681655",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "72072",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "40426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 61,
-      "poseX": 4664,
-      "poseY": 2339,
-      "width": 326,
-      "height": 247,
-      "angle": 91,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "57100",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "447258186749",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 91
-        }
-      ]
-    },
-    {
-      "cell_id": 62,
-      "poseX": 4324,
-      "poseY": 2757,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439218632608635013\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 76,
-        "poseY": 80,
-        "height": 108,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "113",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "744072",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 63,
-      "poseX": 4310,
-      "poseY": 1110,
-      "width": 326,
-      "height": 247,
-      "angle": 91,
-      "cell_dm": {
-        "data": "0104603671003439215937600868860\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 77,
-        "poseY": 82,
-        "height": 104,
-        "width": 106,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "046103671003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "5937614",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "15072",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "90426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 91
-        }
-      ]
-    },
-    {
-      "cell_id": 64,
-      "poseX": 3668,
-      "poseY": 2777,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "0460671003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "0817987140193",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "75072",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "0426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 65,
-      "poseX": 1606,
-      "poseY": 2369,
-      "width": 326,
-      "height": 247,
-      "angle": 92,
-      "cell_dm": {
-        "data": "0104603671003439214080929395294\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 76,
-        "poseY": 80,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "047111367100414449",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 92
-        },
-        {
-          "data": "4080929395294",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 92
-        },
-        {
-          "data": "750719",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 92
-        },
-        {
-          "data": "10426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 92
-        }
-      ]
-    },
-    {
-      "cell_id": 66,
-      "poseX": 4271,
-      "poseY": 720,
-      "width": 326,
-      "height": 247,
-      "angle": 91,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "04603671003434",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "4410315294305",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "40425",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 91
-        }
-      ]
-    },
-    {
-      "cell_id": 67,
-      "poseX": 2975,
-      "poseY": 2796,
-      "width": 326,
-      "height": 247,
-      "angle": 87,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 75,
-        "poseY": 81,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "00135711044439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 87
-        },
-        {
-          "data": "8317668274524",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 87
-        },
-        {
-          "data": "475012",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 87
-        },
-        {
-          "data": "0420",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 87
-        }
-      ]
-    },
-    {
-      "cell_id": 68,
-      "poseX": 2972,
-      "poseY": 1108,
-      "width": 326,
-      "height": 247,
-      "angle": 87,
-      "cell_dm": {
-        "data": "0104603671003439211128632640456\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 75,
-        "poseY": 81,
-        "height": 106,
-        "width": 108,
-        "alpha": 1,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "04603671003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 87
-        },
-        {
-          "data": "1128632640456",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 87
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 87
-        },
-        {
-          "data": "0426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 87
-        }
-      ]
-    },
-    {
-      "cell_id": 69,
-      "poseX": 2297,
-      "poseY": 2380,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439215825460380399\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 74,
-        "poseY": 80,
-        "height": 108,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "114506710004110",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "5825460380399",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "40426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 70,
-      "poseX": 4600,
-      "poseY": 704,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439215116291058921\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 78,
-        "poseY": 82,
-        "height": 102,
-        "width": 106,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "483171001439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "5116291058921",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 71,
-      "poseX": 1266,
-      "poseY": 1552,
-      "width": 326,
-      "height": 247,
-      "angle": 91,
-      "cell_dm": {
-        "data": "0104603671003439214830200760410\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 75,
-        "poseY": 79,
-        "height": 108,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "041713671003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "4830200760410",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "912072",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "90426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 91
-        }
-      ]
-    },
-    {
-      "cell_id": 72,
-      "poseX": 1942,
-      "poseY": 3225,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439210461679068470\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 75,
-        "poseY": 81,
-        "height": 108,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "71",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "0461679488470",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 73,
-      "poseX": 4637,
-      "poseY": 1519,
-      "width": 326,
-      "height": 247,
-      "angle": 91,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "50671003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "48601631907692",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 91
-        }
-      ]
-    },
-    {
-      "cell_id": 74,
-      "poseX": 2989,
-      "poseY": 2378,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439214130467320644\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 75,
-        "poseY": 81,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "0603671003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "4130467320644",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "13426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 75,
-      "poseX": 1606,
-      "poseY": 3210,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
-        },
-        {
           "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 76,
-      "poseX": 932,
-      "poseY": 1136,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439210211183447878\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 75,
-        "poseY": 81,
-        "height": 106,
-        "width": 110,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "046036710100439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "02111834147878",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "50712",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "0426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 77,
-      "poseX": 2649,
-      "poseY": 2790,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439211021114628386\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 74,
-        "poseY": 80,
-        "height": 106,
-        "width": 110,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "4611717113409",
           "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "10211146283099",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
+          "poseX": 66,
+          "poseY": 206,
+          "width": 84,
+          "height": 27,
           "angle": 90
         },
         {
           "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
+          "name": "SN",
+          "poseX": 60,
+          "poseY": 242,
+          "width": 72,
+          "height": 27,
           "angle": 90
         },
         {
           "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 78,
-      "poseX": 1604,
-      "poseY": 1542,
-      "width": 326,
-      "height": 247,
-      "angle": 91,
-      "cell_dm": {
-        "data": "0104603671003439216506530394031\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 74,
-        "poseY": 80,
-        "height": 108,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "04609671006414410",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "65153543194031",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "912072",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "40426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 91
-        }
-      ]
-    },
-    {
-      "cell_id": 79,
-      "poseX": 2631,
-      "poseY": 1527,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439210891114504434\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 75,
-        "poseY": 80,
-        "height": 108,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "04603671309439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 90
-        },
-        {
-          "data": "0891114504434",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
+          "name": "\u0421\u0435\u0440\u0438\u044F",
+          "poseX": 72,
+          "poseY": 279,
+          "width": 96,
+          "height": 27,
           "angle": 90
         },
         {
-          "data": "72972",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
+          "data": "1TIN04",
+          "name": "\u0413\u043E\u0434\u0435\u043D \u0434\u043E",
+          "poseX": 84,
+          "poseY": 315,
+          "width": 121,
+          "height": 27,
           "angle": 90
-        },
-        {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 90
-        }
-      ]
-    },
-    {
-      "cell_id": 80,
-      "poseX": 3300,
-      "poseY": 1520,
-      "width": 326,
-      "height": 247,
-      "angle": 88,
-      "cell_dm": {
-        "data": "0104603671003439219280403354684\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 75,
-        "poseY": 82,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "04603671003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 88
         },
         {
-          "data": "9280403354684",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 88
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 88
-        },
-        {
-          "data": "041446",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 88
-        }
-      ]
-    },
-    {
-      "cell_id": 81,
-      "poseX": 516,
-      "poseY": 1087,
-      "width": 326,
-      "height": 247,
-      "angle": 92,
-      "cell_dm": {
-        "data": "0104603671003439210364735691296\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 76,
-        "poseY": 77,
-        "height": 104,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "04433671001439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 92
-        },
-        {
-          "data": "0104731169138",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 92
-        },
-        {
-          "data": "72012",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 92
-        },
-        {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 92
-        }
-      ]
-    },
-    {
-      "cell_id": 82,
-      "poseX": 1945,
-      "poseY": 1519,
-      "width": 326,
-      "height": 247,
-      "angle": 91,
-      "cell_dm": {
-        "data": "0104603671003439214286460941258\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 74,
-        "poseY": 80,
-        "height": 108,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "046041671001490",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "428646094141258",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "10426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 91
-        }
-      ]
-    },
-    {
-      "cell_id": 83,
-      "poseX": 4647,
-      "poseY": 2765,
-      "width": 326,
-      "height": 247,
-      "angle": 88,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 88
-        },
-        {
-          "data": "",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 88
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 88
-        },
-        {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 88
-        }
-      ]
-    },
-    {
-      "cell_id": 84,
-      "poseX": 4640,
-      "poseY": 3190,
-      "width": 326,
-      "height": 247,
-      "angle": 91,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 91
-        },
-        {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 91
-        }
-      ]
-    },
-    {
-      "cell_id": 85,
-      "poseX": 925,
-      "poseY": 3239,
-      "width": 326,
-      "height": 247,
-      "angle": 89,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 89
-        }
-      ]
-    },
-    {
-      "cell_id": 86,
-      "poseX": 2649,
-      "poseY": 2369,
-      "width": 326,
-      "height": 247,
-      "angle": 89,
-      "cell_dm": {
-        "data": "0104603671003439216842469748113\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 73,
-        "poseY": 80,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "0450067119490",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "6142469748113",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "75072",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "0426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 89
-        }
-      ]
-    },
-    {
-      "cell_id": 87,
-      "poseX": 2278,
-      "poseY": 1517,
-      "width": 326,
-      "height": 247,
-      "angle": 88,
-      "cell_dm": {
-        "data": "0104603671003439212542749559356\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 75,
-        "poseY": 80,
-        "height": 108,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "04711187100090",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 88
-        },
-        {
-          "data": "2542749559356",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 88
-        },
-        {
-          "data": "444750742",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 88
-        },
-        {
-          "data": "40426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 88
-        }
-      ]
-    },
-    {
-      "cell_id": 88,
-      "poseX": 1249,
-      "poseY": 2799,
-      "width": 326,
-      "height": 247,
-      "angle": 89,
-      "cell_dm": {
-        "data": "0104603671003439218752615319352\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 73,
-        "poseY": 81,
-        "height": 106,
-        "width": 108,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "3671",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "8752615319352",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 89
-        },
-        {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 89
-        }
-      ]
-    },
-    {
-      "cell_id": 89,
-      "poseX": 4653,
-      "poseY": 1926,
-      "width": 326,
-      "height": 247,
-      "angle": 92,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "36710111",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 92
-        },
-        {
-          "data": "8114277010076",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 92
-        },
-        {
-          "data": "72072",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 92
-        },
-        {
-          "data": "0426",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 92
-        }
-      ]
-    },
-    {
-      "cell_id": 90,
-      "poseX": 908,
-      "poseY": 2814,
-      "width": 326,
-      "height": 247,
-      "angle": 87,
-      "cell_dm": {
-        "data": "0104603671003439218317668274524\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 0,
-        "poseY": 0,
-        "height": 0,
-        "width": 0,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "9671003439",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
-          "angle": 87
-        },
-        {
-          "data": "0144252798342",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
-          "angle": 87
-        },
-        {
-          "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
-          "angle": 87
-        },
-        {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
-          "angle": 87
-        }
-      ]
-    },
-    {
-      "cell_id": 91,
-      "poseX": 1258,
-      "poseY": 3234,
-      "width": 326,
-      "height": 247,
-      "angle": 90,
-      "cell_dm": {
-        "data": "0104603671003439214639703996901\u001D91xxxx\u001D92xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "poseX": 75,
-        "poseY": 81,
-        "height": 106,
-        "width": 110,
-        "alpha": 0,
-        "isError": false
-      },
-      "cell_ocr": [
-        {
-          "data": "",
-          "name": "GTIN",
-          "poseX": 216,
-          "poseY": 198,
-          "width": 240,
-          "height": 32,
+          "data": "K15",
+          "name": "Gtin",
+          "poseX": 235,
+          "poseY": 206,
+          "width": 205,
+          "height": 27,
           "angle": 90
         },
         {
           "data": "",
-          "name": "UN_CODE",
-          "poseX": 216,
-          "poseY": 165,
-          "width": 240,
-          "height": 32,
+          "name": "SerialNumber",
+          "poseX": 235,
+          "poseY": 242,
+          "width": 205,
+          "height": 27,
           "angle": 90
         },
         {
           "data": "",
-          "name": "SERIES_NAME",
-          "poseX": 280,
-          "poseY": 44,
-          "width": 157,
-          "height": 32,
+          "name": "SeriesName",
+          "poseX": 235,
+          "poseY": 279,
+          "width": 205,
+          "height": 27,
           "angle": 90
         },
         {
-          "data": "",
-          "name": "EXPIRE_DATE",
-          "poseX": 296,
-          "poseY": 76,
-          "width": 119,
-          "height": 32,
+          "data": "O3905002474",
+          "name": "ExpireDate",
+          "poseX": 247,
+          "poseY": 315,
+          "width": 181,
+          "height": 27,
           "angle": 90
         }
       ]

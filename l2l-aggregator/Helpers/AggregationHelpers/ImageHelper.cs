@@ -105,98 +105,6 @@ namespace l2l_aggregator.Helpers.AggregationHelpers
             return tempImage.Clone(ctx => ctx.Crop(cropRect));
         }
 
-        //public ObservableCollection<DmCellViewModel> BuildCellViewModels(
-        //  in result_data dmrData,
-        //  double scaleX, double scaleY,
-        //  SessionService sessionService,
-        //  ObservableCollection<TemplateField> fields,
-        //  ArmJobSgtinResponse response,
-        //  AggregationViewModel thisModel, int minX, int minY)
-        //{
-        //    var cells = new ObservableCollection<DmCellViewModel>();
-        //    //string json = BuildResultJson(dmrData);
-        //    foreach (var dmd in dmrData.BOXs)
-        //    {
-        //        var dmVm = new DmCellViewModel(thisModel)
-        //        {
-        //            X = (dmd.poseX - (dmd.width / 2) - minX) * scaleX,
-        //            Y = ((dmd.poseY - (dmd.height / 2) - minY) * scaleY),
-        //            SizeWidth = dmd.width * scaleX,
-        //            SizeHeight = dmd.height * scaleY,
-        //            Angle = -(dmd.alpha),
-        //            Dm_data = new DmSquareViewModel
-        //            {
-        //                X = (dmd.DM.poseX - (dmd.DM.width / 2)),
-        //                Y = (dmd.DM.poseY - (dmd.DM.height / 2)),
-        //                SizeWidth = dmd.DM.width,
-        //                SizeHeight = dmd.DM.height,
-        //                Angle = -dmd.DM.alpha,
-        //                IsValid = !dmd.DM.isError,
-        //                Data = dmd.DM.data
-        //            }
-        //        };
-
-        //        bool allValid = false;
-
-        //        foreach (var ocr in dmd.OCR)
-        //        {
-        //            var validBarcodes = new HashSet<string>();
-
-        //            var propSgtin = typeof(ArmJobSgtinRecord).GetProperty(ocr.Name);
-        //            if (propSgtin != null)
-        //            {
-        //                foreach (var r in response.RECORDSET)
-        //                {
-        //                    var value = propSgtin.GetValue(r);
-        //                    if (value is string str)
-        //                        validBarcodes.Add(str);
-        //                }
-        //            }
-
-        //            if (propSgtin == null)
-        //            {
-        //                var propInfo = typeof(ArmJobInfoRecord).GetProperty(ocr.Name);
-        //                if (propInfo != null)
-        //                {
-        //                    var val = propInfo.GetValue(sessionService.SelectedTaskInfo);
-        //                    if (val != null)
-        //                        validBarcodes.Add(val.ToString());
-        //                }
-        //            }
-
-        //            bool isValid = validBarcodes.Contains(ocr.Text);
-
-        //            dmVm.OcrCells.Add(new SquareCellViewModel
-        //            {
-        //                X = (ocr.poseX - (ocr.width / 2)),
-        //                Y = (ocr.poseY - (ocr.height / 2)),
-        //                SizeWidth = ocr.width,
-        //                SizeHeight = ocr.height,
-        //                Angle = ocr.alpha,
-        //                IsValid = isValid,
-        //                OcrName = ocr.Name,
-        //                OcrText = ocr.Text
-        //            });
-        //            //thisModel.OnCellClicked(dmVm);
-
-        //            if (!isValid)
-        //                allValid = false;
-        //        }
-
-        //        if (dmd.OCR.Count != fields.Count)
-        //        {
-        //            allValid = false;
-        //        }
-        //        if (dmd.DM.isError)
-        //            allValid = false;
-
-        //        dmVm.IsValid = allValid;
-        //        cells.Add(dmVm);
-        //    }
-
-        //    return cells;
-        //}
-
         public ObservableCollection<DmCellViewModel> BuildCellViewModels(
     in result_data dmrData,
     double scaleX, double scaleY,
@@ -221,7 +129,7 @@ namespace l2l_aggregator.Helpers.AggregationHelpers
                     SizeHeight = dmd.DM.height,
                     Angle = -dmd.DM.alpha,
                     IsValid = !dmd.DM.isError,
-                    Data = dmd.DM.data
+                    Data = dmd.DM.data ?? string.Empty
                 };
 
                 // Проверка валидности через GS1Parser

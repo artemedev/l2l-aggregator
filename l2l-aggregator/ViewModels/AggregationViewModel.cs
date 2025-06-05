@@ -419,11 +419,13 @@ namespace l2l_aggregator.ViewModels
                     packRecogn = RecognizePack,
                     DMRecogn = hasDm
                 };
+                _dmScanService.StopScan();
                 //отправка настроек камеры в библиотеку распознавания
                 _dmScanService.ConfigureParams(recognParams);
 
                 try
                 {
+
                     //отправка шаблона в библиотеку распознавания
                     _dmScanService.StartScan(currentTemplate);
                     _lastUsedTemplateJson = currentTemplate;
@@ -468,7 +470,11 @@ namespace l2l_aggregator.ViewModels
         {
             try
             {
+                //старое
                 _dmScanService.getScan();
+                //старт распознавания
+                //await _dmScanService.WaitForStartOkAsync();
+                //_dmScanService.startShot();
                 dmrData = await _dmScanService.WaitForResultAsync();
                 return true;
             }
@@ -670,6 +676,7 @@ namespace l2l_aggregator.ViewModels
         public async Task CompleteAggregation()
         {
             await _databaseService.AggregationState.ClearStateAsync(_sessionService.User.USER_NAME);
+            _dmScanService.StopScan();
             _notificationService.ShowMessage("Агрегация завершена.");
             _router.GoTo<TaskListViewModel>();
         }
@@ -679,8 +686,10 @@ namespace l2l_aggregator.ViewModels
         public async Task CancelAggregation()
         {
             await _databaseService.AggregationState.ClearStateAsync(_sessionService.User.USER_NAME);
+            _dmScanService.StopScan();
             _notificationService.ShowMessage("Агрегация завершена.");
             _router.GoTo<TaskListViewModel>();
+
         }
 
         //сканирование кода этикетки
