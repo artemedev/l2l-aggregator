@@ -137,7 +137,7 @@
 											   HorizontalAlignment="Right"  ZIndex="1000"
 											   MaxWidth="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource OneThirdWidthConverter}}"/>
 		<Panel Background="Transparent" Name="dialogpanel"  IsVisible="False">
-			<keyboard:VirtualKeyboard Name="VirtualKeyboardControl" IsVisible="False"></keyboard:VirtualKeyboard>
+			<keyboard:VirtualKeyboard Name="VirtualKeyboardControl" IsVisible="False" ></keyboard:VirtualKeyboard>
 		</Panel>
 	</Grid>
 </Window>

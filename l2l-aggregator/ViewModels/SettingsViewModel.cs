@@ -97,17 +97,16 @@ namespace l2l_aggregator.ViewModels
             }
 
             // Подгружаем сохранённый COM-порт и выбираем нужный сканер
-            string savedPort = await _databaseService.Config.GetConfigValueAsync("ScannerCOMPort");
-            SelectedScannerModel = await _databaseService.Config.GetConfigValueAsync("ScannerModel");
+            string savedPort = _sessionService.ScannerPort;
+            SelectedScannerModel = _sessionService.ScannerModel;
             // Найти сканер в списке
             var foundScanner = AvailableScanners.FirstOrDefault(x => x.Id == savedPort);
 
             if (foundScanner != null)
             {
                 SelectedScanner = foundScanner;
-                var session = SessionService.Instance;
-                session.ScannerPort = SelectedScanner?.Id;
-                session.ScannerModel = SelectedScannerModel;
+                //session.ScannerPort = SelectedScanner?.Id;
+                //session.ScannerModel = SelectedScannerModel;
             }
             else
             {
@@ -116,56 +115,60 @@ namespace l2l_aggregator.ViewModels
                 SelectedScannerModel = null;
 
                 // Очистка в сессии
-                SessionService.Instance.ScannerPort = null;
-                SessionService.Instance.ScannerModel = null;
+                _sessionService.ScannerPort = null;
+                _sessionService.ScannerModel = null;
             }
         }
 
         private async Task LoadSettingsAsync()
         {
-            var (camera, disableVK) = await _configLoader.LoadSettingsToSessionAsync();
+            //var (camera, disableVK) = await _configLoader.LoadSettingsToSessionAsync();
 
-            Camera = camera;
-            DisableVirtualKeyboard = disableVK;
-            ServerUri = await _databaseService.Config.GetConfigValueAsync("ServerUri");
-            PrinterIP = SessionService.Instance.PrinterIP;
-            SelectedPrinterModel = SessionService.Instance.PrinterModel;
-            ControllerIP = SessionService.Instance.ControllerIP;
-            SelectedCameraModel = SessionService.Instance.CameraModel;
-            CheckCameraBeforeAggregation = SessionService.Instance.CheckCamera;
-            CheckPrinterBeforeAggregation = SessionService.Instance.CheckPrinter;
-            CheckControllerBeforeAggregation = SessionService.Instance.CheckController;
-            CheckScannerBeforeAggregation = SessionService.Instance.CheckScanner;
-            SelectedScannerModel = SessionService.Instance.ScannerModel;
+            Camera = new CameraViewModel
+            {
+                CameraIP = _sessionService.CameraIP,
+                SelectedCameraModel = _sessionService.CameraModel
+            };
+            DisableVirtualKeyboard = _sessionService.DisableVirtualKeyboard;
+            ServerUri = _sessionService.ServerUri;
+            PrinterIP = _sessionService.PrinterIP;
+            SelectedPrinterModel = _sessionService.PrinterModel;
+            ControllerIP = _sessionService.ControllerIP;
+            SelectedCameraModel = _sessionService.CameraModel;
+            CheckCameraBeforeAggregation = _sessionService.CheckCamera;
+            CheckPrinterBeforeAggregation = _sessionService.CheckPrinter;
+            CheckControllerBeforeAggregation = _sessionService.CheckController;
+            CheckScannerBeforeAggregation = _sessionService.CheckScanner;
+            SelectedScannerModel = _sessionService.ScannerModel;
         }
 
         [RelayCommand]
         private async Task ToggleDisableVirtualKeyboardAsync()
         {
-            await _databaseService.Config.SetConfigValueAsync("DisableVirtualKeyboard", DisableVirtualKeyboard.ToString());
-            SessionService.Instance.DisableVirtualKeyboard = DisableVirtualKeyboard;
+           // await _databaseService.Config.SetConfigValueAsync("DisableVirtualKeyboard", DisableVirtualKeyboard.ToString());
+            _sessionService.DisableVirtualKeyboard = DisableVirtualKeyboard;
             InfoMessage = "Настройка клавиатуры сохранена.";
             _notificationService.ShowMessage(InfoMessage);
         }
         partial void OnCheckControllerBeforeAggregationChanged(bool value)
         {
-            _ = _databaseService.Config.SetConfigValueAsync("CheckController", value.ToString());
-            SessionService.Instance.CheckController = value;
+            //_ = _databaseService.Config.SetConfigValueAsync("CheckController", value.ToString());
+            _sessionService.CheckController = value;
         }
         partial void OnCheckCameraBeforeAggregationChanged(bool value)
         {
-            _ = _databaseService.Config.SetConfigValueAsync("CheckCamera", value.ToString());
-            SessionService.Instance.CheckCamera = value;
+            //_ = _databaseService.Config.SetConfigValueAsync("CheckCamera", value.ToString());
+            _sessionService.CheckCamera = value;
         }
         partial void OnCheckPrinterBeforeAggregationChanged(bool value)
         {
-            _ = _databaseService.Config.SetConfigValueAsync("CheckPrinter", value.ToString());
-            SessionService.Instance.CheckPrinter = value;
+            //_ = _databaseService.Config.SetConfigValueAsync("CheckPrinter", value.ToString());
+            _sessionService.CheckPrinter = value;
         }
         partial void OnCheckScannerBeforeAggregationChanged(bool value)
         {
-            _ = _databaseService.Config.SetConfigValueAsync("CheckScanner", value.ToString());
-            SessionService.Instance.CheckScanner = value;
+           // _ = _databaseService.Config.SetConfigValueAsync("CheckScanner", value.ToString());
+            _sessionService.CheckScanner = value;
         }
 
         [RelayCommand]
@@ -213,8 +216,8 @@ namespace l2l_aggregator.ViewModels
 
                     await _databaseService.RegistrationDevice.SaveRegistrationAsync(response);
 
-                    await _databaseService.Config.SetConfigValueAsync("ServerUri", ServerUri);
-
+                    //await _databaseService.Config.SetConfigValueAsync("ServerUri", ServerUri);
+                    _sessionService.ServerUri = ServerUri;
                     InfoMessage = "URI успешно сохранён!";
                     _notificationService.ShowMessage(InfoMessage);
 
@@ -244,7 +247,8 @@ namespace l2l_aggregator.ViewModels
         [RelayCommand]
         private async void SaveSettings()
         {
-            await _databaseService.Config.SetConfigValueAsync("DisableVirtualKeyboard", DisableVirtualKeyboard.ToString());
+            //await _databaseService.Config.SetConfigValueAsync("DisableVirtualKeyboard", DisableVirtualKeyboard.ToString());
+            _sessionService.DisableVirtualKeyboard = DisableVirtualKeyboard;
             InfoMessage = "Настройки успешно сохранены!";
             _notificationService.ShowMessage(InfoMessage);
 
@@ -268,11 +272,12 @@ namespace l2l_aggregator.ViewModels
             try
             {
                 await Task.Delay(300);
-                await _databaseService.Config.SetConfigValueAsync("ControllerIP", ControllerIP);
-                await _databaseService.Config.SetConfigValueAsync("CheckController", CheckControllerBeforeAggregation.ToString());
 
-                SessionService.Instance.ControllerIP = ControllerIP;
-                SessionService.Instance.CheckController = CheckControllerBeforeAggregation;
+                //await _databaseService.Config.SetConfigValueAsync("ControllerIP", ControllerIP);
+                //await _databaseService.Config.SetConfigValueAsync("CheckController", CheckControllerBeforeAggregation.ToString());
+
+                _sessionService.ControllerIP = ControllerIP;
+                _sessionService.CheckController = CheckControllerBeforeAggregation;
 
                 InfoMessage = "Контроллер успешно сохранён!";
                 _notificationService.ShowMessage(InfoMessage);
@@ -315,13 +320,13 @@ namespace l2l_aggregator.ViewModels
 
                 camera.IsConnected = true;
 
-                await _databaseService.Config.SetConfigValueAsync("CameraIP", camera.CameraIP);
-                await _databaseService.Config.SetConfigValueAsync("CameraModel", camera.SelectedCameraModel);
-                await _databaseService.Config.SetConfigValueAsync("CheckCamera", CheckCameraBeforeAggregation.ToString());
+                //await _databaseService.Config.SetConfigValueAsync("CameraIP", camera.CameraIP);
+                //await _databaseService.Config.SetConfigValueAsync("CameraModel", camera.SelectedCameraModel);
+                //await _databaseService.Config.SetConfigValueAsync("CheckCamera", CheckCameraBeforeAggregation.ToString());
 
-                SessionService.Instance.CameraIP = camera.CameraIP;
-                SessionService.Instance.CameraModel = camera.SelectedCameraModel;
-                SessionService.Instance.CheckCamera = CheckCameraBeforeAggregation;
+                _sessionService.CameraIP = camera.CameraIP;
+                _sessionService.CameraModel = camera.SelectedCameraModel;
+                _sessionService.CheckCamera = CheckCameraBeforeAggregation;
 
                 InfoMessage = $"Камера {camera.CameraIP} сохранена!";
                 _notificationService.ShowMessage(InfoMessage);
@@ -350,13 +355,13 @@ namespace l2l_aggregator.ViewModels
                 _printingService.CheckConnectPrinter(PrinterIP, SelectedPrinterModel);
 
                 // сохраняем в БД
-                await _databaseService.Config.SetConfigValueAsync("PrinterIP", PrinterIP);
-                await _databaseService.Config.SetConfigValueAsync("PrinterModel", SelectedPrinterModel);
-                await _databaseService.Config.SetConfigValueAsync("CheckPrinter", CheckPrinterBeforeAggregation.ToString());
+                //await _databaseService.Config.SetConfigValueAsync("PrinterIP", PrinterIP);
+                //await _databaseService.Config.SetConfigValueAsync("PrinterModel", SelectedPrinterModel);
+                //await _databaseService.Config.SetConfigValueAsync("CheckPrinter", CheckPrinterBeforeAggregation.ToString());
 
-                SessionService.Instance.PrinterIP = PrinterIP;
-                SessionService.Instance.PrinterModel = SelectedPrinterModel;
-                SessionService.Instance.CheckPrinter = CheckPrinterBeforeAggregation;
+                _sessionService.PrinterIP = PrinterIP;
+                _sessionService.PrinterModel = SelectedPrinterModel;
+                _sessionService.CheckPrinter = CheckPrinterBeforeAggregation;
 
                 InfoMessage = "Принтер успешно сохранён и проверен!";
                 _notificationService.ShowMessage(InfoMessage);
@@ -385,13 +390,13 @@ namespace l2l_aggregator.ViewModels
             {
                 if (SelectedScannerModel == "Honeywell")
                 {
-                    await _databaseService.Config.SetConfigValueAsync("ScannerCOMPort", SelectedScanner.Id);
-                    await _databaseService.Config.SetConfigValueAsync("ScannerModel", SelectedScannerModel);
-                    await _databaseService.Config.SetConfigValueAsync("CheckScanner", CheckScannerBeforeAggregation.ToString());
+                    //await _databaseService.Config.SetConfigValueAsync("ScannerCOMPort", SelectedScanner.Id);
+                    //await _databaseService.Config.SetConfigValueAsync("ScannerModel", SelectedScannerModel);
+                    //await _databaseService.Config.SetConfigValueAsync("CheckScanner", CheckScannerBeforeAggregation.ToString());
 
-                    SessionService.Instance.ScannerPort = SelectedScanner.Id;
-                    SessionService.Instance.CheckScanner = CheckScannerBeforeAggregation;
-                    SessionService.Instance.ScannerModel = SelectedScannerModel;
+                    _sessionService.ScannerPort = SelectedScanner.Id;
+                    _sessionService.CheckScanner = CheckScannerBeforeAggregation;
+                    _sessionService.ScannerModel = SelectedScannerModel;
 
                     InfoMessage = $"Сканер '{SelectedScanner.Id}' сохранён!";
                     _notificationService.ShowMessage(InfoMessage);

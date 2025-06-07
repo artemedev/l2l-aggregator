@@ -61,7 +61,7 @@ namespace l2l_aggregator.ViewModels
         {
             try
             {
-                var userId = await _databaseService.UserAuth.GetLastUserIdAsync();
+                var userId = _sessionService.User.USERID;
                 await LoadTasksAsync(userId).ConfigureAwait(false);
             }
             catch (Exception ex)
@@ -74,7 +74,7 @@ namespace l2l_aggregator.ViewModels
         {
             try
             {
-                var serverUri = await _databaseService.Config.GetConfigValueAsync("ServerUri");
+                var serverUri =_sessionService.ServerUri;
                 if (string.IsNullOrWhiteSpace(serverUri))
                 {
                     InfoMessage = "Сервер не настроен!";

@@ -54,8 +54,8 @@ namespace l2l_aggregator.ViewModels
         {
             try
             {
-                var savedScannerPort = await _databaseService.Config.GetConfigValueAsync("ScannerCOMPort");
-                var savedScannerModel = await _databaseService.Config.GetConfigValueAsync("ScannerModel");
+                var savedScannerPort = _sessionService.ScannerPort;
+                var savedScannerModel = _sessionService.ScannerModel;
 
                 if (string.IsNullOrWhiteSpace(savedScannerPort) || string.IsNullOrWhiteSpace(savedScannerModel))
                     return;
@@ -66,13 +66,13 @@ namespace l2l_aggregator.ViewModels
                 {
                     _notificationService.ShowMessage($"Сканер на порту '{savedScannerPort}' не найден. Удаление из настроек...");
 
-                    // Очистка в SessionService
-                    _sessionService.ScannerPort = null;
-                    _sessionService.ScannerModel = null;
+                    //// Очистка в SessionService
+                    //_sessionService.ScannerPort = null;
+                    //_sessionService.ScannerModel = null;
 
-                    // Очистка в конфигурации
-                    await _databaseService.Config.SetConfigValueAsync("ScannerCOMPort", null);
-                    await _databaseService.Config.SetConfigValueAsync("ScannerModel", null);
+                    //// Очистка в конфигурации
+                    //await _databaseService.Config.SetConfigValueAsync("ScannerCOMPort", null);
+                    //await _databaseService.Config.SetConfigValueAsync("ScannerModel", null);
 
                     return;
                 }
@@ -133,9 +133,8 @@ namespace l2l_aggregator.ViewModels
                     return;
                 }
 
-                // Получаем адрес сервера из настроек, запрос на USER_AUTH
-                var serverUri = await _databaseService.Config.GetConfigValueAsync("ServerUri");
-                if (string.IsNullOrWhiteSpace(serverUri))
+
+                if (string.IsNullOrWhiteSpace(_sessionService.ServerUri))
                 {
                     //InfoMessage = "Сервер не настроен!";
                     _notificationService.ShowMessage("Сервер не настроен!");

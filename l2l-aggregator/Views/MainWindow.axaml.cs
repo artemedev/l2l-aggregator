@@ -17,7 +17,6 @@ namespace l2l_aggregator.Views
         private bool iskeyboardCooldown;
         private bool iskeyboardCooldownStarted;
         private l2l_aggregator.Controls.Keyboard.VirtualKeyboard keyboard;
-
         private Timer keyboardCoolDown;
 
         public MainWindow()
@@ -65,7 +64,7 @@ namespace l2l_aggregator.Views
         }
         private void openVirtualKeyboard(object? sender, GotFocusEventArgs e)
         {
-            if (SessionService.Instance.DisableVirtualKeyboard)
+            if (_viewModel?.DisableVirtualKeyboard ?? false)
                 return;
 
             if (iskeyboardCooldown && !iskeyboardCooldownStarted)

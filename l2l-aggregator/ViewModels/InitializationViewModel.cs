@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using l2l_aggregator.Models;
+using l2l_aggregator.Services;
 using l2l_aggregator.Services.Api;
 using l2l_aggregator.Services.Api.Interfaces;
 using l2l_aggregator.Services.Database;
@@ -26,13 +27,16 @@ namespace l2l_aggregator.ViewModels
         private readonly DatabaseService _databaseService;
         private readonly DataApiService _dataApiService;
         private readonly INotificationService _notificationService;
+        private readonly SessionService _sessionService;
 
-        public InitializationViewModel(DatabaseService databaseService, HistoryRouter<ViewModelBase> router, DataApiService dataApiService, INotificationService notificationService)
+
+        public InitializationViewModel(DatabaseService databaseService, HistoryRouter<ViewModelBase> router, DataApiService dataApiService, INotificationService notificationService, SessionService sessionService)
         {
             _notificationService = notificationService;
             _databaseService = databaseService;
             _router = router;
             _dataApiService = dataApiService;
+            _sessionService = sessionService;
 
         }
 
@@ -77,7 +81,8 @@ namespace l2l_aggregator.ViewModels
 
                 await _databaseService.RegistrationDevice.SaveRegistrationAsync(response);
 
-                await _databaseService.Config.SetConfigValueAsync("ServerUri", ServerUri);
+                //await _databaseService.Config.SetConfigValueAsync("ServerUri", ServerUri);
+                _sessionService.ServerUri = ServerUri;
 
                 InfoMessage = "Сервер проверен, переходим к авторизации...";
                 _notificationService.ShowMessage(InfoMessage);

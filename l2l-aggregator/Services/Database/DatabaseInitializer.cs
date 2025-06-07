@@ -89,8 +89,8 @@ namespace l2l_aggregator.Services.Database
                                     REC_TYPE INT
                                     )"
                 );
-                connection.Execute("INSERT INTO USER_AUTH_INFO (USERID, USER_NAME) VALUES (@userid, @username)",
-                    new { userid = "1", username = "admin" });
+                //connection.Execute("INSERT INTO USER_AUTH_INFO (USERID, USER_NAME) VALUES (@userid, @username)",
+                //    new { userid = "1", username = "admin" });
             }
         }
         public void CreateAdminUserTable()

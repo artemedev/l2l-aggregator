@@ -237,7 +237,7 @@ namespace l2l_aggregator.ViewModels
             {
                 try
                 {
-                    var progress = JsonSerializer.Deserialize<AggregationProgressModel>(_sessionService.LoadedProgressJson!);
+                    var progress = JsonSerializer.Deserialize<AggregationProgressModel>(_sessionService.AggregationState.ProgressJson!);
                     if (progress != null)
                     {
                         DMCells.Clear();
@@ -582,7 +582,7 @@ namespace l2l_aggregator.ViewModels
             }
         }
         //Сохранение состояния агрегации
-        private async Task SaveAggregationProgressAsync()
+        private void SaveAggregationProgress()
         {
             var progress = new AggregationProgressModel
             {
@@ -602,14 +602,22 @@ namespace l2l_aggregator.ViewModels
                 }).ToList()
             };
 
-            await _databaseService.AggregationState.SaveStateAsync(new AggregationState
+            _sessionService.AggregationState = new AggregationState
             {
                 Username = _sessionService.User?.USER_NAME ?? "unknown",
                 TaskId = _sessionService.SelectedTaskInfo?.DOCID ?? 0,
                 TemplateJson = _lastUsedTemplateJson ?? "",
                 ProgressJson = JsonSerializer.Serialize(progress),
                 LastUpdated = DateTime.Now
-            });
+            };
+            //await _databaseService.AggregationState.SaveStateAsync(new AggregationState
+            //{
+            //    Username = _sessionService.User?.USER_NAME ?? "unknown",
+            //    TaskId = _sessionService.SelectedTaskInfo?.DOCID ?? 0,
+            //    TemplateJson = _lastUsedTemplateJson ?? "",
+            //    ProgressJson = JsonSerializer.Serialize(progress),
+            //    LastUpdated = DateTime.Now
+            //});
         }
 
         //Печать этикетки коробки

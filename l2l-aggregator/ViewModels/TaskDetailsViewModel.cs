@@ -50,7 +50,7 @@ namespace l2l_aggregator.ViewModels
         {
             try
             {
-                var serverUri = await _databaseService.Config.GetConfigValueAsync("ServerUri");
+                var serverUri = _sessionService.ServerUri;
                 if (string.IsNullOrWhiteSpace(serverUri))
                 {
                     InfoMessage = "Сервер не настроен!";
@@ -82,16 +82,16 @@ namespace l2l_aggregator.ViewModels
         [RelayCommand]
         public async Task GoAggregationAsync()
         {
-            await _configLoader.LoadSettingsToSessionAsync();
-            await _sessionService.InitializeAsync(_databaseService);
-            var session = SessionService.Instance;
+            //await _configLoader.LoadSettingsToSessionAsync();
+            //await _sessionService.InitializeAsync(_databaseService);
+            //var session = SessionService.Instance;
 
             var results = new List<(bool Success, string Message)>
             {
-                await _deviceCheckService.CheckCameraAsync(session),
-                await _deviceCheckService.CheckPrinterAsync(session),
-                await _deviceCheckService.CheckControllerAsync(session),
-                await _deviceCheckService.CheckScannerAsync(session)
+                await _deviceCheckService.CheckCameraAsync(_sessionService),
+                await _deviceCheckService.CheckPrinterAsync(_sessionService),
+                await _deviceCheckService.CheckControllerAsync(_sessionService),
+                await _deviceCheckService.CheckScannerAsync(_sessionService)
             };
 
             var errors = results.Where(r => !r.Success).Select(r => r.Message).ToList();

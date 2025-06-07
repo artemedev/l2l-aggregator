@@ -47,6 +47,7 @@ namespace l2l_aggregator.ViewModels
         public IRelayCommand ClearNotificationsCommand { get; }
 
 
+
         public MainWindowViewModel(HistoryRouter<ViewModelBase> router, DatabaseService databaseService, INotificationService notificationService, SessionService sessionService, ConfigurationLoaderService configLoader)
         {
             _router = router;
@@ -58,30 +59,34 @@ namespace l2l_aggregator.ViewModels
             router.CurrentViewModelChanged += async viewModel =>
             {
                 Content = viewModel;
+                //если страница 
                 IsNotLoginPage = !(viewModel is AuthViewModel || viewModel is InitializationViewModel);
-                if (IsNotLoginPage)
-                {
-                    await LoadUserData(Content); // Загружаем данные пользователя при входе
-                }
+                User = sessionService.User;
+                _disableVirtualKeyboard = _sessionService.DisableVirtualKeyboard;
+                //if (IsNotLoginPage)
+                //{
+                //    await LoadUserData(Content); // Загружаем данные пользователя при входе
+                //}
             };
-
+            
             InitializeAsync();
-
-            _ = InitializeSessionFromDatabaseAsync();
+            
+            //_ = InitializeSessionFromDatabaseAsync();
             //-------Notification--------
             Notifications = _notificationService.Notifications;
             ClearNotificationsCommand = new RelayCommand(ClearNotifications);
         }
-        private async Task InitializeSessionFromDatabaseAsync()
-        {
-            var (camera, disableVK) = await _configLoader.LoadSettingsToSessionAsync();
-            DisableVirtualKeyboard = disableVK;
-        }
+        //private async Task InitializeSessionFromDatabaseAsync()
+        //{
+        //    var (camera, disableVK) = await _configLoader.LoadSettingsToSessionAsync();
+        //    DisableVirtualKeyboard = disableVK;
+        //}
         private async void InitializeAsync()
         {
-            var serverUri = await _databaseService.Config.GetConfigValueAsync("ServerUri");
+            await _sessionService.InitializeAsync(_databaseService);
 
-            if (!string.IsNullOrEmpty(serverUri))
+
+            if (!string.IsNullOrEmpty(_sessionService.ServerUri))
             {
                 _router.GoTo<AuthViewModel>();
             }
@@ -90,25 +95,25 @@ namespace l2l_aggregator.ViewModels
                 _router.GoTo<InitializationViewModel>();
             }
         }
-        private async Task LoadUserData(ViewModelBase contentViewModel)
-        {
+        //private async Task LoadUserData(ViewModelBase contentViewModel)
+        //{
 
-            var users = await _databaseService.UserAuth.GetUserAuthAsync();
+        //    var users = await _databaseService.UserAuth.GetUserAuthAsync();
 
-            if (users == null || users.Count == 0)
-                return;
+        //    if (users == null || users.Count == 0)
+        //        return;
 
-            UserAuthResponse? response;
+        //    UserAuthResponse? response;
 
-            var isSettingsPage = contentViewModel is SettingsViewModel || contentViewModel is CameraSettingsViewModel;
-            response = isSettingsPage ? users.FirstOrDefault() : users.Skip(1).FirstOrDefault();
+        //    var isSettingsPage = contentViewModel is SettingsViewModel || contentViewModel is CameraSettingsViewModel;
+        //    response = isSettingsPage ? users.FirstOrDefault() : users.Skip(1).FirstOrDefault();
 
-            if (response != null)
-            {
-                _sessionService.User = response; // Сохраняем ссылку глобально
-                User = response;                 // Локально для ViewModel
-            }
-        }
+        //    if (response != null)
+        //    {
+        //        _sessionService.User = response; // Сохраняем ссылку глобально
+        //        User = response;                 // Локально для ViewModel
+        //    }
+        //}
         public void ButtonExit()
         {
             Notifications.Clear();
