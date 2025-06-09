@@ -1,4 +1,5 @@
 ﻿using DM_wraper_NS;
+using l2l_aggregator.Services.ControllerService;
 using l2l_aggregator.Services.DmProcessing;
 using l2l_aggregator.Services.Printing;
 using l2l_aggregator.Services.ScannerService.Interfaces;
@@ -13,12 +14,13 @@ namespace l2l_aggregator.Services
         private readonly DmScanService _dmScanService;
         private readonly IScannerPortResolver _scannerPortResolver;
         private readonly PrintingService _printingService;
-
-        public DeviceCheckService(DmScanService dmScanService, IScannerPortResolver scannerPortResolver, PrintingService printingService)
+        private readonly PcPlcConnectionService _plcService;
+        public DeviceCheckService(DmScanService dmScanService, IScannerPortResolver scannerPortResolver, PrintingService printingService, PcPlcConnectionService plcService)
         {
             _dmScanService = dmScanService;
             _scannerPortResolver = scannerPortResolver;
             _printingService = printingService;
+            _plcService = plcService;
         }
 
         public async Task<(bool Success, string Message)> CheckCameraAsync(SessionService session)
@@ -83,13 +85,28 @@ namespace l2l_aggregator.Services
             if (string.IsNullOrWhiteSpace(session.ControllerIP))
                 return (false, "IP контроллера не задан!");
 
-            try
+            //try
+            //{
+            //    //using var ping = new System.Net.NetworkInformation.Ping();
+            //    //var reply = await ping.SendPingAsync(session.ControllerIP, 300);
+            //    //return reply.Status == System.Net.NetworkInformation.IPStatus.Success
+            //    //    ? (true, null)
+            //    //    : (false, $"Контроллер {session.ControllerIP} недоступен!");
+
+            //    var modbusService = new ModbusPositioningService(session.ControllerIP, 1); // высота не важна
+            //    var isAlive = await modbusService.CheckMutualConnectionAsync();
+
+            //    return isAlive
+            //        ? (true, null)
+            //        : (false, $"Контроллер {session.ControllerIP} не отвечает (пинг-понг)!");
+            //}
+             try
             {
-                using var ping = new System.Net.NetworkInformation.Ping();
-                var reply = await ping.SendPingAsync(session.ControllerIP, 300);
-                return reply.Status == System.Net.NetworkInformation.IPStatus.Success
+                var isAlive = await _plcService.TestConnectionAsync();
+
+                return isAlive
                     ? (true, null)
-                    : (false, $"Контроллер {session.ControllerIP} недоступен!");
+                    : (false, $"Контроллер {session.ControllerIP} не отвечает (пинг-понг)!");
             }
             catch
             {
@@ -106,7 +123,7 @@ namespace l2l_aggregator.Services
                 return Task.FromResult((false, "Порт сканера не задан!"));
 
             if (session.ScannerModel != "Honeywell")
-                return Task.FromResult((false, $"фывфывфывСканер модели '{session.ScannerModel}' не поддерживается."));
+                return Task.FromResult((false, $"Сканер модели '{session.ScannerModel}' не поддерживается."));
 
             var availablePorts = _scannerPortResolver.GetHoneywellScannerPorts();
             return Task.FromResult(availablePorts.Contains(session.ScannerPort)

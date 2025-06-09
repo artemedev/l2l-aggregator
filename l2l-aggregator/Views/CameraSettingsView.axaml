@@ -6,9 +6,9 @@
 			  xmlns:vm="using:l2l_aggregator.ViewModels"
 			 x:DataType="vm:CameraSettingsViewModel"
              x:Class="l2l_aggregator.Views.CameraSettingsView">
-	<Grid>
+	<Grid RowDefinitions="*,*">
 		<TextBlock Text="{Binding Title}" FontSize="24" Margin="10" />
-		<Grid>
+		<Grid Grid.Row="0">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*"/>
 				<ColumnDefinition/>
@@ -27,5 +27,45 @@
 				<Button Grid.Row="3"  Content="К настройкам" Command="{Binding GoBackCommand}" HorizontalAlignment="Center" />
 			</Grid>
 		</Grid>
+		<StackPanel Grid.Row="1" Margin="10" Spacing="5">
+
+			<TextBlock Text="Переместить от ZeroPosition" />
+			<TextBox Text="{Binding OffsetFromZeroPosition}" Width="150"/>
+
+			<TextBlock Text="Ограничение времени позиционирования (мс)" />
+			<TextBox Text="{Binding PositioningTimeout}" Width="150"/>
+
+			<TextBlock Text="Расстояние Zero - Home Position" />
+			<TextBox Text="{Binding ZeroToHomeDistance}" Width="150"/>
+
+			<CheckBox Content="Смена направления стрелы" IsChecked="{Binding ArrowDirectionReversed}" />
+
+			<TextBlock Text="Скорость перемещения стрелы" />
+			<TextBox Text="{Binding MovementSpeed}" Width="150"/>
+
+			<TextBlock Text="Мин. расстояние от камеры до стола" />
+			<TextBox Text="{Binding MinCameraToTableDistance}" Width="150"/>
+
+			<TextBlock Text="Интенсивность подсветки" />
+			<TextBox Text="{Binding LightIntensity}" Width="150"/>
+
+			<TextBlock Text="Задержка включения подсветки (мс)" />
+			<TextBox Text="{Binding LightDelay}" Width="150"/>
+
+			<TextBlock Text="Выдержка подсветки (мс)" />
+			<TextBox Text="{Binding LightExposure}" Width="150"/>
+
+			<TextBlock Text="Задержка сигнала триггера камеры (мс)" />
+			<TextBox Text="{Binding TriggerDelay}" Width="150"/>
+
+			<TextBlock Text="Режим работы подсветки (0/1/2...)" />
+			<TextBox Text="{Binding LightMode}" Width="150"/>
+
+			<TextBlock Text="Тайм-аут PC (мс)" />
+			<TextBox Text="{Binding PcTimeout}" Width="150"/>
+
+			<Button Content="Сохранить в ПЛК" Command="{Binding SaveToPlcCommand}" HorizontalAlignment="Center" Margin="10"/>
+
+		</StackPanel>
 	</Grid>
 </UserControl>

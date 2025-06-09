@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using l2l_aggregator.Models;
 using l2l_aggregator.Services;
+using l2l_aggregator.Services.ControllerService;
 using l2l_aggregator.Services.Database;
 using l2l_aggregator.Services.Notification.Interface;
 using System.Collections.ObjectModel;
@@ -47,14 +48,16 @@ namespace l2l_aggregator.ViewModels
         public IRelayCommand ClearNotificationsCommand { get; }
 
 
+        private readonly PcPlcConnectionService _plcConnection;
 
-        public MainWindowViewModel(HistoryRouter<ViewModelBase> router, DatabaseService databaseService, INotificationService notificationService, SessionService sessionService, ConfigurationLoaderService configLoader)
+        public MainWindowViewModel(HistoryRouter<ViewModelBase> router, DatabaseService databaseService, INotificationService notificationService, SessionService sessionService, ConfigurationLoaderService configLoader, PcPlcConnectionService plcConnection)
         {
             _router = router;
             _databaseService = databaseService;
             _configLoader = configLoader;
             _notificationService = notificationService;
             _sessionService = sessionService;
+            _plcConnection = plcConnection;
 
             router.CurrentViewModelChanged += async viewModel =>
             {
@@ -116,6 +119,7 @@ namespace l2l_aggregator.ViewModels
         //}
         public void ButtonExit()
         {
+            _ = _plcConnection.StopAsync();
             Notifications.Clear();
             _sessionService.User = null;
             User = null;

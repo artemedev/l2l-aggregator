@@ -29,6 +29,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using l2l_aggregator.Services.ControllerService;
 
 namespace l2l_aggregator.ViewModels
 {
@@ -176,9 +177,15 @@ namespace l2l_aggregator.ViewModels
         }
 
         //-----------------------------------------------
+        //таймер для проверки контроллера
+        private DispatcherTimer _controllerPingTimer;
 
+        [ObservableProperty]
+        private bool isControllerAvailable = true; // по умолчанию доступен
 
         private Image<Rgba32> _croppedImageRaw;
+
+        private readonly PcPlcConnectionService _plcService;
 
         public AggregationViewModel(
             DataApiService dataApiService,
@@ -191,7 +198,8 @@ namespace l2l_aggregator.ViewModels
             ScannerInputService scannerInputService,
             INotificationService notificationService,
             HistoryRouter<ViewModelBase> router,
-            PrintingService printingService
+            PrintingService printingService,
+             PcPlcConnectionService plcService
             )
         {
             _sessionService = sessionService;
@@ -205,6 +213,7 @@ namespace l2l_aggregator.ViewModels
             _notificationService = notificationService;
             _router = router;
             _printingService = printingService;
+            _plcService = plcService;
 
             ImageSizeChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeChanged);
             ImageSizeCellChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeCellChanged);
@@ -229,6 +238,9 @@ namespace l2l_aggregator.ViewModels
 
             //заполнение из шаблона в модальное окно для выбора элементов для сканирования
             InitializeTemplate();
+
+            //Периодическая проверка контроллера раз в 10 секунд в
+            InitializeControllerPing();
         }
 
         private void InitializeFromSavedState()
@@ -354,13 +366,47 @@ namespace l2l_aggregator.ViewModels
             foreach (var f in loadedFields)
                 TemplateFields.Add(f);
 
-            CanScan = TemplateFields.Count > 0;
+            //CanScan = TemplateFields.Count > 0;
+            UpdateScanAvailability();
 
         }
-      
+
+        private void InitializeControllerPing()
+        {
+            if (!_sessionService.CheckController || string.IsNullOrWhiteSpace(_sessionService.ControllerIP))
+                return;
+
+            _controllerPingTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(10)
+            };
+            _controllerPingTimer.Tick += async (s, e) =>
+            {
+                var isAlive = await _plcService.TestConnectionAsync();
+
+                IsControllerAvailable = isAlive;
+
+                if (!isAlive)
+                {
+                    _notificationService.ShowMessage("Потеряна связь с контроллером!", NotificationType.Warn);
+                }
+            };
+            _controllerPingTimer.Start();
+        }
+
         ~AggregationViewModel()
         {
             _scannerWorker?.Dispose();
+            _controllerPingTimer?.Stop();
+        }
+
+        partial void OnIsControllerAvailableChanged(bool value)
+        {
+            UpdateScanAvailability();
+        }
+        private void UpdateScanAvailability()
+        {
+            CanScan = IsControllerAvailable && TemplateFields.Count > 0;
         }
 
         [RelayCommand]
@@ -372,6 +418,10 @@ namespace l2l_aggregator.ViewModels
                 _notificationService.ShowMessage(InfoMessage);
                 return;
             }
+            if (!await MoveCameraToCurrentLayerAsync())
+                return; // Остановить, если позиционирование не удалось
+
+
             ////при сканировании это всегда перый шаг сканирования
             //CurrentStepIndex = 1;
             //_cellsReadyTcs = new TaskCompletionSource<bool>();
@@ -385,6 +435,61 @@ namespace l2l_aggregator.ViewModels
             await StartScanningAsync();
 
         }
+
+        //работа с контроллером, выставление высоты
+        private async Task<bool> MoveCameraToCurrentLayerAsync()
+        {
+            // Если отключена проверка контроллера — позиционирование не требуется
+            if (!_sessionService.CheckController)
+                return true;
+
+
+            if (_sessionService.SelectedTaskInfo == null)
+            {
+                _notificationService.ShowMessage("Информация о задании отсутствует.");
+                return false;
+            }
+
+            float? packHeight = _sessionService.SelectedTaskInfo.PACK_HEIGHT;
+
+            if (packHeight == null || packHeight == 0)
+            {
+                _notificationService.ShowMessage("Ошибка: не задана высота слоя (PACK_HEIGHT).");
+                return false;
+            }
+
+            string controllerIp = _sessionService.ControllerIP;
+
+            if (string.IsNullOrWhiteSpace(controllerIp))
+            {
+                _notificationService.ShowMessage("IP контроллера не задан.");
+                return false;
+            }
+
+            try
+            {
+                var current = await _plcService.ReadCameraSettingsAsync();
+                if (current == null)
+                {
+                    _notificationService.ShowMessage("Не удалось прочитать настройки камеры из контроллера.");
+                    return false;
+                }
+                current.PositioningTimeout = (int)(packHeight.Value * CurrentLayer); // или как у тебя вычисляется высота слоя
+                var success = await _plcService.WriteCameraSettingsAsync(current);
+                if (!success)
+                {
+                    _notificationService.ShowMessage("Не удалось записать настройки позиционирования.");
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _notificationService.ShowMessage($"Ошибка позиционирования: {ex.Message}");
+                return false;
+            }
+        }
+
 
         //отправляет шаблон распознавания в библиотеку
         public async Task<bool> SendTemplateToRecognizerAsync()
@@ -876,7 +981,6 @@ namespace l2l_aggregator.ViewModels
             }
             // Обновление текста
             AggregationSummaryText = $"""
-GS1-код: {(GS1 ? "нет данных" : GS1)}
 GTIN-код: {(string.IsNullOrWhiteSpace(GTIN) ? "нет данных" : GTIN)}
 SerialNumber-код: {(string.IsNullOrWhiteSpace(SerialNumber) ? "нет данных" : SerialNumber)}
 Валидность: {(cell.Dm_data?.IsValid == true ? "Да" : "Нет")}

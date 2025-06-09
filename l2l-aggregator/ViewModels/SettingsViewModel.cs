@@ -6,6 +6,7 @@ using l2l_aggregator.Models;
 using l2l_aggregator.Services;
 using l2l_aggregator.Services.Api;
 using l2l_aggregator.Services.Api.Interfaces;
+using l2l_aggregator.Services.ControllerService;
 using l2l_aggregator.Services.Database;
 using l2l_aggregator.Services.DmProcessing;
 using l2l_aggregator.Services.Notification.Interface;
@@ -57,6 +58,8 @@ namespace l2l_aggregator.ViewModels
         private readonly ConfigurationLoaderService _configLoader;
         private readonly PrintingService _printingService;
         private readonly DataApiService _dataApiService;
+        private readonly PcPlcConnectionService _plcService;
+
 
         public SettingsViewModel(DatabaseService databaseService,
             HistoryRouter<ViewModelBase> router,
@@ -66,7 +69,8 @@ namespace l2l_aggregator.ViewModels
             DmScanService dmScanService,
             ConfigurationLoaderService configLoader,
             PrintingService printingService, 
-            DataApiService dataApiService)
+            DataApiService dataApiService,
+            PcPlcConnectionService plcService)
         {
             _configLoader = configLoader;
             _notificationService = notificationService;
@@ -78,6 +82,7 @@ namespace l2l_aggregator.ViewModels
             _printingService = printingService;
             _dataApiService = dataApiService;
             _ = InitializeAsync();
+            _plcService = plcService;
         }
         private async Task InitializeAsync()
         {
@@ -271,15 +276,19 @@ namespace l2l_aggregator.ViewModels
 
             try
             {
-                await Task.Delay(300);
+                var success = await _plcService.TestConnectionAsync();
 
-                //await _databaseService.Config.SetConfigValueAsync("ControllerIP", ControllerIP);
-                //await _databaseService.Config.SetConfigValueAsync("CheckController", CheckControllerBeforeAggregation.ToString());
+                if (!success)
+                {
+                    InfoMessage = "Контроллер не отвечает.";
+                    _notificationService.ShowMessage(InfoMessage);
+                    return;
+                }
 
                 _sessionService.ControllerIP = ControllerIP;
                 _sessionService.CheckController = CheckControllerBeforeAggregation;
 
-                InfoMessage = "Контроллер успешно сохранён!";
+                InfoMessage = "Контроллер успешно проверен и сохранён!";
                 _notificationService.ShowMessage(InfoMessage);
             }
             catch (Exception ex)
@@ -288,6 +297,34 @@ namespace l2l_aggregator.ViewModels
                 _notificationService.ShowMessage(InfoMessage);
             }
         }
+        //public async Task TestControllerConnectionAsync()
+        //{
+        //    if (string.IsNullOrWhiteSpace(ControllerIP))
+        //    {
+        //        InfoMessage = "Введите IP контроллера!";
+        //        _notificationService.ShowMessage(InfoMessage);
+        //        return;
+        //    }
+
+        //    try
+        //    {
+        //        await Task.Delay(300);
+
+        //        //await _databaseService.Config.SetConfigValueAsync("ControllerIP", ControllerIP);
+        //        //await _databaseService.Config.SetConfigValueAsync("CheckController", CheckControllerBeforeAggregation.ToString());
+
+        //        _sessionService.ControllerIP = ControllerIP;
+        //        _sessionService.CheckController = CheckControllerBeforeAggregation;
+
+        //        InfoMessage = "Контроллер успешно сохранён!";
+        //        _notificationService.ShowMessage(InfoMessage);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        InfoMessage = $"Ошибка: {ex.Message}";
+        //        _notificationService.ShowMessage(InfoMessage);
+        //    }
+        //}
 
         //Камера - проверка соединения
         [RelayCommand]

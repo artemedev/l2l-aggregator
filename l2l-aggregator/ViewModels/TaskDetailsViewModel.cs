@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using l2l_aggregator.Models;
 using l2l_aggregator.Services;
 using l2l_aggregator.Services.Api;
+using l2l_aggregator.Services.ControllerService;
 using l2l_aggregator.Services.Database;
 using l2l_aggregator.Services.Notification.Interface;
 using System;
@@ -82,6 +83,15 @@ namespace l2l_aggregator.ViewModels
         [RelayCommand]
         public async Task GoAggregationAsync()
         {
+            ////проверка контроллера
+            //var modbusService = new ModbusPositioningService(_sessionService.ControllerIP, 1);
+            //var controllerAvailable = await modbusService.CheckMutualConnectionAsync();
+
+            //if (!controllerAvailable)
+            //{
+            //    _notificationService.ShowMessage("Контроллер не отвечает. Невозможно начать агрегацию.");
+            //    return;
+            //}
             //await _configLoader.LoadSettingsToSessionAsync();
             //await _sessionService.InitializeAsync(_databaseService);
             //var session = SessionService.Instance;

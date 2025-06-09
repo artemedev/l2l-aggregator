@@ -4,6 +4,7 @@ using l2l_aggregator.Infrastructure.OsIntegration.Firebird;
 using l2l_aggregator.Services;
 using l2l_aggregator.Services.AggregationService;
 using l2l_aggregator.Services.Api;
+using l2l_aggregator.Services.ControllerService;
 using l2l_aggregator.Services.Database;
 using l2l_aggregator.Services.Database.Repositories;
 using l2l_aggregator.Services.Database.Repositories.Interfaces;
@@ -88,6 +89,9 @@ namespace l2l_aggregator
             services.AddSingleton<ConfigurationLoaderService>(); 
             services.AddSingleton<PrintingService>();
             services.AddSingleton<IScannerPortResolver>(PlatformResolverFactory.CreateScannerResolver());
+
+            // Регистрируем работу с контроллером
+            services.AddTransient<PcPlcConnectionService>();
         }
     }
 }

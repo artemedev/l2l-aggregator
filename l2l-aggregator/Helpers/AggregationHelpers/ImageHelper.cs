@@ -116,7 +116,16 @@ namespace l2l_aggregator.Helpers.AggregationHelpers
             var cells = new ObservableCollection<DmCellViewModel>();
             var gs1Parser = new GS1Parser(); // инициализация парсера
             var seenDmValues = new HashSet<string>(StringComparer.OrdinalIgnoreCase); // отслеживание дублей
+            var sgtinFieldMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                { "SerialNumber", "UN_CODE" }
+            };
 
+                        // Маппинг OCR.Name к свойствам в ArmJobInfoRecord
+                        var infoFieldMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                { "SeriesName", "SERIES_NAME" }
+            };
             foreach (var dmd in dmrData.BOXs)
             {
                 string? dmValue = dmd.DM.data;
@@ -188,20 +197,23 @@ namespace l2l_aggregator.Helpers.AggregationHelpers
                 foreach (var ocr in dmd.OCR)
                 {
                     var validBarcodes = new HashSet<string>();
-
-                    var propSgtin = typeof(ArmJobSgtinRecord).GetProperty(ocr.Name);
-                    if (propSgtin != null)
+  
+                    if (sgtinFieldMap.TryGetValue(ocr.Name, out var sgtinPropName))
                     {
-                        foreach (var r in response.RECORDSET)
+                        var propSgtin = typeof(ArmJobSgtinRecord).GetProperty(sgtinPropName);
+                        if (propSgtin != null)
                         {
-                            var value = propSgtin.GetValue(r);
-                            if (value is string str)
-                                validBarcodes.Add(str);
+                            foreach (var r in response.RECORDSET)
+                            {
+                                var value = propSgtin.GetValue(r);
+                                if (value is string str)
+                                    validBarcodes.Add(str);
+                            }
                         }
                     }
-                    else
+                    else if (infoFieldMap.TryGetValue(ocr.Name, out var infoPropName))
                     {
-                        var propInfo = typeof(ArmJobInfoRecord).GetProperty(ocr.Name);
+                        var propInfo = typeof(ArmJobInfoRecord).GetProperty(infoPropName);
                         if (propInfo != null)
                         {
                             var val = propInfo.GetValue(sessionService.SelectedTaskInfo);
@@ -209,8 +221,39 @@ namespace l2l_aggregator.Helpers.AggregationHelpers
                                 validBarcodes.Add(val.ToString());
                         }
                     }
+                    //добавить SerialNumber к UN_CODE
+                    //var propSgtin = typeof(ArmJobSgtinRecord).GetProperty(ocr.Name);
+                    //if (propSgtin != null)
+                    //{
+                    //    foreach (var r in response.RECORDSET)
+                    //    {
+                    //        var value = propSgtin.GetValue(r);
+                    //        if (value is string str)
+                    //            validBarcodes.Add(str);
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    var propInfo = typeof(ArmJobInfoRecord).GetProperty(ocr.Name);
+                    //    if (propInfo != null)
+                    //    {
+                    //        var val = propInfo.GetValue(sessionService.SelectedTaskInfo);
+                    //        if (val != null)
+                    //            validBarcodes.Add(val.ToString());
+                    //    }
+                    //}
 
-                    bool isValid = validBarcodes.Contains(ocr.Text);
+
+                    //  если имя OCR совпадает с текстом — считаем валидным
+                    bool isValid = false;
+                    if (ocr.Name == ocr.Text)
+                    {
+                        isValid = true;
+                    }
+                    else if (validBarcodes.Contains(ocr.Text))
+                    {
+                        isValid = true;
+                    }
 
                     dmVm.OcrCells.Add(new SquareCellViewModel
                     {
