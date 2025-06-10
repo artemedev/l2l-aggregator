@@ -3,6 +3,7 @@ using l2l_aggregator.Services.ControllerService;
 using l2l_aggregator.Services.DmProcessing;
 using l2l_aggregator.Services.Printing;
 using l2l_aggregator.Services.ScannerService.Interfaces;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,13 +15,14 @@ namespace l2l_aggregator.Services
         private readonly DmScanService _dmScanService;
         private readonly IScannerPortResolver _scannerPortResolver;
         private readonly PrintingService _printingService;
-        private readonly PcPlcConnectionService _plcService;
-        public DeviceCheckService(DmScanService dmScanService, IScannerPortResolver scannerPortResolver, PrintingService printingService, PcPlcConnectionService plcService)
+        private readonly ILogger<PcPlcConnectionService> _logger;
+
+        public DeviceCheckService(DmScanService dmScanService, IScannerPortResolver scannerPortResolver, PrintingService printingService, ILogger<PcPlcConnectionService> logger)
         {
             _dmScanService = dmScanService;
             _scannerPortResolver = scannerPortResolver;
-            _printingService = printingService;
-            _plcService = plcService;
+            _printingService = printingService;//-----------------------------------
+            _logger = logger;
         }
 
         public async Task<(bool Success, string Message)> CheckCameraAsync(SessionService session)
@@ -85,27 +87,27 @@ namespace l2l_aggregator.Services
             if (string.IsNullOrWhiteSpace(session.ControllerIP))
                 return (false, "IP контроллера не задан!");
 
-            //try
-            //{
-            //    //using var ping = new System.Net.NetworkInformation.Ping();
-            //    //var reply = await ping.SendPingAsync(session.ControllerIP, 300);
-            //    //return reply.Status == System.Net.NetworkInformation.IPStatus.Success
-            //    //    ? (true, null)
-            //    //    : (false, $"Контроллер {session.ControllerIP} недоступен!");
 
-            //    var modbusService = new ModbusPositioningService(session.ControllerIP, 1); // высота не важна
-            //    var isAlive = await modbusService.CheckMutualConnectionAsync();
-
-            //    return isAlive
-            //        ? (true, null)
-            //        : (false, $"Контроллер {session.ControllerIP} не отвечает (пинг-понг)!");
-            //}
              try
             {
-                var isAlive = await _plcService.TestConnectionAsync();
+                // Создать службу подключения PLC
+                var plcService = new PcPlcConnectionService(_logger); // Внедрение ILogger
 
-                return isAlive
-                    ? (true, null)
+                bool connected = await plcService.ConnectAsync(session.ControllerIP);
+                if (!connected)
+                {
+                    return (false, $"Не удалось подключиться к контроллеру {session.ControllerIP}!");
+                }
+
+                // Одиночный тест пинг-понга
+                bool pingPongResult = await plcService.TestConnectionAsync();
+
+                // Закрыть подключение 
+                plcService.Disconnect();
+                plcService.Dispose();
+
+                return pingPongResult
+                            ? (true, null)
                     : (false, $"Контроллер {session.ControllerIP} не отвечает (пинг-понг)!");
             }
             catch

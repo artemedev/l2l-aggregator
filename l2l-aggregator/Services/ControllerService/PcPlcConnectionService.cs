@@ -1,346 +1,469 @@
-﻿using Avalonia.Threading;
-using NModbus;
-using NModbus.Utility;
+﻿using NModbus;
 using System;
-using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace l2l_aggregator.Services.ControllerService
 {
     public class PcPlcConnectionService : IDisposable
     {
-        private readonly SessionService _session;
-        private readonly byte _slaveId = 1;
-        private DispatcherTimer _timer;
-        private bool _isActive;
-        private bool _disposed;
+        private readonly ILogger<PcPlcConnectionService> _logger;
+        private TcpClient _tcpClient;
+        private IModbusMaster _master;
+        private Timer _pingPongTimer;
+        private bool _isConnected = false;
+        private bool _disposedValue = false;
 
-        public bool IsConnected { get; private set; }
-        //private async Task<IModbusMaster> ConnectAsync()
-        //{
-        //    var client = new TcpClient();
-        //    await client.ConnectAsync(_session.ControllerIP, 502);
-        //    var factory = new ModbusFactory();
-        //    return factory.CreateMaster(client);
-        //}
-        //public async Task<ushort> ReadUInt16HoldingAsync(ushort register)
-        //{
-        //    using var master = await ConnectAsync();
-        //    var data = await master.ReadHoldingRegistersAsync(1, register, 1);
-        //    return data[0];
-        //}
+        // Modbus константы
+        private const byte SlaveId = 1;
+        private const int ModbusPort = 502;
 
+        // Регестрируем адреса из документации
+        private const ushort PC_PLC_CONNECT_REGISTER = 0;          // 4x0
+        private const ushort PC_TIMEOUT_REGISTER = 17;             // 4x17
+        private const ushort CYCLE_STEP_NUMBER_REGISTER = 16;      // 4x16
+        private const ushort NON_FATAL_ERRORS_REGISTER = 4;        // 3x4
+        private const ushort FATAL_ERRORS_REGISTER = 5;            // 3x5
+        private const ushort FATAL_ERRORS_FINAL_REGISTER = 6;      // 3x6
 
-        //public async Task WriteUInt16HoldingAsync(ushort register, ushort value)
-        //{
-        //    using var master = await ConnectAsync();
-        //    await master.WriteSingleRegisterAsync(1, register, value);
-        //}
-        //public async Task WriteBoolHoldingAsync(ushort register, int bitIndex, bool value)
-        //{
-        //    using var master = await ConnectAsync();
-        //    var current = await master.ReadHoldingRegistersAsync(1, register, 1);
-        //    ushort modified = ModbusUtility.SetBool(current[0], bitIndex, value);
-        //    await master.WriteSingleRegisterAsync(1, register, modified);
-        //}
-        //public async Task<bool> ReadBoolInputAsync(ushort register, int bitIndex)
-        //{
-        //    using var master = await ConnectAsync();
-        //    var data = await master.ReadInputRegistersAsync(1, register, 1);
-        //    return ModbusUtility.GetBool(data[0], bitIndex);
-        //}
+        // Номер бита в регистре
+        private const int PC_PLC_CONNECT_BIT = 10;                 // 4x0.10
+        private const int PC_PLC_CONNECT_CONTROL_BIT = 12;         // 4x0.12
+        private const int PLC_IS_ACTIVE_BIT = 11;                  // 4x0.11
+        private const int FORCE_POSITIONING_BIT = 0;              // 4x0.0
+        private const int POSITIONING_PERMIT_BIT = 1;             // 4x0.1
+        private const int CYCLE_STEP_START_BIT = 5;               // 4x0.5
+        private const int PHOTO_TAKEN_BIT = 6;                    // 4x0.6
+        private const int START_PEDAL_BIT = 7;                    // 4x0.7
+        private const int APPLY_CAM_BOX_DIST_BIT = 8;             // 4x0.8
+        private const int CONTINUOUS_LIGHT_MODE_BIT = 9;          // 4x0.9
 
-        //public async Task<bool> WaitForBoolInputBitAsync(ushort register, int bitIndex, int timeoutMs = 5000)
-        //{
-        //    var start = DateTime.UtcNow;
-        //    while ((DateTime.UtcNow - start).TotalMilliseconds < timeoutMs)
-        //    {
-        //        if (await ReadBoolInputAsync(register, bitIndex))
-        //            return true;
-        //        await Task.Delay(100);
-        //    }
-        //    return false;
-        //}
+        // Номер регистра настроек
+        private const ushort RETREAT_ZERO_HOME_POSITION_REGISTER = 1;   // 4x1
+        private const ushort ZERO_POSITIONING_REGISTER = 2;             // 4x2
+        private const ushort ESTIMATED_ZERO_HOME_DISTANCE_REGISTER = 3; // 4x3
+        private const ushort TIME_BETWEEN_DIRECTIONS_CHANGE_REGISTER = 4; // 4x4
+        private const ushort CAM_MOVEMENT_VELOCITY_REGISTER = 5;        // 4x5
+        private const ushort CAM_BOX_MIN_DISTANCE_REGISTER = 7;         // 4x7
+        private const ushort CAM_BOX_DISTANCE_REGISTER = 8;             // 4x8
+        private const ushort BOX_HEIGHT_REGISTER = 9;                   // 4x9
+        private const ushort LAYERS_QTTY_REGISTER = 10;                 // 4x10
+        private const ushort LIGHT_LEVEL_REGISTER = 11;                 // 4x11
+        private const ushort LIGHT_DELAY_REGISTER = 12;                 // 4x12
+        private const ushort LIGHT_EXPOSURE_REGISTER = 13;              // 4x13
+        private const ushort CAM_DELAY_REGISTER = 14;                   // 4x14
+        private const ushort CAM_EXPOSURE_REGISTER = 15;                // 4x15
 
-        public PcPlcConnectionService(SessionService session)
+        public event Action<bool> ConnectionStatusChanged;
+        public event Action<PlcErrors> ErrorsReceived;
+
+        public bool IsConnected => _isConnected;
+
+        public PcPlcConnectionService(ILogger<PcPlcConnectionService> logger)
         {
-            _session = session;
+            _logger = logger;
         }
 
-        /// <summary>
-        /// Запускает пинг-понг и включает контроль активности.
-        /// Используется в AggregationViewModel.
-        /// </summary>
-        public async Task StartAsync()
-        {
-            if (_isActive) return;
-            _isActive = true;
-
-            await EnablePingPongAsync();
-
-            _timer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromSeconds(10)
-            };
-            _timer.Tick += async (_, __) => await PingAsync();
-            _timer.Start();
-        }
-
-        /// <summary>
-        /// Останавливает пинг-понг и сбрасывает активность ПЛК.
-        /// </summary>
-        public async Task StopAsync()
-        {
-            _isActive = false;
-            _timer?.Stop();
-            await DisablePingPongAsync();
-        }
-
-        /// <summary>
-        /// Одноразовая проверка соединения, используется для валидации IP (в TaskDetailsViewModel, настройках и т.п.).
-        /// </summary>
-        public async Task<bool> TestConnectionAsync()
+        public async Task<bool> ConnectAsync(string ipAddress)
         {
             try
             {
-                using var client = new TcpClient(_session.ControllerIP, 502);
+                _tcpClient = new TcpClient();
+                await _tcpClient.ConnectAsync(ipAddress, ModbusPort);
+
                 var factory = new ModbusFactory();
-                var master = factory.CreateMaster(client);
+                _master = factory.CreateMaster(_tcpClient);
 
-                await EnablePingPongAsync(master);
-                await Task.Delay(1000);
+                _isConnected = true;
+                ConnectionStatusChanged?.Invoke(true);
 
-                await PerformPingExchangeAsync(master);
-                return IsConnected;
+                _logger.LogInformation($"Connected to PLC at {ipAddress}");
+                return true;
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, $"Failed to connect to PLC at {ipAddress}");
+                _isConnected = false;
+                ConnectionStatusChanged?.Invoke(false);
                 return false;
             }
         }
 
-        private async Task EnablePingPongAsync()
+        public void Disconnect()
         {
-            using var client = new TcpClient(_session.ControllerIP, 502);
-            var factory = new ModbusFactory();
-            var master = factory.CreateMaster(client);
-            await EnablePingPongAsync(master);
+            StopPingPong();
+
+            _master?.Dispose();
+            _tcpClient?.Close();
+
+            _isConnected = false;
+            ConnectionStatusChanged?.Invoke(false);
+
+            _logger.LogInformation("Disconnected from PLC");
         }
 
-        private async Task EnablePingPongAsync(IModbusMaster master)
+        public async Task<bool> TestConnectionAsync()
         {
-            // Включить бит 4x0.12
-            await master.WriteSingleCoilAsync(_slaveId, 12, true);
+            if (!_isConnected) return false;
 
-            // Установить бит 12 в 4x0 (контроль активности включен)
-            var reg = await master.ReadHoldingRegistersAsync(_slaveId, 0, 1);
-            ushort value = (ushort)(reg[0] | (1 << 12));
-            await master.WriteSingleRegisterAsync(_slaveId, 0, value);
-        }
-
-        private async Task PingAsync()
-        {
             try
             {
-                using var client = new TcpClient(_session.ControllerIP, 502);
-                var factory = new ModbusFactory();
-                var master = factory.CreateMaster(client);
+                // Включить управление подключением
+                await EnableConnectionControlAsync(true);
 
-                await PerformPingExchangeAsync(master);
+                // Выполнить одиночный тест пинг-понга
+                bool pingResult = await PerformSinglePingPongAsync();
+
+                if (pingResult)
+                {
+                    _logger.LogInformation("PLC ping-pong test successful");
+                    return true;
+                }
+                else
+                {
+                    _logger.LogWarning("PLC ping-pong test failed");
+                    return false;
+                }
             }
-            catch
+            catch (Exception ex)
             {
-                IsConnected = false;
+                _logger.LogError(ex, "Error during PLC connection test");
+                return false;
             }
         }
 
-        private async Task PerformPingExchangeAsync(IModbusMaster master)
+        public void StartPingPong(int intervalMs = 1000)
         {
-            // Получить уставку таймаута (4x17)
-            var timeoutReg = await master.ReadHoldingRegistersAsync(_slaveId, 16, 1);
-            ushort timeoutMs = timeoutReg[0];
-            if (timeoutMs == 0 || timeoutMs > 10000)
-                timeoutMs = 3000;
-
-            await Task.Delay(Math.Min(timeoutMs / 3, 1000));
-
-            // Сбросить бит активности ПК: бит 10 в 4x0
-            var reg = await master.ReadHoldingRegistersAsync(_slaveId, 0, 1);
-            ushort value = (ushort)(reg[0] & ~(1 << 10));
-            await master.WriteSingleRegisterAsync(_slaveId, 0, value);
-
-            // Проверить 3x0.11 (pong) и 3x0.13 (ПК активен)
-            var inputs = await master.ReadInputsAsync(_slaveId, 0, 14);
-            bool pong = inputs[11];
-            bool pcActive = inputs[13];
-
-            if (!pong || !pcActive)
+            if (!_isConnected)
             {
-                IsConnected = false;
+                _logger.LogWarning("Cannot start ping-pong: not connected to PLC");
                 return;
             }
 
-            // Установить флаг активности ПЛК: бит 11 в 4x0
-            reg = await master.ReadHoldingRegistersAsync(_slaveId, 0, 1);
-            value = (ushort)(reg[0] | (1 << 11));
-            await master.WriteSingleRegisterAsync(_slaveId, 0, value);
+            StopPingPong();
 
-            IsConnected = true;
+            _pingPongTimer = new Timer(async _ => await PerformPingPongCycle(),
+                                     null, 0, intervalMs);
+
+            _logger.LogInformation($"Started ping-pong with interval {intervalMs}ms");
         }
 
-        private async Task DisablePingPongAsync()
+        public void StopPingPong()
+        {
+            _pingPongTimer?.Dispose();
+            _pingPongTimer = null;
+
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await EnableConnectionControlAsync(false);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error disabling connection control");
+                }
+            });
+
+            _logger.LogInformation("Stopped ping-pong");
+        }
+
+        private async Task<bool> PerformSinglePingPongAsync()
         {
             try
             {
-                using var client = new TcpClient(_session.ControllerIP, 502);
-                var factory = new ModbusFactory();
-                var master = factory.CreateMaster(client);
+                // Узнать текущее состояние
+                var holdingRegs = await _master.ReadHoldingRegistersAsync(SlaveId, PC_PLC_CONNECT_REGISTER, 1);
+                bool pcPlcConnectBit = GetBit(holdingRegs[0], PC_PLC_CONNECT_BIT);
 
-                // Отключить пинг-понг: сброс 4x0.12
-                await master.WriteSingleCoilAsync(_slaveId, 12, false);
+                if (pcPlcConnectBit)
+                {
+                    // Сбросить бит (с PC в PLC)
+                    await SetBitAsync(PC_PLC_CONNECT_REGISTER, PC_PLC_CONNECT_BIT, false);
 
-                // Сбросить флаг активности ПЛК: бит 11 в 4x0
-                var reg = await master.ReadHoldingRegistersAsync(_slaveId, 0, 1);
-                ushort value = (ushort)(reg[0] & ~(1 << 11));
-                await master.WriteSingleRegisterAsync(_slaveId, 0, value);
+                    // Установить PLC флаг активности
+                    await SetBitAsync(PC_PLC_CONNECT_REGISTER, PLC_IS_ACTIVE_BIT, true);
+
+                    return true;
+                }
+
+                return false;
             }
-            catch
+            catch (Exception ex)
             {
-                // fail silently
+                _logger.LogError(ex, "Error during ping-pong operation");
+                return false;
+            }
+        }
+
+        private async Task PerformPingPongCycle()
+        {
+            try
+            {
+                var success = await PerformSinglePingPongAsync();
+
+                if (!success)
+                {
+                    // Проверка на ошибки
+                    await CheckErrorsAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in ping-pong cycle");
+            }
+        }
+
+        public async Task EnableConnectionControlAsync(bool enable)
+        {
+            await SetBitAsync(PC_PLC_CONNECT_REGISTER, PC_PLC_CONNECT_CONTROL_BIT, enable);
+            _logger.LogInformation($"Connection control {(enable ? "enabled" : "disabled")}");
+        }
+
+        // Настройки позиционирования камеры
+        public async Task SetPositioningSettingsAsync(PositioningSettings settings)
+        {
+            await _master.WriteSingleRegisterAsync(SlaveId, RETREAT_ZERO_HOME_POSITION_REGISTER, settings.RetreatZeroHomePosition);
+            await _master.WriteSingleRegisterAsync(SlaveId, ZERO_POSITIONING_REGISTER, settings.ZeroPositioning);
+            await _master.WriteSingleRegisterAsync(SlaveId, ESTIMATED_ZERO_HOME_DISTANCE_REGISTER, settings.EstimatedZeroHomeDistance);
+            await _master.WriteSingleRegisterAsync(SlaveId, TIME_BETWEEN_DIRECTIONS_CHANGE_REGISTER, settings.TimeBetweenDirectionsChange);
+            await _master.WriteSingleRegisterAsync(SlaveId, CAM_MOVEMENT_VELOCITY_REGISTER, settings.CamMovementVelocity);
+
+            _logger.LogInformation("Positioning settings updated");
+        }
+
+        public async Task<PositioningSettings> GetPositioningSettingsAsync()
+        {
+            var registers = await _master.ReadHoldingRegistersAsync(SlaveId, RETREAT_ZERO_HOME_POSITION_REGISTER, 5);
+
+            return new PositioningSettings
+            {
+                RetreatZeroHomePosition = registers[0],
+                ZeroPositioning = registers[1],
+                EstimatedZeroHomeDistance = registers[2],
+                TimeBetweenDirectionsChange = registers[3],
+                CamMovementVelocity = registers[4]
+            };
+        }
+
+        //Настройки работы с коробкой
+        public async Task SetBoxWorkSettingsAsync(BoxWorkSettings settings)
+        {
+            await _master.WriteSingleRegisterAsync(SlaveId, CAM_BOX_MIN_DISTANCE_REGISTER, settings.CamBoxMinDistance);
+            await _master.WriteSingleRegisterAsync(SlaveId, CAM_BOX_DISTANCE_REGISTER, settings.CamBoxDistance);
+            await _master.WriteSingleRegisterAsync(SlaveId, BOX_HEIGHT_REGISTER, settings.BoxHeight);
+            await _master.WriteSingleRegisterAsync(SlaveId, LAYERS_QTTY_REGISTER, settings.LayersQtty);
+
+            _logger.LogInformation("Box work settings updated");
+        }
+
+        // Настройки освещения
+        public async Task SetLightingSettingsAsync(LightingSettings settings)
+        {
+            await _master.WriteSingleRegisterAsync(SlaveId, LIGHT_LEVEL_REGISTER, settings.LightLevel);
+            await _master.WriteSingleRegisterAsync(SlaveId, LIGHT_DELAY_REGISTER, settings.LightDelay);
+            await _master.WriteSingleRegisterAsync(SlaveId, LIGHT_EXPOSURE_REGISTER, settings.LightExposure);
+            await _master.WriteSingleRegisterAsync(SlaveId, CAM_DELAY_REGISTER, settings.CamDelay);
+            await _master.WriteSingleRegisterAsync(SlaveId, CAM_EXPOSURE_REGISTER, settings.CamExposure);
+            await SetBitAsync(PC_PLC_CONNECT_REGISTER, CONTINUOUS_LIGHT_MODE_BIT, settings.ContinuousLightMode);
+
+            _logger.LogInformation("Lighting settings updated");
+        }
+
+        public async Task<LightingSettings> GetLightingSettingsAsync()
+        {
+            var registers = await _master.ReadHoldingRegistersAsync(SlaveId, LIGHT_LEVEL_REGISTER, 5);
+            var holdingReg0 = await _master.ReadHoldingRegistersAsync(SlaveId, PC_PLC_CONNECT_REGISTER, 1);
+
+            return new LightingSettings
+            {
+                LightLevel = registers[0],
+                LightDelay = registers[1],
+                LightExposure = registers[2],
+                CamDelay = registers[3],
+                CamExposure = registers[4],
+                ContinuousLightMode = GetBit(holdingReg0[0], CONTINUOUS_LIGHT_MODE_BIT)
+            };
+        }
+
+        // Работа в цикле
+        public async Task StartCycleStepAsync(ushort stepNumber)
+        {
+            await _master.WriteSingleRegisterAsync(SlaveId, CYCLE_STEP_NUMBER_REGISTER, stepNumber);
+            await SetBitAsync(PC_PLC_CONNECT_REGISTER, CYCLE_STEP_START_BIT, true);
+
+            _logger.LogInformation($"Started cycle step {stepNumber}");
+        }
+        //!!!!КАК ЭТО РАБОТАЕТ. СЕЙЧАС Я ПОЛУЧАЮ ФОТО ОТ БИБЛИОТЕКИ РАСПОЗНАВАНИЯ, ТО ЕСТЬ ТАМ ТОЖЕ ЕСТЬ ТРИГЕР ДЛЯ ФОТО, ТРИГЕР КАМЕРЫ ДЕЛАЕТ КАДР? КОГДА БУДЕТ ПЕДАЛЬ!!!!
+        public async Task TriggerPhotoAsync()
+        {
+            await SetBitAsync(PC_PLC_CONNECT_REGISTER, START_PEDAL_BIT, true);
+            _logger.LogInformation("Photo trigger activated");
+        }
+
+        public async Task ConfirmPhotoProcessedAsync()
+        {
+            await SetBitAsync(PC_PLC_CONNECT_REGISTER, PHOTO_TAKEN_BIT, true);
+            _logger.LogInformation("Photo processing confirmed");
+        }
+
+        public async Task ApplyCameraBoxDistanceAsync()
+        {
+            await SetBitAsync(PC_PLC_CONNECT_REGISTER, APPLY_CAM_BOX_DIST_BIT, true);
+            _logger.LogInformation("Camera-box distance applied");
+        }
+
+        // Операции по позиционированию
+        public async Task ForcePositioningAsync()
+        {
+            await SetBitAsync(PC_PLC_CONNECT_REGISTER, FORCE_POSITIONING_BIT, true);
+            _logger.LogInformation("Force positioning initiated");
+        }
+
+        public async Task GrantPositioningPermissionAsync()
+        {
+            await SetBitAsync(PC_PLC_CONNECT_REGISTER, POSITIONING_PERMIT_BIT, true);
+            _logger.LogInformation("Positioning permission granted");
+        }
+
+        // Проверка ошибок
+        public async Task CheckErrorsAsync()
+        {
+            try
+            {
+                var nonFatalErrors = await _master.ReadInputRegistersAsync(SlaveId, NON_FATAL_ERRORS_REGISTER, 1);
+                var fatalErrors = await _master.ReadInputRegistersAsync(SlaveId, FATAL_ERRORS_REGISTER, 1);
+                var fatalErrorsFinal = await _master.ReadInputRegistersAsync(SlaveId, FATAL_ERRORS_FINAL_REGISTER, 1);
+
+                var errors = new PlcErrors
+                {
+                    NonFatalErrors = nonFatalErrors[0],
+                    FatalErrors = fatalErrors[0],
+                    FatalErrorsFinal = fatalErrorsFinal[0]
+                };
+
+                if (errors.HasErrors())
+                {
+                    ErrorsReceived?.Invoke(errors);
+                    _logger.LogWarning($"PLC errors detected: NonFatal={errors.NonFatalErrors:X4}, Fatal={errors.FatalErrors:X4}, FinalFatal={errors.FatalErrorsFinal:X4}");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error reading PLC errors");
+            }
+        }
+
+        // Вспомогательные методы
+        private async Task SetBitAsync(ushort register, int bitPosition, bool value)
+        {
+            var currentValue = await _master.ReadHoldingRegistersAsync(SlaveId, register, 1);
+            var newValue = SetBit(currentValue[0], bitPosition, value);
+            await _master.WriteSingleRegisterAsync(SlaveId, register, newValue);
+        }
+
+        private static bool GetBit(ushort value, int bitPosition)
+        {
+            return (value & (1 << bitPosition)) != 0;
+        }
+
+        private static ushort SetBit(ushort value, int bitPosition, bool bitValue)
+        {
+            if (bitValue)
+                return (ushort)(value | (1 << bitPosition));
+            else
+                return (ushort)(value & ~(1 << bitPosition));
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    StopPingPong();
+                    Disconnect();
+                }
+                _disposedValue = true;
             }
         }
 
         public void Dispose()
         {
-            if (_disposed) return;
-            _disposed = true;
-            _timer?.Stop();
-            _timer = null;
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
+    }
 
-        public class CameraPlcSettings
+    // Интерфейсы
+    public class PositioningSettings
+    {
+        public ushort RetreatZeroHomePosition { get; set; } = 70;
+        public ushort ZeroPositioning { get; set; } = 10000;
+        public ushort EstimatedZeroHomeDistance { get; set; } = 252;
+        public ushort TimeBetweenDirectionsChange { get; set; } = 500;
+        public ushort CamMovementVelocity { get; set; } = 20;
+    }
+
+    public class BoxWorkSettings
+    {
+        public ushort CamBoxMinDistance { get; set; } = 500;
+        public ushort CamBoxDistance { get; set; } = 450;
+        public ushort BoxHeight { get; set; } = 50;
+        public ushort LayersQtty { get; set; } = 4;
+    }
+
+    public class LightingSettings
+    {
+        public ushort LightLevel { get; set; } = 100;
+        public ushort LightDelay { get; set; } = 1000;
+        public ushort LightExposure { get; set; } = 4000;
+        public ushort CamDelay { get; set; } = 1000;
+        public ushort CamExposure { get; set; } = 30;
+        public bool ContinuousLightMode { get; set; } = false;
+    }
+
+    public class PlcErrors
+    {
+        public ushort NonFatalErrors { get; set; }
+        public ushort FatalErrors { get; set; }
+        public ushort FatalErrorsFinal { get; set; }
+
+        public bool HasErrors() => NonFatalErrors != 0 || FatalErrors != 0 || FatalErrorsFinal != 0;
+
+        public string GetErrorDescription()
         {
-            public int OffsetFromZeroPosition { get; set; }
-            public int PositioningTimeout { get; set; }
-            public int ZeroToHomeDistance { get; set; }
-            public bool ArrowDirectionReversed { get; set; }
-            public int MovementSpeed { get; set; }
-            public int MinCameraToTableDistance { get; set; }
+            var errors = new List<string>();
 
-            public int LightIntensity { get; set; }
-            public int LightDelay { get; set; }
-            public int LightExposure { get; set; }
-            public int TriggerDelay { get; set; }
-            public int LightMode { get; set; }
-            public int PcTimeout { get; set; }
-        }
+            // Non-fatal errors
+            if ((NonFatalErrors & (1 << 0)) != 0) errors.Add("PC response timeout exceeded (1500ms)");
+            if ((NonFatalErrors & (1 << 1)) != 0) errors.Add("PLC response timeout exceeded");
+            if ((NonFatalErrors & (1 << 2)) != 0) errors.Add("No printer ready signal");
 
-        public async Task<CameraPlcSettings?> ReadCameraSettingsAsync()
-        {
-            try
-            {
-                using var client = new TcpClient(_session.ControllerIP, 502);
-                var factory = new ModbusFactory();
-                var master = factory.CreateMaster(client);
+            // Fatal errors
+            if ((FatalErrors & (1 << 0)) != 0) errors.Add("Stepper motor driver error");
+            if ((FatalErrors & (1 << 1)) != 0) errors.Add("Lower limit switch activated (SW_1)");
+            if ((FatalErrors & (1 << 2)) != 0) errors.Add("Upper limit switch activated (SW_2)");
+            if ((FatalErrors & (1 << 3)) != 0) errors.Add("Insufficient camera-box distance (IrSens_1)");
+            if ((FatalErrors & (1 << 4)) != 0) errors.Add("Low light level on photographed surface");
+            if ((FatalErrors & (1 << 5)) != 0) errors.Add("Safety circuit violation");
+            if ((FatalErrors & (1 << 6)) != 0) errors.Add("Home position sensor triggered too early");
+            if ((FatalErrors & (1 << 7)) != 0) errors.Add("Home position sensor not triggered in expected range");
+            if ((FatalErrors & (1 << 8)) != 0) errors.Add("Cycle step positioning timeout");
+            if ((FatalErrors & (1 << 9)) != 0) errors.Add("Zero positioning timeout - sensor still active");
+            if ((FatalErrors & (1 << 10)) != 0) errors.Add("Zero position exceeded retreat distance");
+            if ((FatalErrors & (1 << 11)) != 0) errors.Add("Zero position sensor not triggered during downward movement");
+            if ((FatalErrors & (1 << 12)) != 0) errors.Add("Zero position sensor not triggered after reaching -10mm");
+            if ((FatalErrors & (1 << 13)) != 0) errors.Add("Zero sensor triggered too early during downward movement");
+            if ((FatalErrors & (1 << 14)) != 0) errors.Add("Arrow overshot position during Zero to Home movement");
 
-                // Пример: читаем с 4x7 (index = 6), 12 регистров
-                var regs = await master.ReadHoldingRegistersAsync(_slaveId, 6, 12);
+            // Final fatal errors
+            if ((FatalErrorsFinal & (1 << 0)) != 0) errors.Add("220V power supply failure");
 
-                return new CameraPlcSettings
-                {
-                    OffsetFromZeroPosition = regs[0],
-                    PositioningTimeout = regs[1],
-                    ZeroToHomeDistance = regs[2],
-                    ArrowDirectionReversed = regs[3] != 0,
-                    MovementSpeed = regs[4],
-                    MinCameraToTableDistance = regs[5],
-                    LightIntensity = regs[6],
-                    LightDelay = regs[7],
-                    LightExposure = regs[8],
-                    TriggerDelay = regs[9],
-                    LightMode = regs[10],
-                    PcTimeout = regs[11]
-                };
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        public async Task<bool> WriteCameraSettingsAsync(CameraPlcSettings settings)
-        {
-            try
-            {
-                using var client = new TcpClient(_session.ControllerIP, 502);
-                var factory = new ModbusFactory();
-                var master = factory.CreateMaster(client);
-
-                // Подготовим значения для записи
-                ushort[] values = new ushort[]
-                {
-                    (ushort)settings.OffsetFromZeroPosition,
-                    (ushort)settings.PositioningTimeout,
-                    (ushort)settings.ZeroToHomeDistance,
-                    (ushort)(settings.ArrowDirectionReversed ? 1 : 0),
-                    (ushort)settings.MovementSpeed,
-                    (ushort)settings.MinCameraToTableDistance,
-                    (ushort)settings.LightIntensity,
-                    (ushort)settings.LightDelay,
-                    (ushort)settings.LightExposure,
-                    (ushort)settings.TriggerDelay,
-                    (ushort)settings.LightMode,
-                    (ushort)settings.PcTimeout
-                };
-
-                // Записываем начиная с 4x7 (адрес 6), 12 регистров
-                await master.WriteMultipleRegistersAsync(_slaveId, 6, values);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-        public async Task<List<string>> ReadNonFatalErrorsAsync()
-        {
-            try
-            {
-                using var client = new TcpClient(_session.ControllerIP, 502);
-                var factory = new ModbusFactory();
-                var master = factory.CreateMaster(client);
-
-                // 3x4 — Input-регистр с некритическими ошибками (word)
-                var regs = await master.ReadInputRegistersAsync(_slaveId, 4, 1);
-                ushort word = regs[0];
-                return PlcErrorDecoder.DecodeNonFatalErrors(word);
-            }
-            catch
-            {
-                return new List<string> { "Ошибка чтения не критических ошибок." };
-            }
-        }
-
-        public async Task<List<string>> ReadFatalErrorsAsync()
-        {
-            try
-            {
-                using var client = new TcpClient(_session.ControllerIP, 502);
-                var factory = new ModbusFactory();
-                var master = factory.CreateMaster(client);
-
-                // 3x5 — Критические ошибки, 3x6 — Final (объединяем)
-                var regs = await master.ReadInputRegistersAsync(_slaveId, 5, 2);
-                ushort regular = regs[0];
-                ushort final = regs[1];
-                ushort combined = (ushort)(regular | final);
-                return PlcErrorDecoder.DecodeFatalErrors(combined);
-            }
-            catch
-            {
-                return new List<string> { "Ошибка чтения критических ошибок." };
-            }
+            return string.Join("; ", errors);
         }
     }
 }

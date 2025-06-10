@@ -1,4 +1,5 @@
-﻿using Avalonia.SimpleRouter;
+﻿using Avalonia.Logging;
+using Avalonia.SimpleRouter;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DM_wraper_NS;
@@ -13,6 +14,7 @@ using l2l_aggregator.Services.Notification.Interface;
 using l2l_aggregator.Services.Printing;
 using l2l_aggregator.Services.ScannerService.Interfaces;
 using l2l_aggregator.ViewModels.VisualElements;
+using Microsoft.Extensions.Logging;
 using Refit;
 using System;
 using System.Collections.ObjectModel;
@@ -58,8 +60,8 @@ namespace l2l_aggregator.ViewModels
         private readonly ConfigurationLoaderService _configLoader;
         private readonly PrintingService _printingService;
         private readonly DataApiService _dataApiService;
-        private readonly PcPlcConnectionService _plcService;
 
+        private readonly ILogger<PcPlcConnectionService> _logger;
 
         public SettingsViewModel(DatabaseService databaseService,
             HistoryRouter<ViewModelBase> router,
@@ -70,7 +72,7 @@ namespace l2l_aggregator.ViewModels
             ConfigurationLoaderService configLoader,
             PrintingService printingService, 
             DataApiService dataApiService,
-            PcPlcConnectionService plcService)
+            ILogger<PcPlcConnectionService> logger)
         {
             _configLoader = configLoader;
             _notificationService = notificationService;
@@ -81,8 +83,8 @@ namespace l2l_aggregator.ViewModels
             _dmScanService = dmScanService;
             _printingService = printingService;
             _dataApiService = dataApiService;
+            _logger = logger;
             _ = InitializeAsync();
-            _plcService = plcService;
         }
         private async Task InitializeAsync()
         {
@@ -276,20 +278,38 @@ namespace l2l_aggregator.ViewModels
 
             try
             {
-                var success = await _plcService.TestConnectionAsync();
 
-                if (!success)
+                // Создать службу подключения PLC
+                var plcService = new PcPlcConnectionService(_logger); // Внедрение ILogger
+                bool connected = await plcService.ConnectAsync(ControllerIP);
+                if (!connected)
                 {
-                    InfoMessage = "Контроллер не отвечает.";
+                    InfoMessage = "Не удалось подключиться к контроллеру!";
                     _notificationService.ShowMessage(InfoMessage);
                     return;
                 }
 
-                _sessionService.ControllerIP = ControllerIP;
-                _sessionService.CheckController = CheckControllerBeforeAggregation;
+                // Одиночный тест пинг-понга
+                bool pingPongResult = await plcService.TestConnectionAsync();
 
-                InfoMessage = "Контроллер успешно проверен и сохранён!";
-                _notificationService.ShowMessage(InfoMessage);
+                if (pingPongResult)
+                {
+                    // Сохранение настроек, если подключение успешно
+                    _sessionService.ControllerIP = ControllerIP;
+                    _sessionService.CheckController = CheckControllerBeforeAggregation;
+
+                    InfoMessage = "Контроллер успешно проверен и сохранён!";
+                    _notificationService.ShowMessage(InfoMessage);
+                }
+                else
+                {
+                    InfoMessage = "Контроллер не прошёл проверку ping-pong!";
+                    _notificationService.ShowMessage(InfoMessage);
+                }
+
+                // Закрыть подключение 
+                plcService.Disconnect();
+                plcService.Dispose();
             }
             catch (Exception ex)
             {

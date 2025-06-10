@@ -1,6 +1,5 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.SimpleRouter;
 using Avalonia.Threading;
@@ -13,6 +12,7 @@ using l2l_aggregator.Models.AggregationModels;
 using l2l_aggregator.Services;
 using l2l_aggregator.Services.AggregationService;
 using l2l_aggregator.Services.Api;
+using l2l_aggregator.Services.ControllerService;
 using l2l_aggregator.Services.Database;
 using l2l_aggregator.Services.DmProcessing;
 using l2l_aggregator.Services.GS1ParserService;
@@ -21,15 +21,15 @@ using l2l_aggregator.Services.Printing;
 using l2l_aggregator.ViewModels.VisualElements;
 using l2l_aggregator.Views.Popup;
 using Microsoft.Extensions.Logging;
-using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using l2l_aggregator.Services.ControllerService;
+using System.Timers;
 
 namespace l2l_aggregator.ViewModels
 {
@@ -177,15 +177,16 @@ namespace l2l_aggregator.ViewModels
         }
 
         //-----------------------------------------------
-        //таймер для проверки контроллера
-        private DispatcherTimer _controllerPingTimer;
+
 
         [ObservableProperty]
         private bool isControllerAvailable = true; // по умолчанию доступен
 
         private Image<Rgba32> _croppedImageRaw;
 
-        private readonly PcPlcConnectionService _plcService;
+        private PcPlcConnectionService _plcConnection;
+        private Timer _plcPingTimer;
+        private readonly ILogger<PcPlcConnectionService> _logger;
 
         public AggregationViewModel(
             DataApiService dataApiService,
@@ -199,7 +200,7 @@ namespace l2l_aggregator.ViewModels
             INotificationService notificationService,
             HistoryRouter<ViewModelBase> router,
             PrintingService printingService,
-             PcPlcConnectionService plcService
+            ILogger<PcPlcConnectionService> logger
             )
         {
             _sessionService = sessionService;
@@ -207,17 +208,14 @@ namespace l2l_aggregator.ViewModels
             _imageProcessingService = imageProcessingService;
             _templateService = templateService;
             _dmScanService = dmScanService;
-            //_scannerListener = scannerListener;
             _databaseService = databaseService;
-            //_scannerInputService = scannerInputService;
             _notificationService = notificationService;
             _router = router;
             _printingService = printingService;
-            _plcService = plcService;
+            _logger = logger;
 
             ImageSizeChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeChanged);
             ImageSizeCellChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeCellChanged);
-            //ImageSizeGridCellChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeGridCellChanged);
 
 
             InitializeAsync();
@@ -371,33 +369,44 @@ namespace l2l_aggregator.ViewModels
 
         }
 
-        private void InitializeControllerPing()
+        private async void InitializeControllerPing()
         {
             if (!_sessionService.CheckController || string.IsNullOrWhiteSpace(_sessionService.ControllerIP))
                 return;
 
-            _controllerPingTimer = new DispatcherTimer
+            try
             {
-                Interval = TimeSpan.FromSeconds(10)
-            };
-            _controllerPingTimer.Tick += async (s, e) =>
-            {
-                var isAlive = await _plcService.TestConnectionAsync();
+                _plcConnection = new PcPlcConnectionService(_logger); 
+                bool connected = await _plcConnection.ConnectAsync(_sessionService.ControllerIP);
 
-                IsControllerAvailable = isAlive;
-
-                if (!isAlive)
+                if (connected)
                 {
-                    _notificationService.ShowMessage("Потеряна связь с контроллером!", NotificationType.Warn);
+                    // Запуск непрерывного мониторинга ping-pong
+                    _plcConnection.StartPingPong(10000); // Каждые 10 секунд
+
+                    // Подписка на изменения статуса соединения
+                    _plcConnection.ConnectionStatusChanged += OnPlcConnectionStatusChanged;
+                    _plcConnection.ErrorsReceived += OnPlcErrorsReceived;
+
+                    IsControllerAvailable = true;
+                    _notificationService.ShowMessage("Контроллер подключен и мониторинг активен");
                 }
-            };
-            _controllerPingTimer.Start();
+                else
+                {
+                    IsControllerAvailable = false;
+                    _notificationService.ShowMessage("Не удалось подключиться к контроллеру", NotificationType.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                IsControllerAvailable = false;
+                _notificationService.ShowMessage($"Ошибка инициализации контроллера: {ex.Message}", NotificationType.Error);
+            }
         }
 
         ~AggregationViewModel()
         {
             _scannerWorker?.Dispose();
-            _controllerPingTimer?.Stop();
         }
 
         partial void OnIsControllerAvailableChanged(bool value)
@@ -436,6 +445,27 @@ namespace l2l_aggregator.ViewModels
 
         }
 
+
+        private void OnPlcConnectionStatusChanged(bool isConnected)
+        {
+            IsControllerAvailable = isConnected;
+
+            if (!isConnected)
+            {
+                _notificationService.ShowMessage("Потеряно соединение с контроллером!", NotificationType.Error);
+            }
+            else
+            {
+                _notificationService.ShowMessage("Соединение с контроллером восстановлено");
+            }
+        }
+
+        private void OnPlcErrorsReceived(PlcErrors errors)
+        {
+            string errorMessage = errors.GetErrorDescription();
+            _notificationService.ShowMessage($"Ошибки контроллера: {errorMessage}", NotificationType.Error);
+        }
+
         //работа с контроллером, выставление высоты
         private async Task<bool> MoveCameraToCurrentLayerAsync()
         {
@@ -443,6 +473,11 @@ namespace l2l_aggregator.ViewModels
             if (!_sessionService.CheckController)
                 return true;
 
+            if (!IsControllerAvailable)
+            {
+                _notificationService.ShowMessage("Контроллер недоступен!");
+                return false;
+            }
 
             if (_sessionService.SelectedTaskInfo == null)
             {
@@ -451,16 +486,20 @@ namespace l2l_aggregator.ViewModels
             }
 
             float? packHeight = _sessionService.SelectedTaskInfo.PACK_HEIGHT;
+            int layersQty = _sessionService.SelectedTaskInfo.LAYERS_QTY;
 
             if (packHeight == null || packHeight == 0)
             {
                 _notificationService.ShowMessage("Ошибка: не задана высота слоя (PACK_HEIGHT).");
                 return false;
             }
+            if (layersQty == null || layersQty == 0)
+            {
+                _notificationService.ShowMessage("Ошибка: не задана колличество слёв (LAYERS_QTY).");
+                return false;
+            }
 
-            string controllerIp = _sessionService.ControllerIP;
-
-            if (string.IsNullOrWhiteSpace(controllerIp))
+            if (string.IsNullOrWhiteSpace(_sessionService.ControllerIP))
             {
                 _notificationService.ShowMessage("IP контроллера не задан.");
                 return false;
@@ -468,25 +507,45 @@ namespace l2l_aggregator.ViewModels
 
             try
             {
-                var current = await _plcService.ReadCameraSettingsAsync();
-                if (current == null)
+                // Установка рабочих настроек бокса для текущей операции
+                var boxSettings = new BoxWorkSettings
                 {
-                    _notificationService.ShowMessage("Не удалось прочитать настройки камеры из контроллера.");
-                    return false;
-                }
-                current.PositioningTimeout = (int)(packHeight.Value * CurrentLayer); // или как у тебя вычисляется высота слоя
-                var success = await _plcService.WriteCameraSettingsAsync(current);
-                if (!success)
-                {
-                    _notificationService.ShowMessage("Не удалось записать настройки позиционирования.");
-                    return false;
-                }
+                    CamBoxDistance = (ushort)(450 - ((CurrentLayer - 1) * packHeight)), // Настройка для текущего слоя
+                    BoxHeight = (ushort)packHeight,
+                    LayersQtty = (ushort)layersQty,
+                    CamBoxMinDistance = 500
+                };
+
+                await _plcConnection.SetBoxWorkSettingsAsync(boxSettings);
+
+                // Запуск шага цикла для текущего слоя
+                await _plcConnection.StartCycleStepAsync((ushort)CurrentLayer);
+
+                // Запуск захвата фото
+                await _plcConnection.TriggerPhotoAsync();
                 return true;
             }
             catch (Exception ex)
             {
                 _notificationService.ShowMessage($"Ошибка позиционирования: {ex.Message}");
                 return false;
+            }
+        }
+
+        // Метод для подтверждения обработки фото в ПЛК
+        //!!!!УЗНАТЬ ЧТО ОН ДЕЛАЕТ, ЕГО НУЖНО ОТПРАВЛЯТЬ ПОСЛЕ ПОЛКУЧЕНИЯ ИЗОБРАЖЕНИЯ, ИЛИ КОГДА ДАННЫЕ С КАДРА ХОРОШО СЧИТАЛИСЬ!!!!
+        private async Task ConfirmPhotoToPlcAsync()
+        {
+            if (_plcConnection?.IsConnected == true)
+            {
+                try
+                {
+                    await _plcConnection.ConfirmPhotoProcessedAsync();
+                }
+                catch (Exception ex)
+                {
+                    _notificationService.ShowMessage($"Ошибка подтверждения фото: {ex.Message}");
+                }
             }
         }
 
@@ -566,7 +625,10 @@ namespace l2l_aggregator.ViewModels
                 return;
 
             UpdateInfoAndUI();
+            // Метод подтверждения обработки фотографий в ПЛК
+            await ConfirmPhotoToPlcAsync();
 
+            // Сохранение агрегационного состояния
             // await SaveAggregationProgressAsync();
         }
 
@@ -1027,11 +1089,18 @@ OCR:
             imageCellHeight = e.NewSize.Height;
         }
 
-        private void OnImageSizeGridCellChanged(SizeChangedEventArgs e)
+        protected override void Dispose(bool disposing)
         {
-            imageCellWidth = e.NewSize.Width;
-            imageCellHeight = e.NewSize.Height;
+            if (disposing)
+            {
+                _plcConnection?.StopPingPong();
+                _plcConnection?.Disconnect();
+                _plcConnection?.Dispose();
+                _scannerWorker?.Dispose();
+            }
+            base.Dispose(disposing);
         }
 
     }
+
 }

@@ -7,16 +7,12 @@ using DM_wraper_NS;
 using l2l_aggregator.Services;
 using l2l_aggregator.Services.ControllerService;
 using l2l_aggregator.Services.DmProcessing;
-using l2l_aggregator.Services.Notification;
 using l2l_aggregator.Services.Notification.Interface;
-using NModbus;
+using Microsoft.Extensions.Logging;
 using SixLabors.ImageSharp;
 using System;
 using System.IO;
-using System.Net.Sockets;
-using System.Threading;
 using System.Threading.Tasks;
-using static l2l_aggregator.Services.ControllerService.PcPlcConnectionService;
 
 namespace l2l_aggregator.ViewModels
 {
@@ -33,6 +29,22 @@ namespace l2l_aggregator.ViewModels
         [ObservableProperty] private double imageWidth;
         [ObservableProperty] private double imageHeight;
 
+        // Свойства PLC настроек
+        [ObservableProperty] private bool forcePositioning;
+        [ObservableProperty] private bool positioningPermit;
+        [ObservableProperty] private ushort retreatZeroHomePosition = 70;
+        [ObservableProperty] private ushort zeroPositioningTime = 10000;
+        [ObservableProperty] private ushort estimatedZeroHomeDistance = 252;
+        [ObservableProperty] private ushort directionChangeTime = 500;
+        [ObservableProperty] private ushort camMovementVelocity = 20;
+        [ObservableProperty] private ushort camBoxMinDistance = 500;
+        [ObservableProperty] private ushort lightLevel = 100;
+        [ObservableProperty] private ushort lightDelay = 1000;
+        [ObservableProperty] private ushort lightExposure = 4000;
+        [ObservableProperty] private ushort camDelay = 1000;
+        [ObservableProperty] private ushort camExposure = 30;
+        [ObservableProperty] private bool continuousLightMode = false;
+
         static result_data dmrData;
 
         //сервис работы с сессией
@@ -41,31 +53,187 @@ namespace l2l_aggregator.ViewModels
         //сервис нотификаций
         private readonly INotificationService _notificationService;
 
-        [ObservableProperty] private int offsetFromZeroPosition;
-        [ObservableProperty] private int positioningTimeout;
-        [ObservableProperty] private int zeroToHomeDistance;
-        [ObservableProperty] private bool arrowDirectionReversed;
-        [ObservableProperty] private int movementSpeed;
-        [ObservableProperty] private int minCameraToTableDistance;
 
-        [ObservableProperty] private int lightIntensity;
-        [ObservableProperty] private int lightDelay;
-        [ObservableProperty] private int lightExposure;
-        [ObservableProperty] private int triggerDelay;
-        [ObservableProperty] private int lightMode;
-        [ObservableProperty] private int pcTimeout;
+        private PcPlcConnectionService _plcConnection;
 
-        private readonly PcPlcConnectionService _plcConnection;
-        public CameraSettingsViewModel(HistoryRouter<ViewModelBase> router, DmScanService dmScanService, SessionService sessionService, INotificationService notificationService, PcPlcConnectionService plcConnection)
+        private readonly ILogger<PcPlcConnectionService> _logger;
+
+
+        public CameraSettingsViewModel(HistoryRouter<ViewModelBase> router, DmScanService dmScanService, SessionService sessionService, INotificationService notificationService, ILogger<PcPlcConnectionService> logger)
         {
             _sessionService = sessionService;
             _notificationService = notificationService;
-            _plcConnection = plcConnection;
+            //_plcConnection = plcConnection;
             _router = router;
             _dmScanService = dmScanService;
+
             ImageSizeChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeChanged);
             _ = InitializeAsync();
+            _logger = logger;
         }
+        private async Task InitializeAsync()
+        {
+            await ConnectToPlcAsync();
+            await LoadSettingsFromPlcAsync();
+        }
+
+        private async Task ConnectToPlcAsync()
+        {
+            if (string.IsNullOrWhiteSpace(_sessionService.ControllerIP))
+            {
+                _notificationService.ShowMessage("IP контроллера не задан!");
+                return;
+            }
+
+            try
+            {
+                _plcConnection = new PcPlcConnectionService(_logger);
+                bool connected = await _plcConnection.ConnectAsync(_sessionService.ControllerIP);
+
+                if (!connected)
+                {
+                    _notificationService.ShowMessage("Не удалось подключиться к контроллеру!");
+                    return;
+                }
+
+                _notificationService.ShowMessage("Подключение к контроллеру установлено");
+            }
+            catch (Exception ex)
+            {
+                _notificationService.ShowMessage($"Ошибка подключения к контроллеру: {ex.Message}");
+            }
+        }
+
+        private async Task LoadSettingsFromPlcAsync()
+        {
+            if (_plcConnection?.IsConnected != true) return;
+
+            try
+            {
+                // Загрузка настроек позиционирования
+                var positioningSettings = await _plcConnection.GetPositioningSettingsAsync();
+                RetreatZeroHomePosition = positioningSettings.RetreatZeroHomePosition;
+                ZeroPositioningTime = positioningSettings.ZeroPositioning;
+                EstimatedZeroHomeDistance = positioningSettings.EstimatedZeroHomeDistance;
+                DirectionChangeTime = positioningSettings.TimeBetweenDirectionsChange;
+                CamMovementVelocity = positioningSettings.CamMovementVelocity;
+
+                // Загрузка настроек освещения
+                var lightingSettings = await _plcConnection.GetLightingSettingsAsync();
+                LightLevel = lightingSettings.LightLevel;
+                LightDelay = lightingSettings.LightDelay;
+                LightExposure = lightingSettings.LightExposure;
+                CamDelay = lightingSettings.CamDelay;
+                CamExposure = lightingSettings.CamExposure;
+                ContinuousLightMode = lightingSettings.ContinuousLightMode;
+
+                _notificationService.ShowMessage("Настройки загружены из контроллера");
+            }
+            catch (Exception ex)
+            {
+                _notificationService.ShowMessage($"Ошибка загрузки настроек: {ex.Message}");
+            }
+        }
+
+        [RelayCommand]
+        public async Task SavePositioningSettings()
+        {
+            if (_plcConnection?.IsConnected != true)
+            {
+                _notificationService.ShowMessage("Нет подключения к контроллеру!");
+                return;
+            }
+
+            try
+            {
+                var settings = new PositioningSettings
+                {
+                    RetreatZeroHomePosition = RetreatZeroHomePosition,
+                    ZeroPositioning = ZeroPositioningTime,
+                    EstimatedZeroHomeDistance = EstimatedZeroHomeDistance,
+                    TimeBetweenDirectionsChange = DirectionChangeTime,
+                    CamMovementVelocity = CamMovementVelocity
+                };
+
+                await _plcConnection.SetPositioningSettingsAsync(settings);
+                _notificationService.ShowMessage("Настройки позиционирования сохранены");
+            }
+            catch (Exception ex)
+            {
+                _notificationService.ShowMessage($"Ошибка сохранения настроек: {ex.Message}");
+            }
+        }
+
+        [RelayCommand]
+        public async Task SaveLightingSettings()
+        {
+            if (_plcConnection?.IsConnected != true)
+            {
+                _notificationService.ShowMessage("Нет подключения к контроллеру!");
+                return;
+            }
+
+            try
+            {
+                var settings = new LightingSettings
+                {
+                    LightLevel = LightLevel,
+                    LightDelay = LightDelay,
+                    LightExposure = LightExposure,
+                    CamDelay = CamDelay,
+                    CamExposure = CamExposure,
+                    ContinuousLightMode = ContinuousLightMode
+                };
+
+                await _plcConnection.SetLightingSettingsAsync(settings);
+                _notificationService.ShowMessage("Настройки освещения сохранены");
+            }
+            catch (Exception ex)
+            {
+                _notificationService.ShowMessage($"Ошибка сохранения настроек: {ex.Message}");
+            }
+        }
+
+        [RelayCommand]
+        public async Task ForcePositioningCommand()
+        {
+            if (_plcConnection?.IsConnected != true)
+            {
+                _notificationService.ShowMessage("Нет подключения к контроллеру!");
+                return;
+            }
+
+            try
+            {
+                await _plcConnection.ForcePositioningAsync();
+                _notificationService.ShowMessage("Принудительное позиционирование запущено");
+            }
+            catch (Exception ex)
+            {
+                _notificationService.ShowMessage($"Ошибка позиционирования: {ex.Message}");
+            }
+        }
+
+        [RelayCommand]
+        public async Task GrantPositioningPermission()
+        {
+            if (_plcConnection?.IsConnected != true)
+            {
+                _notificationService.ShowMessage("Нет подключения к контроллеру!");
+                return;
+            }
+
+            try
+            {
+                await _plcConnection.GrantPositioningPermissionAsync();
+                _notificationService.ShowMessage("Разрешение на позиционирование выдано");
+            }
+            catch (Exception ex)
+            {
+                _notificationService.ShowMessage($"Ошибка выдачи разрешения: {ex.Message}");
+            }
+        }
+
         [RelayCommand]
         public async Task Scan()
         {
@@ -90,76 +258,19 @@ namespace l2l_aggregator.ViewModels
         [RelayCommand]
         public void GoBack()
         {
-            _ = _plcConnection.StopAsync();
+            _plcConnection?.Disconnect();
+            _plcConnection?.Dispose();
             // Переход на страницу назад
             _router.GoTo<SettingsViewModel>();
         }
-
-        private async Task InitializeAsync()
+        protected override void Dispose(bool disposing)
         {
-            await _plcConnection.StartAsync();
-
-            if (!_plcConnection.IsConnected)
+            if (disposing)
             {
-                _notificationService?.ShowMessage("ПЛК недоступен. Проверьте подключение.");
-                return;
+                _plcConnection?.Disconnect();
+                _plcConnection?.Dispose();
             }
-
-            await LoadFromPlcAsync();
+            base.Dispose(disposing);
         }
-
-        [RelayCommand]
-        public async Task LoadFromPlcAsync()
-        {
-            var settings = await _plcConnection.ReadCameraSettingsAsync();
-            if (settings == null)
-            {
-                _notificationService?.ShowMessage("Ошибка чтения уставок из ПЛК.");
-                return;
-            }
-
-            OffsetFromZeroPosition = settings.OffsetFromZeroPosition;
-            PositioningTimeout = settings.PositioningTimeout;
-            ZeroToHomeDistance = settings.ZeroToHomeDistance;
-            ArrowDirectionReversed = settings.ArrowDirectionReversed;
-            MovementSpeed = settings.MovementSpeed;
-            MinCameraToTableDistance = settings.MinCameraToTableDistance;
-
-            LightIntensity = settings.LightIntensity;
-            LightDelay = settings.LightDelay;
-            LightExposure = settings.LightExposure;
-            TriggerDelay = settings.TriggerDelay;
-            LightMode = settings.LightMode;
-            PcTimeout = settings.PcTimeout;
-
-            _notificationService?.ShowMessage("Уставки загружены из ПЛК.");
-        }
-
-        [RelayCommand]
-        public async Task SaveToPlcAsync()
-        {
-            var settings = new CameraPlcSettings
-            {
-                OffsetFromZeroPosition = OffsetFromZeroPosition,
-                PositioningTimeout = PositioningTimeout,
-                ZeroToHomeDistance = ZeroToHomeDistance,
-                ArrowDirectionReversed = ArrowDirectionReversed,
-                MovementSpeed = MovementSpeed,
-                MinCameraToTableDistance = MinCameraToTableDistance,
-                LightIntensity = LightIntensity,
-                LightDelay = LightDelay,
-                LightExposure = LightExposure,
-                TriggerDelay = TriggerDelay,
-                LightMode = LightMode,
-                PcTimeout = PcTimeout
-            };
-
-            bool success = await _plcConnection.WriteCameraSettingsAsync(settings);
-            if (success)
-                _notificationService?.ShowMessage("Уставки успешно сохранены в ПЛК.");
-            else
-                _notificationService?.ShowMessage("Ошибка записи уставок в ПЛК.");
-        }
-
     }
 }
