@@ -577,8 +577,8 @@ namespace l2l_aggregator.ViewModels
                     CamInterfaces = "GigEVision2",
                     cameraName = _sessionService.CameraIP,
                     _Preset = new camera_preset(_sessionService.CameraModel),
-                    softwareTrigger = true,
-                    hardwareTrigger = false,
+                    softwareTrigger = true, //поменять на false
+                    hardwareTrigger = false, //поменять на true
                     OCRRecogn = hasOcr,
                     packRecogn = RecognizePack,
                     DMRecogn = hasDm

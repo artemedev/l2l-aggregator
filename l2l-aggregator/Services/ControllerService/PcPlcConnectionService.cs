@@ -297,7 +297,8 @@ namespace l2l_aggregator.Services.ControllerService
 
             _logger.LogInformation($"Started cycle step {stepNumber}");
         }
-        //!!!!КАК ЭТО РАБОТАЕТ. СЕЙЧАС Я ПОЛУЧАЮ ФОТО ОТ БИБЛИОТЕКИ РАСПОЗНАВАНИЯ, ТО ЕСТЬ ТАМ ТОЖЕ ЕСТЬ ТРИГЕР ДЛЯ ФОТО, ТРИГЕР КАМЕРЫ ДЕЛАЕТ КАДР? КОГДА БУДЕТ ПЕДАЛЬ!!!!
+        //!!!!КАК ЭТО РАБОТАЕТ. СЕЙЧАС Я ПОЛУЧАЮ ФОТО ОТ БИБЛИОТЕКИ РАСПОЗНАВАНИЯ, ТО ЕСТЬ ТАМ ТОЖЕ ЕСТЬ ТРИГЕР ДЛЯ ФОТО, ТРИГЕР КАМЕРЫ ДЕЛАЕТ КАДР? КОГДА БУДЕТ ПЕДАЛЬ!!!! 
+        //START_PEDAL_BIT = 7 // 4x0.7
         public async Task TriggerPhotoAsync()
         {
             await SetBitAsync(PC_PLC_CONNECT_REGISTER, START_PEDAL_BIT, true);
