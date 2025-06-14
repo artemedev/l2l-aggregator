@@ -180,6 +180,16 @@ namespace DM_process_lib
 
             return resultFields;
         }
+
+        public void MP_StartShot()
+        {
+            _DMP.update_PP();
+            //_DMP._dM_recogn_wraper.Show_user_event("MP_StartShot", "message");
+            //Thread th_pShot = new Thread(_shot_proces);
+            //th_pShot.IsBackground = true;
+            //th_pShot.Start();
+            //Loger.Log(Loger.TypeLog.Info, "MainProces", "Start shot process");
+        }
         private class ResultData
         {
             public List<Cell> cells { get; set; }

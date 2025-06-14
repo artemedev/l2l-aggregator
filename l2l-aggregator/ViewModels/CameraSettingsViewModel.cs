@@ -241,7 +241,7 @@ namespace l2l_aggregator.ViewModels
             //_dmScanService.getScan();
             //новое
             //await _dmScanService.WaitForStartOkAsync();
-            //_dmScanService.startShot();
+            _dmScanService.startShot();
             dmrData = await _dmScanService.WaitForResultAsync();
             using (var ms = new MemoryStream())
             {

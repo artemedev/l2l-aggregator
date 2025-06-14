@@ -638,10 +638,10 @@ namespace l2l_aggregator.ViewModels
             try
             {
                 //старое
-                _dmScanService.getScan();
+                //_dmScanService.getScan();
                 //старт распознавания
                 //await _dmScanService.WaitForStartOkAsync();
-                //_dmScanService.startShot();
+                _dmScanService.startShot();
                 dmrData = await _dmScanService.WaitForResultAsync();
                 return true;
             }

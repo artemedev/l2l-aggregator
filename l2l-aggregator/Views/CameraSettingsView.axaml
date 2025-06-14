@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-			  xmlns:vm="using:l2l_aggregator.ViewModels"
+			 xmlns:vm="using:l2l_aggregator.ViewModels"
 			 x:DataType="vm:CameraSettingsViewModel"
              x:Class="l2l_aggregator.Views.CameraSettingsView">
 	<Grid>
@@ -37,16 +37,11 @@
                                    Foreground="Gray"
                                    IsVisible="{Binding ScannedImage, Converter={x:Static ObjectConverters.IsNull}}"/>
 
+						<!-- Упрощенное изображение без SizeChanged -->
 						<Image Source="{Binding ScannedImage}"
                                Stretch="Uniform"
-                               IsVisible="{Binding ScannedImage, Converter={x:Static ObjectConverters.IsNotNull}}">
-							<Interaction.Behaviors>
-								<EventTriggerBehavior EventName="SizeChanged">
-									<InvokeCommandAction Command="{Binding ImageSizeChangedCommand}"
-                                                         PassEventArgsToCommand="True"/>
-								</EventTriggerBehavior>
-							</Interaction.Behaviors>
-						</Image>
+                               Name="PreviewImage"
+                               IsVisible="{Binding ScannedImage, Converter={x:Static ObjectConverters.IsNotNull}}"/>
 					</Grid>
 				</Border>
 

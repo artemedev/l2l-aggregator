@@ -18,9 +18,23 @@ namespace DM_wraper_NS
         public event Action libStartShot = delegate { };
         public event Action libStopShot = delegate { };
         public event Action libGetCameras = delegate { };
+
+        //--------
+
         //__________ For Software _________________
         public event NewResultContainer swNewDMResult = delegate { };
         public event AlarmEventForUser alarmEvent = delegate { };
+
+        //-------------------------------------------
+        public delegate void FindedCameras(string[] cameras);
+
+        public event FindedCameras swFindedCamerasList = delegate { };
+        public event Action swPrintPaternOk = delegate { };
+        public event Action swParamsOk = delegate { };
+        public event Action swStartOk = delegate { };
+        public event Action swShotOk = delegate { };
+        public event Action swStopOk = delegate { };
+        //-------------------------------------------
 
         private ConcurrentQueue<result_data> _result = new ConcurrentQueue<result_data>();
         private recogn_params _params;
@@ -44,8 +58,11 @@ namespace DM_wraper_NS
         {
             result_data newResult;
             if (_result.TryDequeue(out newResult))
+            {
                 Console.WriteLine($"GetDMResult: {newResult.BOXs.Count()}");
-            return newResult;
+                return newResult;
+            }
+
             throw new Exception("DM results list is empty");
         }
         public bool SetParams(recogn_params newParams)

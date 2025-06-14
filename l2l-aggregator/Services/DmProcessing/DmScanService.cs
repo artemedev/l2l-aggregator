@@ -19,26 +19,20 @@ namespace l2l_aggregator.Services.DmProcessing
             _recognWrapper = new DM_recogn_wraper();
             _recognWrapper.Init();
             _recognWrapper.swNewDMResult += OnNewResult;
-            //_recognWrapper.alarmEvent += alarmEvent;
-            //_recognWrapper.swStartOk += OnStartOk;
-            //_recognWrapper.swFindedCamerasList += showListOfCam;
+            _recognWrapper.alarmEvent += alarmEvent;
+            _recognWrapper.swStartOk += OnStartOk;
+            _recognWrapper.swFindedCamerasList += showListOfCam;
             _dmProcess = new DM_process();
             _dmProcess.Init(_recognWrapper);
         }
 
         private result_data _dmrData;
-        //public void StartScan(string base64Template)
-        //{
-        //    _dmrDataReady = new TaskCompletionSource<bool>();
-        //    _recognWrapper.SendPrintPatternXML(base64Template);
-        //    _recognWrapper.SendStartShotComand();
-        //}
-        //старое
         public void StartScan(string base64Template)
         {
             _dmrDataReady = new TaskCompletionSource<bool>();
             _recognWrapper.SendPrintPatternXML(base64Template);
-            _DMP.update_PP();
+            _recognWrapper.SendStartShotComand();
+            
         }
         public void SaveXmlToFile(string xmlContent, string filePath)
         {
@@ -68,13 +62,6 @@ namespace l2l_aggregator.Services.DmProcessing
         {
             _recognWrapper.SendStopShotComand();
         }
-        //старое
-        public void getScan()
-        {
-            _dmrDataReady = new TaskCompletionSource<bool>();
-            _recognWrapper.SendStartShotComand();
-            _recognWrapper.SendShotFrameComand();
-        }
         public async Task<result_data> WaitForResultAsync()
         {
             await _dmrDataReady.Task;
@@ -86,11 +73,11 @@ namespace l2l_aggregator.Services.DmProcessing
             _dmrData = _recognWrapper.GetDMResult();
             _dmrDataReady.TrySetResult(true);
         }
-        //public void startShot()
-        //{
-        //    _dmrDataReady = new TaskCompletionSource<bool>();
-        //    _recognWrapper.SendShotFrameComand();
-        //}
+        public void startShot()
+        {
+            _dmrDataReady = new TaskCompletionSource<bool>();
+            _recognWrapper.SendShotFrameComand();
+        }
         public Task WaitForStartOkAsync()
         {
             _startOkSignal = new TaskCompletionSource<bool>();
