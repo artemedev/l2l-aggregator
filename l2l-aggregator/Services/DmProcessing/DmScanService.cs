@@ -67,7 +67,6 @@ namespace l2l_aggregator.Services.DmProcessing
             await _dmrDataReady.Task;
             return _dmrData;
         }
-
         private void OnNewResult(int countResult)
         {
             _dmrData = _recognWrapper.GetDMResult();

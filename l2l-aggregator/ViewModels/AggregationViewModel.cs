@@ -188,6 +188,18 @@ namespace l2l_aggregator.ViewModels
         private Timer _plcPingTimer;
         private readonly ILogger<PcPlcConnectionService> _logger;
 
+        //состояние кнопок
+        //Кнопка "Начать задание"
+        [ObservableProperty] private bool canStartTask = true;
+
+        //переменная для отслеживания состояния шаблона
+        private bool templateOk = false;
+
+        //Кнопка сканировать (hardware trigger)
+        [ObservableProperty] private bool canScanHardware = false;
+
+        //переменная для отслеживания состояния конфигурации камеры
+        private bool cameraConfigured = false;
         public AggregationViewModel(
             DataApiService dataApiService,
             ImageHelper imageProcessingService,
@@ -415,7 +427,49 @@ namespace l2l_aggregator.ViewModels
         }
         private void UpdateScanAvailability()
         {
-            CanScan = IsControllerAvailable && TemplateFields.Count > 0;
+            CanScan = IsControllerAvailable && TemplateFields.Count > 0 && templateOk;
+            CanScanHardware = IsControllerAvailable && TemplateFields.Count > 0 && templateOk;
+        }
+        [RelayCommand]
+        public async Task StartTask()
+        {
+            if (_sessionService.SelectedTaskInfo == null)
+            {
+                InfoMessage = "Ошибка: отсутствует информация о задании.";
+                _notificationService.ShowMessage(InfoMessage);
+                return;
+            }
+
+            CanStartTask = false; // Отключаем кнопку во время выполнения
+
+            try
+            {
+                //отправляет шаблон распознавания в библиотеку
+                templateOk = await SendTemplateToRecognizerAsync();
+
+                if (templateOk)
+                {
+                    InfoLayerText = "Шаблон успешно отправлен. Теперь можно начинать сканирование!";
+                    _notificationService.ShowMessage("Шаблон распознавания успешно настроен");
+                }
+                else
+                {
+                    InfoLayerText = "Ошибка отправки шаблона. Проверьте настройки и попробуйте снова.";
+                    _notificationService.ShowMessage("Ошибка настройки шаблона распознавания", NotificationType.Error);
+                    CanStartTask = true; // Включаем кнопку обратно при ошибке
+                }
+            }
+            catch (Exception ex)
+            {
+                InfoMessage = $"Ошибка инициализации задания: {ex.Message}";
+                _notificationService.ShowMessage(InfoMessage, NotificationType.Error);
+                CanStartTask = true; // Включаем кнопку обратно при ошибке
+                templateOk = false;
+            }
+            finally
+            {
+                UpdateScanAvailability();
+            }
         }
 
         [RelayCommand]
@@ -427,6 +481,13 @@ namespace l2l_aggregator.ViewModels
                 _notificationService.ShowMessage(InfoMessage);
                 return;
             }
+            if (!templateOk)
+            {
+                InfoMessage = "Шаблон не инициализирован. Сначала нажмите 'Начать задание'.";
+                _notificationService.ShowMessage(InfoMessage);
+                return;
+            }
+
             if (!await MoveCameraToCurrentLayerAsync())
                 return; // Остановить, если позиционирование не удалось
 
@@ -435,16 +496,55 @@ namespace l2l_aggregator.ViewModels
             //CurrentStepIndex = 1;
             //_cellsReadyTcs = new TaskCompletionSource<bool>();
 
-            //отправляет шаблон распознавания в библиотеку
-            var templateOk = await SendTemplateToRecognizerAsync();
-            if (!templateOk)
-                return;
+            ////отправляет шаблон распознавания в библиотеку
+            //var templateOk = await SendTemplateToRecognizerAsync();
+            //if (!templateOk)
+            //    return;
 
             //выполняет процесс получения данных от распознавания и отображение результата в UI
-            await StartScanningAsync();
+            await StartScanningSoftwareAsync();
 
         }
+        // Команда для hardware trigger сканирования
+        [RelayCommand]
+        public async Task ScanHardware()
+        {
+            if (_sessionService.SelectedTaskInfo == null)
+            {
+                InfoMessage = "Ошибка: отсутствует информация о задании.";
+                _notificationService.ShowMessage(InfoMessage);
+                return;
+            }
 
+            if (!templateOk)
+            {
+                InfoMessage = "Задание не инициализировано. Сначала нажмите 'Начать задание'.";
+                _notificationService.ShowMessage(InfoMessage);
+                return;
+            }
+
+            if (!await MoveCameraToCurrentLayerAsync())
+                return; // Остановить, если позиционирование не удалось
+
+
+
+            // Отправляем шаблон для hardware trigger режима
+            if (!await SendTemplateToRecognizerAsync())
+                return;
+
+            // Запуск захвата фото через контроллер
+            try
+            {
+                await _plcConnection.TriggerPhotoAsync();
+                //выполняет процесс получения данных от распознавания и отображение результата в UI
+                await StartScanningHardwareAsync();
+            }
+            catch (Exception ex)
+            {
+                InfoMessage = $"Ошибка hardware trigger: {ex.Message}";
+                _notificationService.ShowMessage(InfoMessage);
+            }
+        }
 
         private void OnPlcConnectionStatusChanged(bool isConnected)
         {
@@ -521,8 +621,8 @@ namespace l2l_aggregator.ViewModels
                 // Запуск шага цикла для текущего слоя
                 await _plcConnection.StartCycleStepAsync((ushort)CurrentLayer);
 
-                // Запуск захвата фото
-                await _plcConnection.TriggerPhotoAsync();
+                //// Запуск захвата фото
+                //await _plcConnection.TriggerPhotoAsync();
                 return true;
             }
             catch (Exception ex)
@@ -578,7 +678,7 @@ namespace l2l_aggregator.ViewModels
                     cameraName = _sessionService.CameraIP,
                     _Preset = new camera_preset(_sessionService.CameraModel),
                     softwareTrigger = true, //поменять на false
-                    hardwareTrigger = false, //поменять на true
+                    hardwareTrigger = true, //поменять на true
                     OCRRecogn = hasOcr,
                     packRecogn = RecognizePack,
                     DMRecogn = hasDm
@@ -606,8 +706,8 @@ namespace l2l_aggregator.ViewModels
             return true; // шаблон не изменился, можно использовать старый
         }
 
-        //выполняет процесс получения данных от распознавания и отображение результата в UI
-        public async Task StartScanningAsync()
+        //выполняет процесс получения данных от распознавания и отображение результата в UI.Software
+        public async Task StartScanningSoftwareAsync()
         {
             if (_lastUsedTemplateJson == null)
             {
@@ -615,7 +715,7 @@ namespace l2l_aggregator.ViewModels
                 return;
             }
 
-            if (!await TryReceiveScanDataAsync())
+            if (!await TryReceiveScanDataSoftwareAsync())
                 return;
 
             if (!await TryCropImageAsync())
@@ -625,15 +725,40 @@ namespace l2l_aggregator.ViewModels
                 return;
 
             UpdateInfoAndUI();
-            // Метод подтверждения обработки фотографий в ПЛК
-            await ConfirmPhotoToPlcAsync();
+            //// Метод подтверждения обработки фотографий в ПЛК
+            //await ConfirmPhotoToPlcAsync();
+
+            // Сохранение агрегационного состояния
+            // await SaveAggregationProgressAsync();
+        }
+        //выполняет процесс получения данных от распознавания и отображение результата в UI.Hardware
+        public async Task StartScanningHardwareAsync()
+        {
+            if (_lastUsedTemplateJson == null)
+            {
+                _notificationService.ShowMessage("Шаблон не отправлен. Сначала выполните отправку шаблона.");
+                return;
+            }
+
+            if (!await TryReceiveScanDataHardwareAsync())
+                return;
+
+            if (!await TryCropImageAsync())
+                return;
+
+            if (!await TryBuildCellsAsync())
+                return;
+
+            UpdateInfoAndUI();
+            //// Метод подтверждения обработки фотографий в ПЛК
+            //await ConfirmPhotoToPlcAsync();
 
             // Сохранение агрегационного состояния
             // await SaveAggregationProgressAsync();
         }
 
-        // Получение данных распознавания
-        private async Task<bool> TryReceiveScanDataAsync()
+        // Получение данных распознавания. Software
+        private async Task<bool> TryReceiveScanDataSoftwareAsync()
         {
             try
             {
@@ -642,6 +767,26 @@ namespace l2l_aggregator.ViewModels
                 //старт распознавания
                 //await _dmScanService.WaitForStartOkAsync();
                 _dmScanService.startShot();
+                dmrData = await _dmScanService.WaitForResultAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                InfoMessage = $"Ошибка распознавания: {ex.Message}";
+                _notificationService.ShowMessage(InfoMessage);
+                return false;
+            }
+        }
+        // Получение данных распознавания. Hardware
+        private async Task<bool> TryReceiveScanDataHardwareAsync()
+        {
+            try
+            {
+                //старое
+                //_dmScanService.getScan();
+                //старт распознавания
+                //await _dmScanService.WaitForStartOkAsync();
+                //_dmScanService.startShot();
                 dmrData = await _dmScanService.WaitForResultAsync();
                 return true;
             }
@@ -720,7 +865,7 @@ namespace l2l_aggregator.ViewModels
             return true;
         }
         //Обновление UI и состояния
-        private void UpdateInfoAndUI()
+        private async void UpdateInfoAndUI()
         {
             int validCountDMCells = DMCells.Count(c => c.IsValid);
             // Обновление информационного текста выше изображения
@@ -746,6 +891,8 @@ namespace l2l_aggregator.ViewModels
                 CanScan = false;
                 CanOpenTemplateSettings = false;
                 СanPrintBoxLabel = true;
+                // Метод подтверждения обработки фотографий в ПЛК
+                await ConfirmPhotoToPlcAsync();
             }
         }
         //Сохранение состояния агрегации
