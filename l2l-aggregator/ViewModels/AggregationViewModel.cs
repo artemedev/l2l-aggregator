@@ -336,11 +336,33 @@ namespace l2l_aggregator.ViewModels
         {
             if (_sessionService.SelectedTaskInfo != null)
             {
-                numberOfLayers = _sessionService.SelectedTaskInfo.IN_BOX_QTY / _sessionService.SelectedTaskInfo.LAYERS_QTY;
-                //шаблон коробки
-                frxBoxBytes = Convert.FromBase64String(_sessionService.SelectedTaskInfo.BOX_TEMPLATE);
-                //шаблон паллеты
-                frxPalletBytes = Convert.FromBase64String(_sessionService.SelectedTaskInfo.PALLETE_TEMPLATE);
+                // Безопасное преобразование nullable int в int
+                var inBoxQty = _sessionService.SelectedTaskInfo.IN_BOX_QTY ?? 0;
+                var layersQty = _sessionService.SelectedTaskInfo.LAYERS_QTY ?? 1; // избегаем деления на ноль
+
+                if (layersQty > 0)
+                {
+                    numberOfLayers = inBoxQty / layersQty;
+                }
+                else
+                {
+                    numberOfLayers = 0;
+                    InfoMessage = "Ошибка: некорректное количество слоев (LAYERS_QTY).";
+                    _notificationService.ShowMessage(InfoMessage);
+                }
+
+
+                // Проверяем, что BOX_TEMPLATE не null и не пустой
+                if (_sessionService.SelectedTaskInfo.BOX_TEMPLATE != null)
+                {
+                    // Если BOX_TEMPLATE это byte[], то используем его напрямую
+                    frxBoxBytes = _sessionService.SelectedTaskInfo.BOX_TEMPLATE;
+                }
+                else
+                {
+                    InfoMessage = "Ошибка: шаблон коробки отсутствует.";
+                    _notificationService.ShowMessage(InfoMessage);
+                }
             }
             else
             {
@@ -348,6 +370,27 @@ namespace l2l_aggregator.ViewModels
                 _notificationService.ShowMessage(InfoMessage);
                 return;
             }
+            //var inBoxQty = _sessionService.SelectedTaskInfo.IN_BOX_QTY ?? 0;
+            //var layersQty = _sessionService.SelectedTaskInfo.LAYERS_QTY ?? 1; // избегаем деления на ноль
+
+            //if (layersQty > 0)
+            //{
+            //    numberOfLayers = inBoxQty / layersQty;
+            //}
+            //if (_sessionService.SelectedTaskInfo != null)
+            //{
+            //    numberOfLayers = _sessionService.SelectedTaskInfo.IN_BOX_QTY / _sessionService.SelectedTaskInfo.LAYERS_QTY;
+            //    //шаблон коробки
+            //    frxBoxBytes = _sessionService.SelectedTaskInfo.BOX_TEMPLATE;
+            //    ////шаблон паллеты
+            //    //frxPalletBytes = Convert.FromBase64String(_sessionService.SelectedTaskInfo.PALLETE_TEMPLATE);
+            //}
+            //else
+            //{
+            //    InfoMessage = "Ошибка: отсутствует информация о задании.";
+            //    _notificationService.ShowMessage(InfoMessage);
+            //    return;
+            //}
         }
 
         private async void InitializeSsccAsync()
@@ -358,7 +401,17 @@ namespace l2l_aggregator.ViewModels
                 _notificationService.ShowMessage(InfoMessage);
                 return;
             }
-            responseSscc = await _dataApiService.LoadSsccAsync(_sessionService.SelectedTaskInfo.DOCID);
+
+            // Безопасное преобразование nullable long в long
+            var docId = _sessionService.SelectedTaskInfo.DOCID ?? 0;
+            if (docId == 0)
+            {
+                InfoMessage = "Ошибка: некорректный ID документа.";
+                _notificationService.ShowMessage(InfoMessage);
+                return;
+            }
+
+            responseSscc = await _dataApiService.LoadSsccAsync(docId);
             if (responseSscc == null)
             {
                 InfoMessage = "Ошибка загрузки SSCC данных.";
@@ -366,18 +419,47 @@ namespace l2l_aggregator.ViewModels
                 return;
             }
             _sessionService.SelectedTaskSscc = responseSscc.RECORDSET.FirstOrDefault();
+            //if (_sessionService.SelectedTaskInfo == null)
+            //{
+            //    InfoMessage = "Не выбрано задание. Невозможно загрузить SSCC.";
+            //    _notificationService.ShowMessage(InfoMessage);
+            //    return;
+            //}
+            //responseSscc = await _dataApiService.LoadSsccAsync(_sessionService.SelectedTaskInfo.DOCID);
+            //if (responseSscc == null)
+            //{
+            //    InfoMessage = "Ошибка загрузки SSCC данных.";
+            //    _notificationService.ShowMessage(InfoMessage);
+            //    return;
+            //}
+            //_sessionService.SelectedTaskSscc = responseSscc.RECORDSET.FirstOrDefault();
         }
 
         private void InitializeTemplate()
         {
-
             TemplateFields.Clear();
-            var loadedFields = _templateService.LoadTemplate(_sessionService.SelectedTaskInfo.UN_TEMPLATE_FR);
-            foreach (var f in loadedFields)
-                TemplateFields.Add(f);
 
-            //CanScan = TemplateFields.Count > 0;
+            // Проверяем, что UN_TEMPLATE_FR не null
+            if (_sessionService.SelectedTaskInfo?.UN_TEMPLATE_FR != null)
+            {
+                var loadedFields = _templateService.LoadTemplate(_sessionService.SelectedTaskInfo.UN_TEMPLATE_FR);
+                foreach (var f in loadedFields)
+                    TemplateFields.Add(f);
+            }
+            else
+            {
+                InfoMessage = "Ошибка: шаблон распознавания отсутствует.";
+                _notificationService.ShowMessage(InfoMessage);
+            }
+
             UpdateScanAvailability();
+            //TemplateFields.Clear();
+            //var loadedFields = _templateService.LoadTemplate(_sessionService.SelectedTaskInfo.UN_TEMPLATE_FR);
+            //foreach (var f in loadedFields)
+            //    TemplateFields.Add(f);
+
+            ////CanScan = TemplateFields.Count > 0;
+            //UpdateScanAvailability();
 
         }
 
@@ -388,7 +470,7 @@ namespace l2l_aggregator.ViewModels
 
             try
             {
-                _plcConnection = new PcPlcConnectionService(_logger); 
+                _plcConnection = new PcPlcConnectionService(_logger);
                 bool connected = await _plcConnection.ConnectAsync(_sessionService.ControllerIP);
 
                 if (connected)
@@ -585,8 +667,8 @@ namespace l2l_aggregator.ViewModels
                 return false;
             }
 
-            float? packHeight = _sessionService.SelectedTaskInfo.PACK_HEIGHT;
-            int layersQty = _sessionService.SelectedTaskInfo.LAYERS_QTY;
+            var packHeight = _sessionService.SelectedTaskInfo.PACK_HEIGHT ?? 0;
+            var layersQty = _sessionService.SelectedTaskInfo.LAYERS_QTY ?? 0;
 
             if (packHeight == null || packHeight == 0)
             {
@@ -821,7 +903,7 @@ namespace l2l_aggregator.ViewModels
             _croppedImageRaw = _imageProcessingService.GetCroppedImage(dmrData, minX, minY, maxX, maxY);
 
             // Освобождаем старое изображение перед новым
-            ScannedImage?.Dispose(); 
+            ScannedImage?.Dispose();
             ScannedImage = _imageProcessingService.ConvertToAvaloniaBitmap(_croppedImageRaw);
 
             await Task.Delay(100); //исправить
@@ -837,7 +919,14 @@ namespace l2l_aggregator.ViewModels
         // Построение ячеек
         private async Task<bool> TryBuildCellsAsync()
         {
-            var responseSgtin = await _dataApiService.LoadSgtinAsync(_sessionService.SelectedTaskInfo.DOCID);
+            var docId = _sessionService.SelectedTaskInfo?.DOCID ?? 0;
+            if (docId == 0)
+            {
+                InfoMessage = "Ошибка: некорректный ID документа.";
+                _notificationService.ShowMessage(InfoMessage);
+                return false;
+            }
+            var responseSgtin = await _dataApiService.LoadSgtinAsync(docId);
             if (responseSgtin == null)
             {
                 InfoMessage = "Ошибка загрузки данных SGTIN.";
@@ -960,24 +1049,24 @@ namespace l2l_aggregator.ViewModels
             }
         }
         //Печать этикетки паллеты
-        [RelayCommand]
-        public void PrintPalletLabel()
-        {
-            var boxRecord = responseSscc.RECORDSET
-               .Where(r => r.TYPEID == 1)
-               .ElementAtOrDefault(CurrentPallet - 1);
+        //[RelayCommand]
+        //public void PrintPalletLabel()
+        //{
+        //    var boxRecord = responseSscc.RECORDSET
+        //       .Where(r => r.TYPEID == 1)
+        //       .ElementAtOrDefault(CurrentPallet - 1);
 
-            if (boxRecord != null)
-            {
-                _sessionService.SelectedTaskSscc = boxRecord;
-                _printingService.PrintReport(frxPalletBytes, false);
-            }
-            else
-            {
-                InfoMessage = $"Не удалось найти запись паллет с индексом {CurrentPallet - 1}.";
-                _notificationService.ShowMessage(InfoMessage);
-            }
-        }
+        //    if (boxRecord != null)
+        //    {
+        //        _sessionService.SelectedTaskSscc = boxRecord;
+        //        _printingService.PrintReport(frxPalletBytes, false);
+        //    }
+        //    else
+        //    {
+        //        InfoMessage = $"Не удалось найти запись паллет с индексом {CurrentPallet - 1}.";
+        //        _notificationService.ShowMessage(InfoMessage);
+        //    }
+        //}
 
         //Очистить короб
         [RelayCommand]

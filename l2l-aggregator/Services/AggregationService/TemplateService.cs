@@ -12,17 +12,17 @@ namespace l2l_aggregator.Services.AggregationService
     {
         public XDocument OriginalDocument { get; private set; }
 
-        public List<TemplateField> LoadTemplate(string template)
+        public List<TemplateField> LoadTemplate(byte[] template)
         {
             var fields = new List<TemplateField>();
 
-            if (string.IsNullOrEmpty(template))
+            if (template == null || template.Length == 0)
                 return fields;
 
             try
             {
-                byte[] templateBytes = Convert.FromBase64String(template);
-                using (var memoryStream = new MemoryStream(templateBytes))
+                //byte[] templateBytes = Convert.FromBase64String(template);
+                using (var memoryStream = new MemoryStream(template))
                 {
                     OriginalDocument = XDocument.Load(memoryStream);
                 }
