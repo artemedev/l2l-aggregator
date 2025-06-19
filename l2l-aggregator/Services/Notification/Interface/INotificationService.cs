@@ -9,7 +9,8 @@ namespace l2l_aggregator.Services.Notification.Interface
     {
         Info,
         Warn,
-        Error
+        Error,
+        Success
     }
     public interface INotificationService
     {

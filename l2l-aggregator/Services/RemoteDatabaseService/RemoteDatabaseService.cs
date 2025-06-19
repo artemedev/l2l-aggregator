@@ -15,10 +15,10 @@ namespace l2l_aggregator.Services.Database
     {
         private readonly IConfigRepository _configRepository;
         private readonly INotificationService _notificationService;
-        private string? _connectionString;
+        //private string? _connectionString;
         private long? _currentSessionId;
         private long? _currentDeviceId;
-
+        private readonly string _connectionString = "Server=172.16.3.237;Port=3050;Database=/DATA_SSD/fb/arm_mtd_test.fdb;User=AEEGOROV;Password=AEE123456;";
         public RemoteDatabaseService(IConfigRepository configRepository, INotificationService notificationService)
         {
             _configRepository = configRepository;
@@ -29,15 +29,15 @@ namespace l2l_aggregator.Services.Database
         {
             try
             {
-                var databaseUri = await _configRepository.GetConfigValueAsync("DatabaseUri");
-                if (string.IsNullOrWhiteSpace(databaseUri))
-                {
-                    _notificationService.ShowMessage("Адрес базы данных не настроен!", NotificationType.Error);
-                    return false;
-                }
+                //var databaseUri = await _configRepository.GetConfigValueAsync("DatabaseUri");
+                //if (string.IsNullOrWhiteSpace(databaseUri))
+                //{
+                //    _notificationService.ShowMessage("Адрес базы данных не настроен!", NotificationType.Error);
+                //    return false;
+                //}
 
-                _connectionString = databaseUri;
-
+                //_connectionString = databaseUri;
+                _notificationService.ShowMessage($"Подключение к БД", NotificationType.Info);
                 return await TestConnectionAsync();
             }
             catch (Exception ex)
@@ -67,14 +67,14 @@ namespace l2l_aggregator.Services.Database
 
         public async Task SetConnectionStringAsync(string connectionString)
         {
-            _connectionString = connectionString;
+           // _connectionString = connectionString;
             await _configRepository.SetConfigValueAsync("DatabaseUri", connectionString);
         }
 
         private async Task<T> WithConnectionAsync<T>(Func<FbConnection, Task<T>> action)
         {
-            if (string.IsNullOrWhiteSpace(_connectionString))
-                throw new InvalidOperationException("Строка подключения не установлена");
+            //if (string.IsNullOrWhiteSpace(_connectionString))
+            //    throw new InvalidOperationException("Строка подключения не установлена");
 
             using var connection = new FbConnection(_connectionString);
             await connection.OpenAsync();
@@ -83,8 +83,8 @@ namespace l2l_aggregator.Services.Database
 
         private async Task WithConnectionAsync(Func<FbConnection, Task> action)
         {
-            if (string.IsNullOrWhiteSpace(_connectionString))
-                throw new InvalidOperationException("Строка подключения не установлена");
+            //if (string.IsNullOrWhiteSpace(_connectionString))
+            //    throw new InvalidOperationException("Строка подключения не установлена");
 
             using var connection = new FbConnection(_connectionString);
             await connection.OpenAsync();
@@ -572,5 +572,6 @@ namespace l2l_aggregator.Services.Database
         // Свойства для отслеживания состояния
         public long? CurrentSessionId => _currentSessionId;
         public long? CurrentDeviceId => _currentDeviceId;
+        public string ConnectionString => _connectionString;
     }
 }

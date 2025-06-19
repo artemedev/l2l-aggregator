@@ -45,13 +45,17 @@ namespace l2l_aggregator.ViewModels
         private readonly INotificationService _notificationService;
 
         private readonly HistoryRouter<ViewModelBase> _router;
-        public TaskListViewModel(DatabaseService databaseService, HistoryRouter<ViewModelBase> router, SessionService sessionService, DataApiService dataApiService, INotificationService notificationService)
+        private readonly DatabaseDataService _databaseDataService;
+
+        public TaskListViewModel(DatabaseService databaseService, DatabaseDataService databaseDataService, HistoryRouter<ViewModelBase> router, SessionService sessionService, DataApiService dataApiService, INotificationService notificationService)
         {
             _dataApiService = dataApiService;
             _databaseService = databaseService;
             _router = router;
             _sessionService = sessionService;
             _notificationService = notificationService;
+            _databaseDataService = databaseDataService;
+
 
             InitializeAsync();
             //string userId = await _databaseService.UserAuth.GetLastUserIdAsync();
@@ -74,7 +78,7 @@ namespace l2l_aggregator.ViewModels
         {
             try
             {
-                var serverUri =_sessionService.ServerUri;
+                var serverUri =_sessionService.DatabaseUri;
                 if (string.IsNullOrWhiteSpace(serverUri))
                 {
                     InfoMessage = "Сервер не настроен!";
@@ -89,7 +93,8 @@ namespace l2l_aggregator.ViewModels
                 //});
 
                 var request = new ArmJobRequest { userid = userId };
-                var response = await _dataApiService.GetJobsAsync(userId);
+                //var response = await _dataApiService.GetJobsAsync(userId);
+                var response = await _databaseDataService.GetJobsAsync(userId);
                 if (response != null)
                 {
                     //client.GetJobs(request);

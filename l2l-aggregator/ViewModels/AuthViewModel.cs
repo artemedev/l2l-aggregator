@@ -1,6 +1,7 @@
 ﻿using Avalonia.SimpleRouter;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using l2l_aggregator.Models;
 using l2l_aggregator.Services;
 using l2l_aggregator.Services.AggregationService;
 using l2l_aggregator.Services.Api;
@@ -32,10 +33,12 @@ namespace l2l_aggregator.ViewModels
         private readonly SessionService _sessionService;
         private readonly INotificationService _notificationService;
         private ScannerWorker _scannerWorker;
+        private readonly DatabaseDataService _databaseDataService;
         public AuthViewModel(DatabaseService databaseService, 
                             HistoryRouter<ViewModelBase> router, 
                             INotificationService notificationService, 
-                            DataApiService dataApiService, 
+                            DataApiService dataApiService,
+                            DatabaseDataService databaseDataService,
                             SessionService sessionService)
         {
             _databaseService = databaseService;
@@ -43,6 +46,7 @@ namespace l2l_aggregator.ViewModels
             _notificationService = notificationService;
             _dataApiService = dataApiService;
             _sessionService = sessionService;
+            _databaseDataService = databaseDataService;
             // Тестовые/заготовленные значения
             _login = "TESTINNO1";
             _password = "4QrcOUm6Wau+VuBX8g+IPg==";
@@ -124,39 +128,41 @@ namespace l2l_aggregator.ViewModels
         {
             try
             {
-                // Локальный админ вход
-                if (await _databaseService.UserAuth.ValidateAdminUserAsync(Login, Password))
+                if (string.IsNullOrWhiteSpace(_sessionService.DatabaseUri))
                 {
-                    _sessionService.User = new Models.UserAuthResponse { USER_NAME = Login };
-                    _notificationService.ShowMessage("Админ вход. Переходим к настройкам...");
-                    _router.GoTo<SettingsViewModel>();
+                    _notificationService.ShowMessage("База данных не настроена!");
                     return;
                 }
 
-
-                if (string.IsNullOrWhiteSpace(_sessionService.ServerUri))
-                {
-                    //InfoMessage = "Сервер не настроен!";
-                    _notificationService.ShowMessage("Сервер не настроен!");
-                    return;
-                }
-                // Попытка входа через API
+                // Попытка входа через удаленную БД
                 try
                 {
-                    var response = await _dataApiService.LoginAsync(Login, Password);
+                    UserAuthResponse response = await _databaseDataService.LoginAsync(Login, Password);
                     if (response != null)
                     {
                         if (response.AUTH_OK == "1")
                         {
                             _sessionService.User = response;
+
                             // Сохраняем в локальную базу
                             await _databaseService.UserAuth.SaveUserAuthAsync(response);
+
+                            // Проверяем права администратора
+                            bool isAdmin = await _databaseDataService.CheckAdminRoleAsync(response.USERID);
+                            _sessionService.IsAdmin = isAdmin;
                             // Успешная авторизация
                             _notificationService.ShowMessage("Авторизация прошла успешно!");
 
+                            // Если пользователь админ, предлагаем выбор
+                            //if (isAdmin)
+                            //{
+                            //    //_notificationService.ShowMessage("У вас есть права администратора. Переходим к настройкам...");
+                            //    //_router.GoTo<SettingsViewModel>();
+                            //    //return;
+                            //}
+
                             // Загружаем сохранённое состояние (если есть)
                             await _sessionService.LoadAggregationStateAsync(_databaseService);
-
 
                             if (_sessionService.HasUnfinishedAggregation)
                             {
@@ -175,20 +181,13 @@ namespace l2l_aggregator.ViewModels
                     }
                     else
                     {
-                        _notificationService.ShowMessage("Ошибка: пустой ответ от сервера.", NotificationType.Error);
+                        _notificationService.ShowMessage("Ошибка: пустой ответ от базы данных.", NotificationType.Error);
                     }
-
                 }
                 catch (Exception ex)
                 {
-
                     _notificationService.ShowMessage($"Ошибка входа: {ex.Message}", NotificationType.Error);
                 }
-
-            }
-            catch (ApiException apiEx)
-            {
-                _notificationService.ShowMessage($"API ошибка: {apiEx.Message}", NotificationType.Error);
             }
             catch (Exception ex)
             {

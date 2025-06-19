@@ -50,7 +50,7 @@
 								   FontWeight="SemiBold"
 								   FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource ResponsiveFontSizeConverter}, ConverterParameter='0.017;8;36'}"/>
 						<!-- TextBox во второй колонке, строка 1, растягивается по горизонтали -->
-						<TextBox Grid.Row="1" Text="{Binding ServerUri, Mode=TwoWay}"
+						<TextBox Grid.Row="1" Text="{Binding DatabaseUri, Mode=TwoWay}"
 								 HorizontalAlignment="Stretch"
 								 VerticalAlignment="Center"
 								 Watermark="IP адрес сервера"

@@ -26,7 +26,7 @@ namespace l2l_aggregator.ViewModels
 {
     public partial class SettingsViewModel : ViewModelBase
     {
-        [ObservableProperty] private string _serverUri;
+        [ObservableProperty] private string _databaseUri;
         [ObservableProperty] private string _cameraIP;
         [ObservableProperty] private string _serverIP;
         [ObservableProperty] private string _printerIP;
@@ -137,7 +137,7 @@ namespace l2l_aggregator.ViewModels
                 SelectedCameraModel = _sessionService.CameraModel
             };
             DisableVirtualKeyboard = _sessionService.DisableVirtualKeyboard;
-            ServerUri = _sessionService.ServerUri;
+            DatabaseUri = _sessionService.DatabaseUri;
             PrinterIP = _sessionService.PrinterIP;
             SelectedPrinterModel = _sessionService.PrinterModel;
             ControllerIP = _sessionService.ControllerIP;
@@ -192,7 +192,7 @@ namespace l2l_aggregator.ViewModels
         [RelayCommand]
         public async Task CheckAndSaveUriAsync()
         {
-            if (!string.IsNullOrWhiteSpace(ServerUri))
+            if (!string.IsNullOrWhiteSpace(DatabaseUri))
             {
                 try
                 {
@@ -214,7 +214,7 @@ namespace l2l_aggregator.ViewModels
                     };
                     var httpClient = new HttpClient(handler)
                     {
-                        BaseAddress = new Uri(ServerUri)
+                        BaseAddress = new Uri(DatabaseUri)
                     };
                     httpClient.DefaultRequestHeaders.Add("MTDApikey", "e2fbe0f4fbe2e0fbf4ecf7f1ece5e8f020fbe2e0eff0eae5f020edeeede320fceee8ec343533343536333435212121de2cc1de"); // если нужно
 
@@ -224,7 +224,7 @@ namespace l2l_aggregator.ViewModels
                     await _databaseService.RegistrationDevice.SaveRegistrationAsync(response);
 
                     //await _databaseService.Config.SetConfigValueAsync("ServerUri", ServerUri);
-                    _sessionService.ServerUri = ServerUri;
+                    //_sessionService.DatabaseUri = DatabaseUri;
                     InfoMessage = "URI успешно сохранён!";
                     _notificationService.ShowMessage(InfoMessage);
 

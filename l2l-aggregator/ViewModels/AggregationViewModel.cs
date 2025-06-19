@@ -200,6 +200,9 @@ namespace l2l_aggregator.ViewModels
 
         //переменная для отслеживания состояния конфигурации камеры
         private bool cameraConfigured = false;
+
+        private readonly DatabaseDataService _databaseDataService;
+
         public AggregationViewModel(
             DataApiService dataApiService,
             ImageHelper imageProcessingService,
@@ -208,6 +211,7 @@ namespace l2l_aggregator.ViewModels
             DmScanService dmScanService,
             ScannerListenerService scannerListener,
             DatabaseService databaseService,
+            DatabaseDataService databaseDataService,
             ScannerInputService scannerInputService,
             INotificationService notificationService,
             HistoryRouter<ViewModelBase> router,
@@ -225,6 +229,8 @@ namespace l2l_aggregator.ViewModels
             _router = router;
             _printingService = printingService;
             _logger = logger;
+            _databaseDataService = databaseDataService;
+
 
             ImageSizeChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeChanged);
             ImageSizeCellChangedCommand = new RelayCommand<SizeChangedEventArgs>(OnImageSizeCellChanged);
@@ -411,7 +417,8 @@ namespace l2l_aggregator.ViewModels
                 return;
             }
 
-            responseSscc = await _dataApiService.LoadSsccAsync(docId);
+            //responseSscc = await _dataApiService.LoadSsccAsync(docId);
+            responseSscc = await _databaseDataService.LoadSsccAsync(docId);
             if (responseSscc == null)
             {
                 InfoMessage = "Ошибка загрузки SSCC данных.";
@@ -926,7 +933,8 @@ namespace l2l_aggregator.ViewModels
                 _notificationService.ShowMessage(InfoMessage);
                 return false;
             }
-            var responseSgtin = await _dataApiService.LoadSgtinAsync(docId);
+            //var responseSgtin = await _dataApiService.LoadSgtinAsync(docId);
+            var responseSgtin = await _databaseDataService.LoadSgtinAsync(docId);
             if (responseSgtin == null)
             {
                 InfoMessage = "Ошибка загрузки данных SGTIN.";

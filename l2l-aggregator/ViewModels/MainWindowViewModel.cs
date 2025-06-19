@@ -30,6 +30,9 @@ namespace l2l_aggregator.ViewModels
         [ObservableProperty]
         private bool _disableVirtualKeyboard;
 
+        [ObservableProperty]
+        private bool _isAdmin;
+
         private readonly DatabaseService _databaseService;
         private readonly HistoryRouter<ViewModelBase> _router;
         private readonly INotificationService _notificationService;
@@ -62,6 +65,7 @@ namespace l2l_aggregator.ViewModels
                 //если страница 
                 IsNotLoginPage = !(viewModel is AuthViewModel || viewModel is InitializationViewModel);
                 User = sessionService.User;
+                IsAdmin = sessionService.IsAdmin;
                 _disableVirtualKeyboard = _sessionService.DisableVirtualKeyboard;
                 //if (IsNotLoginPage)
                 //{
@@ -86,7 +90,7 @@ namespace l2l_aggregator.ViewModels
             await _sessionService.InitializeAsync(_databaseService);
 
 
-            if (!string.IsNullOrEmpty(_sessionService.ServerUri))
+            if (!string.IsNullOrEmpty(_sessionService.DatabaseUri))
             {
                 _router.GoTo<AuthViewModel>();
             }
@@ -114,12 +118,18 @@ namespace l2l_aggregator.ViewModels
         //        User = response;                 // Локально для ViewModel
         //    }
         //}
+        [RelayCommand]
         public void ButtonExit()
         {
             Notifications.Clear();
             _sessionService.User = null;
             User = null;
             _router.GoTo<AuthViewModel>();
+        }
+        [RelayCommand]
+        public void ButtonSettings()
+        {
+            _router.GoTo<SettingsViewModel>();
         }
 
         public void SetFlyout(Flyout flyout)

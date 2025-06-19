@@ -92,7 +92,7 @@ namespace l2l_aggregator
 
             // Регистрируем работу с контроллером
             services.AddTransient<PcPlcConnectionService>();
-
+            services.AddSingleton<DatabaseDataService>();
             services.AddSingleton<RemoteDatabaseService>();
         }
     }

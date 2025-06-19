@@ -117,8 +117,22 @@
 					<TextBlock Text="Пользователь:" FontSize="16" FontWeight="Bold" Padding="5" VerticalAlignment="Center"/>
 					<TextBlock Text="{Binding User.USER_NAME}" FontSize="16" FontWeight="Bold" Padding="5" VerticalAlignment="Center"/>
 				</StackPanel>
+				<Button Grid.Column="1"
+					Command="{Binding ButtonSettingsCommand}"
+					Content="Настройки"
+					HorizontalAlignment="Stretch"
+					HorizontalContentAlignment="Center"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Center"
+					Background="Transparent"
+					BorderBrush="Gray"
+					FontSize="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource ResponsiveFontSizeConverter}}"
+					Margin="0"
+					BorderThickness="1,0,0,0"
+					CornerRadius="0"
+					IsVisible="{Binding IsAdmin}"/>
 				<Button Grid.Column="2"
-					Command="{Binding ButtonExit}"
+					Command="{Binding ButtonExitCommand}"
 					Content="Выход"
 					HorizontalAlignment="Stretch"
 					HorizontalContentAlignment="Center"

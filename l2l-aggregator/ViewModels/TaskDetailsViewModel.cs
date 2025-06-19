@@ -29,9 +29,12 @@ namespace l2l_aggregator.ViewModels
         private readonly INotificationService _notificationService;
         private readonly DeviceCheckService _deviceCheckService;
         private readonly ConfigurationLoaderService _configLoader;
+        private readonly DatabaseDataService _databaseDataService;
+
 
         public TaskDetailsViewModel(HistoryRouter<ViewModelBase> router, 
-            DatabaseService databaseService, 
+            DatabaseService databaseService,
+            DatabaseDataService databaseDataService,
             SessionService sessionService, 
             DataApiService dataApiService, 
             INotificationService notificationService, 
@@ -45,13 +48,15 @@ namespace l2l_aggregator.ViewModels
             _sessionService = sessionService;
             _notificationService = notificationService;
             _deviceCheckService = deviceCheckService;
+            _databaseDataService = databaseDataService;
+
             LoadTaskAsync(_sessionService.SelectedTask.DOCID);
         }
         private async Task LoadTaskAsync(long docId)
         {
             try
             {
-                var serverUri = _sessionService.ServerUri;
+                var serverUri = _sessionService.DatabaseUri;
                 if (string.IsNullOrWhiteSpace(serverUri))
                 {
                     InfoMessage = "Сервер не настроен!";
@@ -60,7 +65,8 @@ namespace l2l_aggregator.ViewModels
                     return;
                 }
                 var request = new ArmJobInfoRequest { docid = docId };
-                var jobInfo = await _dataApiService.GetJobDetailsAsync(docId);
+                //var jobInfo = await _dataApiService.GetJobDetailsAsync(docId);
+                var jobInfo = await _databaseDataService.GetJobDetailsAsync(docId);
                 Task = jobInfo;
                 _sessionService.SelectedTaskInfo = jobInfo;
             }

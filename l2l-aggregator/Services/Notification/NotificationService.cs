@@ -51,6 +51,7 @@ namespace l2l_aggregator.Services.Notification
                 NotificationType.Info => ("#1751c3", "Информация"),
                 NotificationType.Warn => ("#E0A030", "Предупреждение"),
                 NotificationType.Error => ("#e03030", "Ошибка"),
+                NotificationType.Success => ("#4BB543", "Успешно"),
                 _ => ("#1751c3", "Информация")
             };
             var item = new NotificationItem
