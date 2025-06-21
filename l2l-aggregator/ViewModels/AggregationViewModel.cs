@@ -418,7 +418,7 @@ namespace l2l_aggregator.ViewModels
             }
 
             //responseSscc = await _dataApiService.LoadSsccAsync(docId);
-            responseSscc = await _databaseDataService.LoadSsccAsync(docId);
+            responseSscc = await _databaseDataService.GetSsccAsync(docId);
             if (responseSscc == null)
             {
                 InfoMessage = "Ошибка загрузки SSCC данных.";
@@ -934,7 +934,7 @@ namespace l2l_aggregator.ViewModels
                 return false;
             }
             //var responseSgtin = await _dataApiService.LoadSgtinAsync(docId);
-            var responseSgtin = await _databaseDataService.LoadSgtinAsync(docId);
+            var responseSgtin = await _databaseDataService.GetSgtinAsync(docId);
             if (responseSgtin == null)
             {
                 InfoMessage = "Ошибка загрузки данных SGTIN.";

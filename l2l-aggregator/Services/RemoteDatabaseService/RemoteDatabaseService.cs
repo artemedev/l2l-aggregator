@@ -1,11 +1,10 @@
-﻿// RemoteDatabaseService.cs - обновленный для работы с хранимыми процедурами
-using Dapper;
+﻿using Dapper;
 using FirebirdSql.Data.FirebirdClient;
 using l2l_aggregator.Models;
 using l2l_aggregator.Services.Database.Repositories.Interfaces;
 using l2l_aggregator.Services.Notification.Interface;
+using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,29 +14,22 @@ namespace l2l_aggregator.Services.Database
     {
         private readonly IConfigRepository _configRepository;
         private readonly INotificationService _notificationService;
-        //private string? _connectionString;
         private long? _currentSessionId;
         private long? _currentDeviceId;
-        private readonly string _connectionString = "Server=172.16.3.237;Port=3050;Database=/DATA_SSD/fb/arm_mtd_test.fdb;User=AEEGOROV;Password=AEE123456;Charset=UTF8;";
-        //private readonly string _connectionString = "Database=172.16.3.237:arm_mtd_test; User=AEEGOROV; Password=AEE123456; Role=RDB$ADMIN";
-        public RemoteDatabaseService(IConfigRepository configRepository, INotificationService notificationService)
+        private readonly string _connectionString;
+        private IConfiguration _configuration;
+        public RemoteDatabaseService(IConfigRepository configRepository, IConfiguration configuration, INotificationService notificationService)
         {
             _configRepository = configRepository;
+            _configuration = configuration;
             _notificationService = notificationService;
+            _connectionString = _configuration.GetConnectionString("FirebirdDatabase");
         }
 
         public async Task<bool> InitializeConnectionAsync()
         {
             try
             {
-                //var databaseUri = await _configRepository.GetConfigValueAsync("DatabaseUri");
-                //if (string.IsNullOrWhiteSpace(databaseUri))
-                //{
-                //    _notificationService.ShowMessage("Адрес базы данных не настроен!", NotificationType.Error);
-                //    return false;
-                //}
-
-                //_connectionString = databaseUri;
                 _notificationService.ShowMessage($"Подключение к БД", NotificationType.Info);
                 return await TestConnectionAsync();
             }
@@ -55,11 +47,6 @@ namespace l2l_aggregator.Services.Database
 
             try
             {
-                //using var connection = new FbConnection(_connectionString)
-                //{
-                //    connection
-                //}
-                //connection.Open();
                 using (FbConnection connection = new FbConnection(_connectionString))
                 {
                    await connection.OpenAsync();
@@ -73,17 +60,8 @@ namespace l2l_aggregator.Services.Database
             }
         }
 
-        public async Task SetConnectionStringAsync(string connectionString)
-        {
-           // _connectionString = connectionString;
-            await _configRepository.SetConfigValueAsync("DatabaseUri", connectionString);
-        }
-
         private async Task<T> WithConnectionAsync<T>(Func<FbConnection, Task<T>> action)
         {
-            //if (string.IsNullOrWhiteSpace(_connectionString))
-            //    throw new InvalidOperationException("Строка подключения не установлена");
-
             using var connection = new FbConnection(_connectionString);
             await connection.OpenAsync();
             return await action(connection);
@@ -91,9 +69,6 @@ namespace l2l_aggregator.Services.Database
 
         private async Task WithConnectionAsync(Func<FbConnection, Task> action)
         {
-            //if (string.IsNullOrWhiteSpace(_connectionString))
-            //    throw new InvalidOperationException("Строка подключения не установлена");
-
             using var connection = new FbConnection(_connectionString);
             await connection.OpenAsync();
             await action(connection);
@@ -285,6 +260,107 @@ namespace l2l_aggregator.Services.Database
         }
 
         // ---------------- JOB DETAILS ----------------
+        //public async Task<ArmJobInfoRecord?> GetJobDetailsAsync(long docId)
+        //{
+        //    try
+        //    {
+        //        // Сначала загружаем задание
+        //        var loadResult = await LoadJobAsync(docId);
+        //        if (!loadResult)
+        //        {
+        //            _notificationService.ShowMessage("Не удалось загрузить задание", NotificationType.Error);
+        //            return null;
+        //        }
+
+        //        return await WithConnectionAsync(async conn =>
+        //        {
+        //            // Теперь получаем данные из таблицы ARM_TASK, куда они загружены после ARM_JOB_LOAD
+        //            var sql = @"SELECT * FROM ARM_TASK WHERE DOCID = @DOCID";
+
+        //            var record = await conn.QueryFirstOrDefaultAsync(sql, new { DOCID = docId });
+
+        //            if (record != null)
+        //            {
+        //                var resp =  new ArmJobInfoRecord
+        //                {
+        //                    DOCID = record.DOCID ?? 0,
+        //                    RESOURCEID = record.RESOURCEID ?? 0,
+        //                    SERIESID = record.SERIESID ?? 0,
+        //                    RES_BOXID = record.RES_BOXID ?? 0,
+        //                    DOC_ORDER = record.DOC_ORDER ?? 0,
+        //                    DOCDATE = record.DOCDATE?.ToString("dd.MM.yyyy"),
+        //                    MOVEDATE = record.MOVEDATE?.ToString("dd.MM.yyyy"),
+        //                    BUHDATE = record.BUHDATE?.ToString("dd.MM.yyyy"),
+        //                    FIRMID = record.FIRMID ?? 0,
+        //                    DOC_NUM = record.DOC_NUM ?? string.Empty,
+        //                    DEPART_NAME = record.DEPART_NAME ?? string.Empty,
+        //                    RESOURCE_NAME = record.RESOURCE_NAME ?? string.Empty,
+        //                    RESOURCE_ARTICLE = record.RESOURCE_ARTICLE ?? string.Empty,
+        //                    SERIES_NAME = record.SERIES_NAME ?? string.Empty,
+        //                    RES_BOX_NAME = record.RES_BOX_NAME ?? string.Empty,
+        //                    GTIN = record.GTIN ?? string.Empty,
+        //                    EXPIRE_DATE_VAL = record.EXPIRE_DATE_VAL?.ToString("dd.MM.yyyy"),
+        //                    MNF_DATE_VAL = record.MNF_DATE_VAL?.ToString("dd.MM.yyyy"),
+        //                    DOC_TYPE = record.DOC_TYPE ?? 0,
+        //                    AGREGATION_CODE = record.AGREGATION_CODE ?? string.Empty,
+        //                    AGREGATION_TYPE = record.AGREGATION_TYPE ?? 0,
+        //                    CRYPTO_CODE_FLAG = record.CRYPTO_CODE_FLAG ?? 0,
+        //                    FIRM_NAME = record.FIRM_NAME ?? string.Empty,
+        //                    QTY = record.QTY ?? 0,
+        //                    AGGR_FLAG = record.AGGR_FLAG ?? 0,
+        //                    UN_TEMPLATE = record.UN_TEMPLATE ?? string.Empty,
+        //                    UN_TEMPLATEID = record.UN_TEMPLATEID ?? 0,
+        //                    UN_RESERVE_DOCID = record.UN_RESERVE_DOCID ?? 0,
+        //                    UN_TEMPLATE_FR = record.UN_TEMPLATE_FR ?? string.Empty,
+
+        //                    // Дополнительные поля из ARM_TASK с проверкой на null
+        //                    IN_BOX_QTY = record.IN_BOX_QTY ?? 0,
+        //                    IN_INNER_BOX_QTY = record.IN_INNER_BOX_QTY ?? 0,
+        //                    INNER_BOX_FLAG = record.INNER_BOX_FLAG ?? 0,
+        //                    INNER_BOX_AGGR_FLAG = record.INNER_BOX_AGGR_FLAG ?? 0,
+        //                    INNER_BOX_QTY = record.INNER_BOX_QTY ?? 0,
+        //                    IN_PALLET_BOX_QTY = record.IN_PALLET_BOX_QTY ?? 0,
+        //                    LAST_PACKAGE_LOCATION_INFO = record.LAST_PACKAGE_LOCATION_INFO ?? string.Empty,
+        //                    PALLET_NOT_USE_FLAG = record.PALLET_NOT_USE_FLAG ?? 0,
+        //                    PALLET_AGGR_FLAG = record.PALLET_AGGR_FLAG ?? 0,
+        //                    AGREGATION_TYPEID = record.AGREGATION_TYPEID ?? 0,
+        //                    SERIES_SYS_NUM = record.SERIES_SYS_NUM ?? string.Empty,
+        //                    LAYERS_QTY = record.LAYERS_QTY ?? 0,
+        //                    LAYER_ROW_QTY = record.LAYER_ROW_QTY ?? 0,
+        //                    LAYER_ROWS_QTY = record.LAYER_ROWS_QTY ?? 0,
+        //                    PACK_HEIGHT = record.PACK_HEIGHT ?? 0,
+        //                    PACK_WIDTH = record.PACK_WIDTH ?? 0,
+        //                    PACK_LENGTH = record.PACK_LENGTH ?? 0,
+        //                    PACK_WEIGHT = record.PACK_WEIGHT ?? 0,
+        //                    PACK_CODE_POSITION = record.PACK_CODE_POSITION ?? 0,
+        //                    BOX_TEMPLATEID = record.BOX_TEMPLATEID ?? 0,
+        //                    BOX_RESERVE_DOCID = record.BOX_RESERVE_DOCID ?? 0,
+        //                    BOX_TEMPLATE = record.BOX_TEMPLATE ?? string.Empty,
+        //                    PALLETE_TEMPLATEID = record.PALLETE_TEMPLATEID ?? 0,
+        //                    PALLETE_RESERVE_DOCID = record.PALLETE_RESERVE_DOCID ?? 0,
+        //                    PALLETE_TEMPLATE = record.PALLETE_TEMPLATE ?? string.Empty,
+        //                    INT_BOX_TEMPLATEID = record.INT_BOX_TEMPLATEID ?? 0,
+        //                    INT_BOX_RESERVE_DOCID = record.INT_BOX_RESERVE_DOCID ?? 0,
+        //                    INT_BOX_TEMPLATE = record.INT_BOX_TEMPLATE ?? string.Empty,
+        //                    LOAD_START_TIME = record.LOAD_START_TIME?.ToString("dd.MM.yyyy HH:mm:ss"),
+        //                    LOAD_FINISH_TIME = record.LOAD_FINISH_TIME?.ToString("dd.MM.yyyy HH:mm:ss"),
+        //                    EXPIRE_DATE = record.EXPIRE_DATE,
+        //                    MNF_DATE = record.MNF_DATE
+        //                };
+        //                return resp;
+        //            }
+
+        //            return null;
+        //        });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _notificationService.ShowMessage($"Ошибка получения деталей задания: {ex.Message}", NotificationType.Error);
+        //        return null;
+        //    }
+        //}
+
+        // Исправленная версия GetJobDetailsAsync с правильными типами полей
         public async Task<ArmJobInfoRecord?> GetJobDetailsAsync(long docId)
         {
             try
@@ -300,21 +376,7 @@ namespace l2l_aggregator.Services.Database
                 return await WithConnectionAsync(async conn =>
                 {
                     // Теперь получаем данные из таблицы ARM_TASK, куда они загружены после ARM_JOB_LOAD
-                    var sql = @"SELECT 
-                DOCID, RESOURCEID, SERIESID, RES_BOXID, DOC_ORDER, DOCDATE, MOVEDATE, BUHDATE,
-                FIRMID, DOC_NUM, DEPART_NAME, RESOURCE_NAME, RESOURCE_ARTICLE, SERIES_NAME,
-                RES_BOX_NAME, GTIN, EXPIRE_DATE_VAL, MNF_DATE_VAL, DOC_TYPE, AGREGATION_CODE,
-                AGREGATION_TYPE, CRYPTO_CODE_FLAG, FIRM_NAME, QTY, AGGR_FLAG, UN_TEMPLATE,
-                UN_TEMPLATEID, UN_RESERVE_DOCID, IN_BOX_QTY, IN_INNER_BOX_QTY, INNER_BOX_FLAG,
-                INNER_BOX_AGGR_FLAG, INNER_BOX_QTY, IN_PALLET_BOX_QTY, LAST_PACKAGE_LOCATION_INFO,
-                PALLET_NOT_USE_FLAG, PALLET_AGGR_FLAG, AGREGATION_TYPEID, SERIES_SYS_NUM,
-                LAYERS_QTY, LAYER_ROW_QTY, LAYER_ROWS_QTY, PACK_HEIGHT, PACK_WIDTH, PACK_LENGTH,
-                PACK_WEIGHT, PACK_CODE_POSITION, BOX_TEMPLATEID, BOX_RESERVE_DOCID, BOX_TEMPLATE,
-                PALLETE_TEMPLATEID, PALLETE_RESERVE_DOCID, PALLETE_TEMPLATE, INT_BOX_TEMPLATEID,
-                INT_BOX_RESERVE_DOCID, INT_BOX_TEMPLATE, UN_TEMPLATE_FR, LOAD_START_TIME,
-                LOAD_FINISH_TIME, EXPIRE_DATE, MNF_DATE
-                FROM ARM_TASK 
-                WHERE DOCID = @DOCID";
+                    var sql = @"SELECT * FROM ARM_TASK WHERE DOCID = @DOCID";
 
                     var record = await conn.QueryFirstOrDefaultAsync(sql, new { DOCID = docId });
 
@@ -322,69 +384,78 @@ namespace l2l_aggregator.Services.Database
                     {
                         return new ArmJobInfoRecord
                         {
-                            DOCID = record.DOCID,
-                            RESOURCEID = record.RESOURCEID,
-                            SERIESID = record.SERIESID,
-                            RES_BOXID = record.RES_BOXID,
-                            DOC_ORDER = record.DOC_ORDER,
+                            // Nullable long/int поля
+                            DOCID = record.DOCID as long?,
+                            RESOURCEID = record.RESOURCEID as long?,
+                            SERIESID = record.SERIESID as long?,
+                            RES_BOXID = record.RES_BOXID as long?,
+                            DOC_ORDER = record.DOC_ORDER as int?,
+                            FIRMID = record.FIRMID as long?,
+
+                            // String поля с проверкой на null
                             DOCDATE = record.DOCDATE?.ToString("dd.MM.yyyy"),
                             MOVEDATE = record.MOVEDATE?.ToString("dd.MM.yyyy"),
                             BUHDATE = record.BUHDATE?.ToString("dd.MM.yyyy"),
-                            FIRMID = record.FIRMID,
-                            DOC_NUM = record.DOC_NUM,
-                            DEPART_NAME = record.DEPART_NAME,
-                            RESOURCE_NAME = record.RESOURCE_NAME,
-                            RESOURCE_ARTICLE = record.RESOURCE_ARTICLE,
-                            SERIES_NAME = record.SERIES_NAME,
-                            RES_BOX_NAME = record.RES_BOX_NAME,
-                            GTIN = record.GTIN,
+                            DOC_NUM = record.DOC_NUM?.ToString(),
+                            DEPART_NAME = record.DEPART_NAME?.ToString(),
+                            RESOURCE_NAME = record.RESOURCE_NAME?.ToString(),
+                            RESOURCE_ARTICLE = record.RESOURCE_ARTICLE?.ToString(),
+                            SERIES_NAME = record.SERIES_NAME?.ToString(),
+                            RES_BOX_NAME = record.RES_BOX_NAME?.ToString(),
+                            GTIN = record.GTIN?.ToString(),
                             EXPIRE_DATE_VAL = record.EXPIRE_DATE_VAL?.ToString("dd.MM.yyyy"),
                             MNF_DATE_VAL = record.MNF_DATE_VAL?.ToString("dd.MM.yyyy"),
-                            DOC_TYPE = record.DOC_TYPE,
-                            AGREGATION_CODE = record.AGREGATION_CODE,
-                            AGREGATION_TYPE = record.AGREGATION_TYPE,
-                            CRYPTO_CODE_FLAG = record.CRYPTO_CODE_FLAG,
-                            FIRM_NAME = record.FIRM_NAME,
-                            QTY = record.QTY,
-                            AGGR_FLAG = record.AGGR_FLAG,
-                            UN_TEMPLATE = record.UN_TEMPLATE,
-                            UN_TEMPLATEID = record.UN_TEMPLATEID,
-                            UN_RESERVE_DOCID = record.UN_RESERVE_DOCID,
-                            UN_TEMPLATE_FR = record.UN_TEMPLATE_FR,
+
+                            // Специальные типы согласно модели
+                            DOC_TYPE = record.DOC_TYPE?.ToString(), // string? в модели
+                            AGREGATION_CODE = record.AGREGATION_CODE as int?, // int? в модели
+                            AGREGATION_TYPE = record.AGREGATION_TYPE?.ToString(), // string? в модели
+                            CRYPTO_CODE_FLAG = record.CRYPTO_CODE_FLAG as short?,
+                            FIRM_NAME = record.FIRM_NAME?.ToString(),
+                            QTY = record.QTY as int?,
+                            AGGR_FLAG = record.AGGR_FLAG as short?,
+
+                            // Nullable long поля
+                            UN_TEMPLATEID = record.UN_TEMPLATEID as long?,
+                            UN_RESERVE_DOCID = record.UN_RESERVE_DOCID as long?,
+
+                            // byte[] поля с правильной обработкой
+                            UN_TEMPLATE = ConvertToByteArray(record.UN_TEMPLATE),
+                            UN_TEMPLATE_FR = ConvertToByteArray(record.UN_TEMPLATE_FR),
 
                             // Дополнительные поля из ARM_TASK
-                            IN_BOX_QTY = record.IN_BOX_QTY,
-                            IN_INNER_BOX_QTY = record.IN_INNER_BOX_QTY,
-                            INNER_BOX_FLAG = record.INNER_BOX_FLAG,
-                            INNER_BOX_AGGR_FLAG = record.INNER_BOX_AGGR_FLAG,
-                            INNER_BOX_QTY = record.INNER_BOX_QTY,
-                            IN_PALLET_BOX_QTY = record.IN_PALLET_BOX_QTY,
-                            LAST_PACKAGE_LOCATION_INFO = record.LAST_PACKAGE_LOCATION_INFO,
-                            PALLET_NOT_USE_FLAG = record.PALLET_NOT_USE_FLAG,
-                            PALLET_AGGR_FLAG = record.PALLET_AGGR_FLAG,
-                            AGREGATION_TYPEID = record.AGREGATION_TYPEID,
-                            SERIES_SYS_NUM = record.SERIES_SYS_NUM,
-                            LAYERS_QTY = record.LAYERS_QTY,
-                            LAYER_ROW_QTY = record.LAYER_ROW_QTY,
-                            LAYER_ROWS_QTY = record.LAYER_ROWS_QTY,
-                            PACK_HEIGHT = record.PACK_HEIGHT,
-                            PACK_WIDTH = record.PACK_WIDTH,
-                            PACK_LENGTH = record.PACK_LENGTH,
-                            PACK_WEIGHT = record.PACK_WEIGHT,
-                            PACK_CODE_POSITION = record.PACK_CODE_POSITION,
-                            BOX_TEMPLATEID = record.BOX_TEMPLATEID,
-                            BOX_RESERVE_DOCID = record.BOX_RESERVE_DOCID,
-                            BOX_TEMPLATE = record.BOX_TEMPLATE,
-                            PALLETE_TEMPLATEID = record.PALLETE_TEMPLATEID,
-                            PALLETE_RESERVE_DOCID = record.PALLETE_RESERVE_DOCID,
-                            PALLETE_TEMPLATE = record.PALLETE_TEMPLATE,
-                            INT_BOX_TEMPLATEID = record.INT_BOX_TEMPLATEID,
-                            INT_BOX_RESERVE_DOCID = record.INT_BOX_RESERVE_DOCID,
-                            INT_BOX_TEMPLATE = record.INT_BOX_TEMPLATE,
+                            IN_BOX_QTY = record.IN_BOX_QTY as int?,
+                            IN_INNER_BOX_QTY = record.IN_INNER_BOX_QTY as int?,
+                            INNER_BOX_FLAG = record.INNER_BOX_FLAG as short?,
+                            INNER_BOX_AGGR_FLAG = record.INNER_BOX_AGGR_FLAG as short?,
+                            INNER_BOX_QTY = record.INNER_BOX_QTY as int?,
+                            IN_PALLET_BOX_QTY = record.IN_PALLET_BOX_QTY as int?,
+                            LAST_PACKAGE_LOCATION_INFO = record.LAST_PACKAGE_LOCATION_INFO?.ToString(),
+                            PALLET_NOT_USE_FLAG = record.PALLET_NOT_USE_FLAG as short?,
+                            PALLET_AGGR_FLAG = record.PALLET_AGGR_FLAG as short?,
+                            AGREGATION_TYPEID = record.AGREGATION_TYPEID as long?,
+                            SERIES_SYS_NUM = record.SERIES_SYS_NUM as int?, // int? в модели
+                            LAYERS_QTY = record.LAYERS_QTY as int?,
+                            LAYER_ROW_QTY = record.LAYER_ROW_QTY as int?,
+                            LAYER_ROWS_QTY = record.LAYER_ROWS_QTY as int?,
+                            PACK_HEIGHT = record.PACK_HEIGHT as int?,
+                            PACK_WIDTH = record.PACK_WIDTH as int?,
+                            PACK_LENGTH = record.PACK_LENGTH as int?,
+                            PACK_WEIGHT = record.PACK_WEIGHT as int?,
+                            PACK_CODE_POSITION = record.PACK_CODE_POSITION?.ToString(), // string? в модели
+                            BOX_TEMPLATEID = record.BOX_TEMPLATEID as long?,
+                            BOX_RESERVE_DOCID = record.BOX_RESERVE_DOCID as long?,
+                            BOX_TEMPLATE = ConvertToByteArray(record.BOX_TEMPLATE),
+                            PALLETE_TEMPLATEID = record.PALLETE_TEMPLATEID as long?,
+                            PALLETE_RESERVE_DOCID = record.PALLETE_RESERVE_DOCID as long?,
+                            PALLETE_TEMPLATE = ConvertToByteArray(record.PALLETE_TEMPLATE),
+                            INT_BOX_TEMPLATEID = record.INT_BOX_TEMPLATEID as long?,
+                            INT_BOX_RESERVE_DOCID = record.INT_BOX_RESERVE_DOCID as long?,
+                            INT_BOX_TEMPLATE = ConvertToByteArray(record.INT_BOX_TEMPLATE),
                             LOAD_START_TIME = record.LOAD_START_TIME?.ToString("dd.MM.yyyy HH:mm:ss"),
                             LOAD_FINISH_TIME = record.LOAD_FINISH_TIME?.ToString("dd.MM.yyyy HH:mm:ss"),
-                            EXPIRE_DATE = record.EXPIRE_DATE,
-                            MNF_DATE = record.MNF_DATE
+                            EXPIRE_DATE = record.EXPIRE_DATE?.ToString(),
+                            MNF_DATE = record.MNF_DATE?.ToString()
                         };
                     }
 
@@ -396,6 +467,22 @@ namespace l2l_aggregator.Services.Database
                 _notificationService.ShowMessage($"Ошибка получения деталей задания: {ex.Message}", NotificationType.Error);
                 return null;
             }
+        }
+
+        // Вспомогательный метод для конвертации в byte[]
+        private byte[]? ConvertToByteArray(object? value)
+        {
+            if (value == null)
+                return null;
+
+            if (value is byte[] byteArray)
+                return byteArray;
+
+            if (value is string stringValue)
+                return System.Text.Encoding.UTF8.GetBytes(stringValue);
+
+            // Если это другой тип, конвертируем через ToString
+            return System.Text.Encoding.UTF8.GetBytes(value.ToString() ?? string.Empty);
         }
         public async Task<ArmJobSgtinResponse?> GetSgtinAsync(long docId)
         {

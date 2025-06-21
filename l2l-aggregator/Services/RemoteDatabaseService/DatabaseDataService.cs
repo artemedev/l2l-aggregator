@@ -73,16 +73,16 @@ namespace l2l_aggregator.Services
                     await _localDatabaseService.UserAuth.SaveUserAuthAsync(response);
                     _notificationService.ShowMessage($"Добро пожаловать, {response.USER_NAME}!", NotificationType.Success);
 
-                    // Проверяем права администратора для возможности входа в настройки
-                    if (long.TryParse(response.USERID, out var userId))
-                    {
-                        bool isAdmin = await _remoteDatabaseService.CheckAdminRoleAsync(userId);
-                        if (isAdmin)
-                        {
-                            _notificationService.ShowMessage("Права администратора подтверждены", NotificationType.Info);
-                        }
-                        // Можно сохранить информацию об админских правах в локальной БД или SessionService
-                    }
+                    //// Проверяем права администратора для возможности входа в настройки
+                    //if (long.TryParse(response.USERID, out var userId))
+                    //{
+                    //    bool isAdmin = await _remoteDatabaseService.CheckAdminRoleAsync(userId);
+                    //    if (isAdmin)
+                    //    {
+                    //        _notificationService.ShowMessage("Права администратора подтверждены", NotificationType.Info);
+                    //    }
+                    //    // Можно сохранить информацию об админских правах в локальной БД или SessionService
+                    //}
 
                     return response;
                 }
@@ -124,7 +124,8 @@ namespace l2l_aggregator.Services
                 return false;
             }
         }
-
+        
+        //Регистрация устройства
         public async Task<ArmDeviceRegistrationResponse?> RegisterDeviceAsync(ArmDeviceRegistrationRequest data)
         {
             try
@@ -203,6 +204,7 @@ namespace l2l_aggregator.Services
             }
         }
 
+        //Получение Sgtin
         public async Task<ArmJobSgtinResponse?> GetSgtinAsync(long docId)
         {
             try
@@ -227,6 +229,7 @@ namespace l2l_aggregator.Services
             }
         }
 
+        //Получение Sscc
         public async Task<ArmJobSsccResponse?> GetSsccAsync(long docId)
         {
             try
@@ -251,15 +254,6 @@ namespace l2l_aggregator.Services
             }
         }
 
-        public async Task<ArmJobSgtinResponse?> LoadSgtinAsync(long docId)
-        {
-            return await GetSgtinAsync(docId);
-        }
-
-        public async Task<ArmJobSsccResponse?> LoadSsccAsync(long docId)
-        {
-            return await GetSsccAsync(docId);
-        }
 
         // ---------------- SESSION MANAGEMENT ----------------
         public async Task<long?> StartAggregationSessionAsync(long docId, string userId)
@@ -342,20 +336,7 @@ namespace l2l_aggregator.Services
             }
         }
 
-        // ---------------- Connection Management ----------------
-        [Obsolete("Метод устарел, так как используется статичный адрес БД")]
-        public async Task<bool> TestConnectionAsync(string connectionString)
-        {
-            // Метод оставлен для обратной совместимости, но игнорирует переданную строку подключения
-            _notificationService.ShowMessage("Используется статичный адрес БД, переданная строка подключения игнорируется", NotificationType.Warn);
-            return await TestConnectionAsync();
-        }
-
-        // Получение информации о подключении
-        public string GetConnectionInfo()
-        {
-            return _remoteDatabaseService.ConnectionString;
-        }
+        
 
         // Принудительный сброс состояния подключения
         public void ResetConnection()

@@ -34,7 +34,7 @@ namespace l2l_aggregator
                 //appsettings нужен только для подключения бд.
                 .ConfigureAppConfiguration(configBuilder =>
                 {
-                    configBuilder.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+                    configBuilder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
                 })
                 .ConfigureServices((context, services) =>
                 {
