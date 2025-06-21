@@ -11,6 +11,8 @@ using Refit;
 using System;
 using System.IO.Ports;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace l2l_aggregator.ViewModels
@@ -49,11 +51,27 @@ namespace l2l_aggregator.ViewModels
             _databaseDataService = databaseDataService;
             // Тестовые/заготовленные значения
             _login = "TESTINNO1";
-            _password = "4QrcOUm6Wau+VuBX8g+IPg==";
+            _password = "123456";
+            //var asdf = HashPassword("123456");
             InitializeScanner();
         }
 
+        private string HashPassword(string password)
+        {
+            using (MD5 md5 = MD5.Create())
+            {
+                // Преобразуем пароль в байты
+                byte[] inputBytes = Encoding.UTF8.GetBytes(password);
 
+                // Вычисляем MD5 хэш
+                byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+                // Преобразуем в Base64
+                string base64Hash = Convert.ToBase64String(hashBytes);
+
+                return base64Hash;
+            }
+        }
         private async void InitializeScanner()
         {
             try
@@ -137,7 +155,7 @@ namespace l2l_aggregator.ViewModels
                 // Попытка входа через удаленную БД
                 try
                 {
-                    UserAuthResponse response = await _databaseDataService.LoginAsync(Login, Password);
+                    UserAuthResponse response = await _databaseDataService.LoginAsync(Login, HashPassword(Password));
                     if (response != null)
                     {
                         if (response.AUTH_OK == "1")

@@ -86,7 +86,7 @@ namespace l2l_aggregator.ViewModels
                     {
                         NAME = NameDevice,
                         MAC_ADDRESS = macAddress,
-                        SERIAL_NUMBER = Environment.MachineName,
+                        SERIAL_NUMBER = NameDevice, //должен вводить пользователь
                         NET_ADDRESS = GetLocalIPAddress(),
                         KERNEL_VERSION = Environment.OSVersion.Version.ToString(),
                         HADWARE_VERSION = Environment.OSVersion.Platform.ToString(),

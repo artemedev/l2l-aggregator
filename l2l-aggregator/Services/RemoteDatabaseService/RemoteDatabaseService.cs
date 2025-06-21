@@ -18,7 +18,8 @@ namespace l2l_aggregator.Services.Database
         //private string? _connectionString;
         private long? _currentSessionId;
         private long? _currentDeviceId;
-        private readonly string _connectionString = "Server=172.16.3.237;Port=3050;Database=/DATA_SSD/fb/arm_mtd_test.fdb;User=AEEGOROV;Password=AEE123456;";
+        private readonly string _connectionString = "Server=172.16.3.237;Port=3050;Database=/DATA_SSD/fb/arm_mtd_test.fdb;User=AEEGOROV;Password=AEE123456;Charset=UTF8;";
+        //private readonly string _connectionString = "Database=172.16.3.237:arm_mtd_test; User=AEEGOROV; Password=AEE123456; Role=RDB$ADMIN";
         public RemoteDatabaseService(IConfigRepository configRepository, INotificationService notificationService)
         {
             _configRepository = configRepository;
@@ -54,8 +55,15 @@ namespace l2l_aggregator.Services.Database
 
             try
             {
-                using var connection = new FbConnection(_connectionString);
-                await connection.OpenAsync();
+                //using var connection = new FbConnection(_connectionString)
+                //{
+                //    connection
+                //}
+                //connection.Open();
+                using (FbConnection connection = new FbConnection(_connectionString))
+                {
+                   await connection.OpenAsync();
+                }
                 return true;
             }
             catch (Exception ex)
